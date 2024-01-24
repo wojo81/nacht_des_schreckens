@@ -1,0 +1,148 @@
+// Bullet Casing
+$random weapons/casing1	{ weapons/bullet1 weapons/bullet2 weapons/bullet3 weapons/bullet4 }
+weapons/bullet1			dscasing
+weapons/bullet2			dscasin2
+weapons/bullet3			dscasin3
+weapons/bullet4			dscasin4
+
+// Shell Casing
+$random weapons/casing2	{ weapons/shell1 weapons/shell2 weapons/shell3 }
+weapons/shell1			dsshell1
+weapons/shell2			dsshell2
+weapons/shell3			dsshell3
+
+// Shotgun Reload
+weapons/shellload  		DSSHLOD1
+
+// Minigun
+weapons/minigunSpinUp   DSMINSTA
+weapons/minigunSpin     DSMINSPI
+weapons/minigunSpinDown DSMINSTO
+weapons/minigunLoop     sounds/minigun_loop.ogg
+weapons/minigunRelease  sounds/minigun_release.ogg
+
+// Sniper Rifle
+weapons/sniperFire      M40RIF1
+weapons/sniperScope     M40RIF2
+weapons/sniperBolt1     M40RIF3
+weapons/sniperBolt2     M40RIF4
+
+// Frag grenade
+weapons/grenadePin      GREN_USE
+weapons/grenadeThrow    GRNTHROW
+weapons/grenadeBounce   GRNBNCE
+weapons/grenadeExplode  GEXPLODE
+
+// Land mine
+weapons/mineThrow   MINE002
+weapons/mineLand   MINE001
+
+// Empty gun click
+weapons/emptyClick      sounds/beretta_hammer.flac
+
+// Empty magazine
+weapons/emptyMagazine   DSCLIP
+
+zombie/hit1   sounds/DSSZHIT1
+zombie/hit2   sounds/DSSZHIT2
+zombie/hit3   sounds/DSSZHIT3
+zombie/see1   sounds/DZMBSE1
+zombie/see2   sounds/DZMBSE2
+zombie/see3   sounds/DZMBSE3
+zombie/dead1  sounds/DZMBDE1
+zombie/dead2  sounds/DZMBDE2
+zombie/follow1 sounds/DZMBFO1
+zombie/follow2 sounds/DZMBFO2
+zombie/follow3 sounds/DZMBFO3
+zombie/follow4 sounds/DZMBFO4
+zombie/die1 sounds/DEATH_00
+zombie/die2 sounds/DEATH_01
+zombie/die3 sounds/DEATH_02
+zombie/die4 sounds/DEATH_03
+zombie/die5 sounds/DEATH_04
+zombie/die6 sounds/DEATH_05
+zombie/die7 sounds/DEATH_06
+zombie/die8 sounds/DEATH_07
+zombie/amb1 sounds/zombie/zomb1
+zombie/amb2 sounds/zombie/zomb2
+zombie/amb3 sounds/zombie/zomb3
+zombie/amb4 sounds/zombie/zomb4
+zombie/amb5 sounds/zombie/zomb5
+zombie/amb6 sounds/zombie/zomb6
+zombie/amb7 sounds/zombie/zomb7
+zombie/amb8 sounds/zombie/zomb8
+zombie/spr1 sounds/zombie/sprint1
+zombie/spr2 sounds/zombie/sprint2
+zombie/spr3 sounds/zombie/sprint3
+zombie/spr4 sounds/zombie/sprint4
+zombie/spr5 sounds/zombie/sprint5
+zombie/inj1 sounds/zombie/inj1
+zombie/inj2 sounds/zombie/inj2
+zombie/inj3 sounds/zombie/inj3
+zombie/crack1 sounds/zombie/crack1
+zombie/crack2 sounds/zombie/crack2
+zombie/crack3 sounds/zombie/crack3
+zombie/shot1  sounds/zombie/shot1
+zombie/shot2  sounds/zombie/shot2
+zombie/shot3  sounds/zombie/shot3
+zombie/shot4  sounds/zombie/shot4
+zombie/fall1  sounds/zombie/fall1
+zombie/fall2  sounds/zombie/fall2
+zombie/fall3  sounds/zombie/fall3
+zombie/fall4  sounds/zombie/fall4
+zombie/fall5  sounds/zombie/fall5
+zombie/attack1 sounds/zombie/attack1
+zombie/attack2 sounds/zombie/attack2
+zombie/attack3 sounds/zombie/attack3
+zombie/attack4 sounds/zombie/attack4
+zombie/attack5 sounds/zombie/attack5
+zombie/attack6 sounds/zombie/attack6
+zombie/attack7 sounds/zombie/attack7
+zombie/attack8 sounds/zombie/attack8
+$RANDOM zombie/normal { game/nosound zombie/amb1 zombie/amb2 zombie/amb3 zombie/amb4 zombie/amb5 zombie/amb6 zombie/amb7 zombie/amb8 }
+$RANDOM zombie/sprint { game/nosound zombie/spr1 zombie/spr2 zombie/spr3 zombie/spr4 zombie/spr5 }
+$RANDOM zombie/inj    { game/nosound zombie/inj1 zombie/inj2 zombie/inj3 }
+$RANDOM zombie/crack  { game/nosound zombie/crack1 zombie/crack2 zombie/crack3 }
+$RANDOM zombie/shot	  { game/nosound zombie/shot1 zombie/shot2 zombie/shot3 zombie/shot4 }
+$RANDOM zombie/fall	  { zombie/fall1 zombie/fall2 zombie/fall3 zombie/fall4 zombie/fall5 }
+$RANDOM zombie/attack { zombie/attack1 zombie/attack2 zombie/attack3 zombie/attack4 zombie/attack5 zombie/attack6 zombie/attack7 zombie/attack8 }
+
+game/nuke     sounds/NUKE
+game/doublepoints   sounds/X2
+game/x2vanish sounds/DPVANISH
+game/instakill   sounds/INSTAK
+game/ikvanish sounds/IKVANISH
+game/maxammo  sounds/MAXAMMO
+game/powerup_grab sounds/POWERGRAB
+game/fire_sale sounds/fire_sale.wav
+
+game/intro sounds/BEGIN
+game/purchase sounds/PURCHASE
+game/round sounds/ROUND
+game/mystery sounds/MYSTERY
+
+weapons/raygun sounds/weapons/raygun/raygun
+weapons/rayflux sounds/weapons/raygun/rayflux
+weapons/raygunReload1 sounds/weapons/raygun/raygunre1
+weapons/raygunReload2 sounds/weapons/raygun/raygunre2
+weapons/raygunReload3 sounds/weapons/raygun/raygunre3
+weapons/rayflux_explode sounds/weapons/raygun/rayflux_explode.wav
+
+weapons/colt sounds/weapons/colt/m1911
+weapons/coltReload1 sounds/weapons/colt/m191out
+weapons/coltReload2 sounds/weapons/colt/m191in
+
+weapons/ppsh_fire1 sounds/weapons/ppsh/wpn_ppsh_st_act.wav
+weapons/ppsh_fire2 sounds/weapons/ppsh/wpn_ppsh_st_sur.wav
+weapons/ppsh_fire3 sounds/weapons/ppsh/wpn_ppsh_st_f.wav
+weapons/ppsh_magin sounds/weapons/ppsh/ppsh_magin.wav
+weapons/ppsh_magout sounds/weapons/ppsh/ppsh_magout.wav
+weapons/ppsh_magtap sounds/weapons/ppsh/ppsh_magtap.wav
+weapons/ppsh_slide_forward sounds/weapons/ppsh/ppsh_slide_forward.wav
+
+weapons/m1g_fire sounds/weapons/m1garand/wpn_m1garand_st_act_c.wav
+weapons/m1g_open sounds/weapons/m1garand/m1gar_pull_slide.wav
+weapons/m1g_close sounds/weapons/m1garand/m1gar_breech_close.wav
+weapons/m1g_clipin sounds/weapons/m1garand/m1gar_clip_in.wav
+weapons/m1g_clipout sounds/weapons/m1garand/m1gar_clip_out.wav
+weapons/m1g_ping sounds/weapons/m1garand/wpn_m1garand_clip.wav

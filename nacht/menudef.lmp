@@ -1,0 +1,3 @@
+AddOptionMenu "OptionsMenu" {
+    Option "Toggled Zoom", "toggledZoom", "OnOff"
+}
