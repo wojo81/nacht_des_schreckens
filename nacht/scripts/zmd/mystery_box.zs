@@ -32,7 +32,8 @@ class zmd_MysteryBoxSelection : EventHandler {
         self.add('ZPlasmaRifle', 'plas');
         self.add('ZFragGrenade', 'hgn1');
         self.add('Raygun', 'rayp');
-        self.add('Ppsh', 'ppsp');
+        self.add('M1garand', 'm1ga');
+//         self.add('Ppsh', 'ppsp');
     }
 }
 

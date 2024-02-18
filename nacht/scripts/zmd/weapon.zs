@@ -5,10 +5,12 @@ class zmd_Weapon : Weapon abstract {
     bool toggledZoom;
     readonly int clipCapacity;
     int clipSize;
-    readonly int fastDelay;
+    readonly int fastReloadRate;
+    readonly int fastFireRate;
 
     property clipCapacity: clipCapacity;
-    property fastDelay: fastDelay;
+    property fastReloadRate: fastReloadRate;
+    property fastFireRate: fastFireRate;
 
     Default {
         Weapon.bobStyle 'InverseSmooth';
@@ -159,11 +161,11 @@ class zmd_Weapon : Weapon abstract {
 
     action void ff() {
         if (invoker.useDoubleFire)
-            a_setTics(invoker.fastDelay);
+            a_setTics(invoker.fastFireRate);
     }
 
     action void fr() {
         if (invoker.useFastReload)
-            a_setTics(invoker.fastDelay);
+            a_setTics(invoker.fastReloadRate);
     }
 }

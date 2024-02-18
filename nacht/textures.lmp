@@ -1,3 +1,18 @@
+sprite colva0, 352, 200 {
+    offset 16, 32
+    patch colva0, 0, 0
+}
+
+sprite colvb0, 352, 200 {
+    offset 16, 32
+    patch colvb0, 0, 0
+}
+
+sprite colvc0, 352, 200 {
+    offset 16, 32
+    patch colvc0, 0, 0
+}
+
 sprite colfc0, 352, 200 {
     offset 16, 32
     patch colfc0, 0, 0
@@ -11,6 +26,36 @@ sprite colfb0, 352, 200 {
 sprite colfa0, 352, 200 {
     offset 16, 32
     patch colfa0, 0, 0
+}
+
+sprite colya0, 352, 200 {
+    offset 16, 32
+    patch colya0, 0, 0
+}
+
+sprite colyb0, 352, 200 {
+    offset 16, 32
+    patch colyb0, 0, 0
+}
+
+sprite colyc0, 352, 200 {
+    offset 16, 32
+    patch colyc0, 0, 0
+}
+
+sprite collc0, 352, 200 {
+    offset 16, 32
+    patch collc0, 0, 0
+}
+
+sprite collb0, 352, 200 {
+    offset 16, 32
+    patch collb0, 0, 0
+}
+
+sprite colla0, 352, 200 {
+    offset 16, 32
+    patch colla0, 0, 0
 }
 
 sprite colzf0, 352, 200 {
@@ -41,6 +86,181 @@ sprite colzd0, 352, 200 {
 sprite colza0, 352, 200 {
     offset 16, 32
     patch colza0, 0, 0
+}
+
+sprite colta0, 352, 200 {
+    offset 16, 32
+    patch colta0, 0, 0
+}
+
+sprite colga0, 352, 200 {
+    offset 16, 32
+    patch colga0, 0, 0
+}
+
+sprite colja0, 352, 200 {
+    offset 16, 32
+    patch colja0, 0, 0
+}
+
+sprite co1pd0, 352, 200 {
+    offset 16, 32
+    patch co1pd0, 0, 0
+}
+
+sprite colpd0, 352, 200 {
+    offset 16, 32
+    patch colpd0, 0, 0
+}
+
+sprite colpj0, 352, 200 {
+    offset 16, 32
+    patch colpj0, 0, 0
+}
+
+sprite colpz0, 352, 200 {
+    offset 16, 32
+    patch colpz0, 0, 0
+}
+
+sprite colpw0, 352, 200 {
+    offset 16, 32
+    patch colpw0, 0, 0
+}
+
+sprite colpr0, 352, 200 {
+    offset 16, 32
+    patch colpr0, 0, 0
+}
+
+sprite colpu0, 352, 200 {
+    offset 16, 32
+    patch colpu0, 0, 0
+}
+
+sprite colpk0, 352, 200 {
+    offset 16, 32
+    patch colpk0, 0, 0
+}
+
+sprite co1pb0, 352, 200 {
+    offset 16, 32
+    patch co1pb0, 0, 0
+}
+
+sprite colpf0, 352, 200 {
+    offset 16, 32
+    patch colpf0, 0, 0
+}
+
+sprite colpt0, 352, 200 {
+    offset 16, 32
+    patch colpt0, 0, 0
+}
+
+sprite colpq0, 352, 200 {
+    offset 16, 32
+    patch colpq0, 0, 0
+}
+
+sprite colpn0, 352, 200 {
+    offset 16, 32
+    patch colpn0, 0, 0
+}
+
+sprite colpe0, 352, 200 {
+    offset 16, 32
+    patch colpe0, 0, 0
+}
+
+sprite colpv0, 352, 200 {
+    offset 16, 32
+    patch colpv0, 0, 0
+}
+
+sprite colpa0, 352, 200 {
+    offset 16, 32
+    patch colpa0, 0, 0
+}
+
+sprite co1pa0, 352, 200 {
+    offset 16, 32
+    patch co1pa0, 0, 0
+}
+
+sprite colpl0, 352, 200 {
+    offset 16, 32
+    patch colpl0, 0, 0
+}
+
+sprite colpp0, 352, 200 {
+    offset 16, 32
+    patch colpp0, 0, 0
+}
+
+sprite colpx0, 352, 200 {
+    offset 16, 32
+    patch colpx0, 0, 0
+}
+
+sprite colpc0, 352, 200 {
+    offset 16, 32
+    patch colpc0, 0, 0
+}
+
+sprite colpi0, 352, 200 {
+    offset 16, 32
+    patch colpi0, 0, 0
+}
+
+sprite colpy0, 352, 200 {
+    offset 16, 32
+    patch colpy0, 0, 0
+}
+
+sprite colpo0, 352, 200 {
+    offset 16, 32
+    patch colpo0, 0, 0
+}
+
+sprite co1pc0, 352, 200 {
+    offset 16, 32
+    patch co1pc0, 0, 0
+}
+
+sprite colpb0, 352, 200 {
+    offset 16, 32
+    patch colpb0, 0, 0
+}
+
+sprite colpm0, 352, 200 {
+    offset 16, 32
+    patch colpm0, 0, 0
+}
+
+sprite co1pe0, 352, 200 {
+    offset 16, 32
+    patch co1pe0, 0, 0
+}
+
+sprite colps0, 352, 200 {
+    offset 16, 32
+    patch colps0, 0, 0
+}
+
+sprite co1pf0, 352, 200 {
+    offset 16, 32
+    patch co1pf0, 0, 0
+}
+
+sprite colpg0, 352, 200 {
+    offset 16, 32
+    patch colpg0, 0, 0
+}
+
+sprite colph0, 352, 200 {
+    offset 16, 32
+    patch colph0, 0, 0
 }
 
 sprite colrb0, 352, 200 {
@@ -193,6 +413,11 @@ sprite colrh0, 352, 200 {
     patch colrh0, 0, 0
 }
 
+sprite co1rj0, 352, 200 {
+    offset 16, 32
+    patch co1rj0, 0, 0
+}
+
 sprite co1ri0, 352, 200 {
     offset 16, 32
     patch co1ri0, 0, 0
@@ -216,6 +441,36 @@ sprite co1rg0, 352, 200 {
 sprite colrm0, 352, 200 {
     offset 16, 32
     patch colrm0, 0, 0
+}
+
+sprite colsa0, 352, 200 {
+    offset 16, 32
+    patch colsa0, 0, 0
+}
+
+sprite colsb0, 352, 200 {
+    offset 16, 32
+    patch colsb0, 0, 0
+}
+
+sprite colsc0, 352, 200 {
+    offset 16, 32
+    patch colsc0, 0, 0
+}
+
+sprite colse0, 352, 200 {
+    offset 16, 32
+    patch colse0, 0, 0
+}
+
+sprite colsd0, 352, 200 {
+    offset 16, 32
+    patch colsd0, 0, 0
+}
+
+sprite colsf0, 352, 200 {
+    offset 16, 32
+    patch colsf0, 0, 0
 }
 
 sprite colia0, 352, 200 {

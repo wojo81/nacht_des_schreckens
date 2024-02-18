@@ -6,6 +6,7 @@ class Rayflux : Rocket {
         height 5;
         speed 30;
         damage 40;
+        damageType 'Explosion';
         seeSound "weapons/rayflux";
         deathSound "weapons/rayflux_explode";
 

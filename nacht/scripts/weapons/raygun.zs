@@ -3,12 +3,13 @@ class Raygun : zmd_Weapon {
         Weapon.ammoGive 40;
         Weapon.ammoType 'RaygunAmmo';
         zmd_Weapon.clipCapacity 20;
-        zmd_Weapon.fastDelay 1;
+        zmd_Weapon.fastFireRate 1;
+        zmd_Weapon.fastReloadRate 2;
     }
 
     States {
     Spawn:
-        RAYP a -1;
+        rayp a -1;
         loop;
     Select:
     Raise:
@@ -29,15 +30,22 @@ class Raygun : zmd_Weapon {
         tnt1 a 0 perhapsZoomFire;
         rayf a 2 ff;
         tnt1 a 0 shootProjectile('Rayflux');
+        tnt1 a 0 a_startSound("weapons/raygun");
         rayf bcdefg 2 ff;
         tnt1 a 0 a_refire;
         goto Ready;
     Reload:
         tnt1 a 0 perhapsNoReload;
         tnt1 a 0 zoomOut;
-        rayr abcdefghijklmnopqrstuvwxyz 2 fr;
-        ra1r abcdefghijklmnopqrstuvwxyz 2 fr;
-        ra2r abcdefgh 2 fr;
+        rayr abcdefghijklmn 3 fr;
+        tnt1 a 0 a_startSound("weapons/raygunReload1");
+        rayr opqrstuvwxyz 3 fr;
+        ra1r abcdefghijklmnopqrstu 3 fr;
+        tnt1 a 0 a_startSound("weapons/raygunReload2");
+        ra1r v 3 fr;
+        tnt1 a 0 a_startSound("weapons/raygunReload3");
+        ra1r wxyz 3 fr;
+        ra2r abcdefgh 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Zoom:
@@ -57,7 +65,8 @@ class Raygun : zmd_Weapon {
     Zoom.Fire:
         rayv a 2 ff;
         tnt1 a 0 shootProjectile('Rayflux');
-        rayv bcde 2 ff;
+        tnt1 a 0 a_startSound("weapons/raygun");
+        rayv bccdde 2 ff;
         tnt1 a 0 a_refire;
         goto Ready;
     }

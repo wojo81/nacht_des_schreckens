@@ -24,8 +24,8 @@ class zmd_Player : DoomPlayer {
     zmd_DownedPlayerSelection downedPlayerSelection;
 
     Default {
-        Player.StartItem 'Raygun';
-        Player.StartItem 'RaygunAmmo', 40;
+        Player.StartItem 'Colt';
+        Player.StartItem 'ColtAmmo', 40;
         Player.startItem 'zmd_Points', 5000;
         Player.StartItem 'zmd_Regen';
         Player.StartItem 'NTM_QuickMelee';

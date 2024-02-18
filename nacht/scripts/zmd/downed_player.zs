@@ -19,14 +19,14 @@ class zmd_DownedPlayerSelection : EventHandler {
 
     override void worldLoaded(WorldEvent e) {
         self.defaultMorph = 'zmd_DownedPlayerWithColt';
-//         self.addMorph('Raygun', 'zmd_DownedPlayerWithRaygun');
+        self.addMorph('Raygun', 'zmd_DownedPlayerWithRaygun');
 //         self.addMorph('ZPistol', 'zmd_DownedPlayerWithZPistol');
     }
 }
 
 class zmd_DownedPlayerWithColt : zmd_DownedPlayer {
     Default {
-        Player.morphWeapon 'M1Garand';
+        Player.morphWeapon 'Colt';
     }
 }
 
@@ -71,7 +71,7 @@ class zmd_DownedPlayer : DoomPlayer {
     override void touch(Actor toucher) {
         let toucher = zmd_Player(toucher);
         if (toucher)
-            toucher.setMessage("[Revive]");
+            toucher.setMessage('[Revive]');
     }
 
     override bool used(Actor user) {
@@ -125,7 +125,7 @@ class zmd_DownedPlayer : DoomPlayer {
 
     void finishRevive() {
         self.reviver.flashReviveIndicator();
-        self.giveInventory("zmd_Revive", 1);
+        self.giveInventory('zmd_Revive', 1);
         self.unmorph(self, 0, true);
     }
 }

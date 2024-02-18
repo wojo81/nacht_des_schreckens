@@ -3,7 +3,8 @@ class M1Garand : zmd_Weapon {
         Weapon.ammoGive 64;
         Weapon.ammoType 'M1GarandAmmo';
         zmd_Weapon.clipCapacity 8;
-        zmd_Weapon.fastDelay 1;
+        zmd_Weapon.fastFireRate 1;
+        zmd_Weapon.fastReloadRate 2;
     }
 
     States {
@@ -32,19 +33,19 @@ class M1Garand : zmd_Weapon {
         tnt1 a 0 perhapsZoomFire;
         tnt1 a 0 perhapsFireLast;
         m1gf a 2 ff;
-        tnt1 a 0 shoot(5, 25);
+        tnt1 a 0 shoot(3, 25);
         tnt1 a 0 a_startSound("weapons/m1g_fire");
-        m1gf bcdef 2 ff;
+        m1gf bcde 2 ff;
         goto Ready;
     Reload:
         tnt1 a 0 perhapsNoReload;
         tnt1 a 0 zoomOut;
         tnt1 a 0 perhapsReloadPartial;
-        m1gr abcdefghijk 2 fr;
+        m1gr abcdefghijk 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_clipin");
-        m1gr lmnop 2 fr;
+        m1gr lmnop 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_close");
-        m1gr qrstuvwx 2 fr;
+        m1gr qrstuvwx 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Zoom:
@@ -67,13 +68,13 @@ class M1Garand : zmd_Weapon {
     Zoom.Fire:
         tnt1 a 0 perhapsZoomFireLast;
         m1gv a 2 ff;
-        tnt1 a 0 shoot(0.25, 25);
+        tnt1 a 0 shoot(0.5, 25);
         tnt1 a 0 a_startSound("weapons/m1g_fire");
         m1gv bcde 2 ff;
         goto Ready;
     Fire.Last:
         m1gl a 2 ff;
-        tnt1 a 0 shoot(5, 25);
+        tnt1 a 0 shoot(3, 25);
         tnt1 a 0 a_startSound("weapons/m1g_fire");
         m1gl bcd 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_ping");
@@ -81,24 +82,24 @@ class M1Garand : zmd_Weapon {
         goto Ready;
     Zoom.Fire.Last:
         m1gy a 2 ff;
-        tnt1 a 0 shoot(0.25, 25);
+        tnt1 a 0 shoot(0.5, 25);
         tnt1 a 0 a_startSound("weapons/m1g_fire");
         m1gy bcd 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_ping");
-        m1gy ef 2 ff;
+        m1gy e 2 ff;
         goto Ready;
     Reload.Partial:
-        m1gp abcdefghi 2 fr;
+        m1gp abcdefghi 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_open");
-        m1gp jk 2 fr;
+        m1gp jk 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_clipout");
-        m1gp lmnopqrstuvwxyz 2 fr;
-        m11p abcdefg 2 fr;
+        m1gp lmnopqrstuvwxyz 3 fr;
+        m11p abcdefg 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_clipin");
-        m11p hijkl 2 fr;
+        m11p hijkl 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_close");
-        m11p mnopqrstuvwxyz 2 fr;
-        m12p a 2 fr;
+        m11p mnopqrstuvwxyz 3 fr;
+        m12p a 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Raise.Empty:

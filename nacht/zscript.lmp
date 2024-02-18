@@ -35,6 +35,6 @@ version "4.11.1"
 
 #include "scripts/weapons/raygun.zs"
 #include "scripts/weapons/rayflux.zs"
-// #include "scripts/weapons/colt.zs"
+#include "scripts/weapons/colt.zs"
 // #include "scripts/weapons/ppsh.zs"
 #include "scripts/weapons/m1garand.zs"
