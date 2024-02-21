@@ -20,7 +20,6 @@ class zmd_DownedPlayerSelection : EventHandler {
     override void worldLoaded(WorldEvent e) {
         self.defaultMorph = 'zmd_DownedPlayerWithColt';
         self.addMorph('Raygun', 'zmd_DownedPlayerWithRaygun');
-//         self.addMorph('ZPistol', 'zmd_DownedPlayerWithZPistol');
     }
 }
 
@@ -33,12 +32,6 @@ class zmd_DownedPlayerWithColt : zmd_DownedPlayer {
 class zmd_DownedPlayerWithRaygun : zmd_DownedPlayer {
     Default {
         Player.morphWeapon 'Raygun';
-    }
-}
-
-class zmd_DownedPlayerWithZPistol : zmd_DownedPlayer {
-    Default {
-        Player.morphWeapon 'ZPistol';
     }
 }
 

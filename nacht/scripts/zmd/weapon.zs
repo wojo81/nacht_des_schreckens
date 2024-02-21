@@ -22,7 +22,9 @@ class zmd_Weapon : Weapon abstract {
 
     override void postBeginPlay() {
         super.postBeginPlay();
-        toggledZoom = CVar.getCVar('toggledZoom', owner.player).getBool();
+        self.toggledZoom = CVar.getCVar('toggledZoom', owner.player).getBool();
+        self.clipSize += self.clipCapacity;
+        self.owner.takeInventory(self.ammoType1, self.clipCapacity);
     }
 
     action State toggleZoom() {
@@ -63,6 +65,19 @@ class zmd_Weapon : Weapon abstract {
     action void reload() {
         invoker.clipSize = invoker.clipCapacity;
         invoker.owner.takeInventory(invoker.ammoType1, invoker.clipCapacity);
+    }
+
+    action void reloadPartially() {
+        let reserveAmmo = invoker.owner.countInv(invoker.ammoType1);
+        let activeAmmo = invoker.clipSize;
+        let maxActive = invoker.clipCapacity;
+
+        let transferAmmo = min(maxActive - activeAmmo, reserveAmmo);
+        if (transferAmmo == 0) {
+            invoker.owner.takeInventory(invoker.ammoType1, reserveAmmo);
+        }
+        invoker.owner.takeInventory(invoker.ammoType1, transferAmmo);
+        invoker.clipSize += transferAmmo;
     }
 
     action void shoot(double spread, int damage, int bullets = -1) {
@@ -107,6 +122,12 @@ class zmd_Weapon : Weapon abstract {
 
     action State perhapsReloadPartial() {
         if (invoker.clipSize)
+            return resolveState('Reload.Partial');
+        return resolveState(null);
+    }
+
+    action State perhapsReloadPartialOnly() {
+        if ((invoker.clipSize != 0 && invoker.clipSize != invoker.clipCapacity) || invoker.owner.countInv(invoker.ammoType1) < invoker.clipCapacity)
             return resolveState('Reload.Partial');
         return resolveState(null);
     }
