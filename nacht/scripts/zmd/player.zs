@@ -31,11 +31,7 @@ class zmd_Player : DoomPlayer {
         Player.StartItem 'NTM_QuickMelee';
         Player.StartItem 'zmd_InventoryManager';
 
-        Player.WeaponSlot 2, 'ZPistol', 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun';
-        Player.WeaponSlot 3, 'ZShotgun', 'ZSuperShotgun';
-        Player.WeaponSlot 4, 'ZSniperRifle', 'ZChaingun';
-        Player.WeaponSlot 5, 'ZRocketLauncher', 'ZFragGrenade', 'ZLandMine';
-        Player.WeaponSlot 6, 'ZPlasmaRifle';
+        Player.WeaponSlot 1, 'ZPistol', 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun';
 
         Player.maxHealth 250;
     }

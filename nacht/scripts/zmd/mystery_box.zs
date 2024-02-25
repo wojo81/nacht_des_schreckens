@@ -23,14 +23,6 @@ class zmd_MysteryBoxSelection : EventHandler {
     }
 
     override void worldLoaded(WorldEvent e) {
-        self.add('ZPistol', '23pt');
-        self.add('ZShotgun', 'shot');
-        self.add('ZChaingun', 'mngn');
-        self.add('ZLandMine', 'lmin');
-        self.add('ZSniperRifle', 'snpp');
-        self.add('ZRocketLauncher', 'laun');
-        self.add('ZPlasmaRifle', 'plas');
-        self.add('ZFragGrenade', 'hgn1');
         self.add('Raygun', 'rayp');
         self.add('M1garand', 'm1ga');
         self.add('DoubleBarrelShotgun', 'dbla');
@@ -45,9 +37,8 @@ class zmd_MysteryBoxHandler : EventHandler {
 
     void moveActiveBox() {
         ++self.moveCount;
-        if (self.moveCount == 1) {
+        if (self.moveCount == 1)
             zmd_PowerupHandler(EventHandler.find('zmd_PowerupHandler')).availablePowerups.push('zmd_FireSaleDrop');
-        }
         self.removeBox(self.activeIndex);
         self.spawnBox(self.activeIndex = self.randomIndex(self.activeIndex), true);
     }
@@ -62,9 +53,8 @@ class zmd_MysteryBoxHandler : EventHandler {
 
     int randomIndex(int hole) {
         let index = random[randomLocation](0, locations.size() - 1);
-        while (index == hole) {
+        while (index == hole)
             index = random[randomLocation](0, locations.size() - 1);
-        }
         return index;
     }
 

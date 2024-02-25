@@ -1,16 +1,5 @@
 version "4.11.1"
 
-#include "scripts/zwl/zwl.zs"
-
-#include "scripts/demo/zland_mine.zs"
-#include "scripts/demo/zplasma_rifle.zs"
-#include "scripts/demo/zfrag_grenade.zs"
-#include "scripts/demo/zrocket_launcher.zs"
-#include "scripts/demo/zsniper_rifle.zs"
-#include "scripts/demo/zchaingun.zs"
-#include "scripts/demo/zshotgun.zs"
-#include "scripts/demo/zpistol.zs"
-
 #include "scripts/zmd/points.zs"
 #include "scripts/zmd/rounds.zs"
 #include "scripts/zmd/spawning.zs"

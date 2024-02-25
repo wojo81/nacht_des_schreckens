@@ -14,10 +14,6 @@ skill Normal {
 }
 
 GameInfo {
-    AddEventHandlers = "ZCasingKiller", "ZFlatDecalKiller"
-}
-
-GameInfo {
     PlayerClasses = "zmd_Player"
     StatusBarClass = "zmd_Hud"
     AddEventHandlers =
@@ -26,9 +22,6 @@ GameInfo {
 }
 
 DoomEdNums {
-    1000 = "ZSniperRifle"
-    1001 = "ZFragGrenade"
-    1002 = "ZLandMine"
     1003 = "zmd_Spawner"
     1004 = "zmd_MysteryBox"
     1005 = "MinigunDrawing"
