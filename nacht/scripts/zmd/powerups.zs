@@ -67,7 +67,7 @@ class zmd_SharedDrop : CustomInventory {
     action void giveToAllPlayers(class<Inventory> item, int amount = 1) {
         if (item is 'zmd_Points') {
             for (int i = 0; i != players.size() && players[i].mo != null; ++i) {
-                zmd_Points.give(zmd_Player(players[i].mo), 400);
+                zmd_Points.give(zmd_Player(players[i].mo), amount);
             }
         } else {
             for (int i = 0; i != players.size() && players[i].mo != null; ++i) {
