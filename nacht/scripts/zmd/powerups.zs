@@ -1,37 +1,38 @@
 class zmd_PowerupHandler : EventHandler {
+    const maxSpawnCount = 4;
+
     Array<String> availablePowerups;
     Array<String> currentPowerups;
     int spawnCount;
-    int maxSpawnCount;
 
     override void worldLoaded(WorldEvent e) {
-        availablePowerups.push('zmd_InstakillDrop');
-        availablePowerups.push('zmd_DoublePointsDrop');
-        availablePowerups.push('zmd_MaxAmmoDrop');
-        availablePowerups.push('zmd_NukeDrop');
+        self.availablePowerups.push('zmd_InstakillDrop');
+        self.availablePowerups.push('zmd_DoublePointsDrop');
+        self.availablePowerups.push('zmd_FireSaleDrop');
+        // self.availablePowerups.push('zmd_MaxAmmoDrop');
+        // self.availablePowerups.push('zmd_NukeDrop');
 
-        resetCycle();
-        spawnCount = 0;
-        maxSpawnCount = 4;
+        self.resetCycle();
+        self.spawnCount = 0;
     }
 
     void resetCycle() {
         foreach (drop : availablePowerups)
-            currentPowerups.push(drop);
+            self.currentPowerups.push(drop);
     }
 
     void resetCount() {
-        spawnCount = 0;
+        self.spawnCount = 0;
     }
 
     string maybeGet() {
-        if (spawnCount != maxSpawnCount && random[randomSpawning](1, 5) == 1) {
-            spawnCount++;
+        if (self.spawnCount != maxSpawnCount && random[randomSpawning](1, 1) == 1) {
+            self.spawnCount++;
             int randomIndex = random[randomSpawning](0, self.currentPowerups.size() - 1);
             let randomPowerup = self.currentPowerups[randomIndex];
             self.currentPowerups.delete(randomIndex);
             if (self.currentPowerups.size() == 0)
-                resetCycle();
+                self.resetCycle();
             return randomPowerup;
         }
         return 'null';
@@ -39,45 +40,47 @@ class zmd_PowerupHandler : EventHandler {
 }
 
 class zmd_TimedPowerup : Inventory {
-    int tickCount;
-    int currentTicks;
+    readonly String iconName;
+    int ticksLeft;
 
-    property tickCount: tickCount;
-    property currentTicks: currentTicks;
+    property iconName: iconName;
+    property ticksLeft: ticksLeft;
 
     Default {
-        zmd_TimedPowerup.tickCount 35 * 30;
-        zmd_TimedPowerup.currentTicks 0;
-    }
-
-    void reset() {
-        self.currentTicks = 0;
+        zmd_TimedPowerup.ticksLeft 35 * 30;
     }
 
     override void tick() {
-        if (self.currentTicks == self.tickCount) {
-            destroy();
-        } else {
-            ++self.currentTicks;
-        }
+        if (self.ticksLeft == 0)
+            self.destroy();
+        else
+            --self.ticksLeft;
+    }
+
+    override bool tryPickup(in out Actor toucher) {
+        let player = zmd_Player(toucher);
+        if (player)
+            player.powerupHud.add(self.iconName, self.Default.ticksLeft);
+        return super.tryPickup(toucher);
+    }
+
+    void reset() {
+        self.ticksLeft = self.Default.ticksLeft;
     }
 }
 
 class zmd_SharedDrop : CustomInventory {
     action void giveToAllPlayers(class<Inventory> item, int amount = 1) {
-        if (item is 'zmd_Points') {
-            for (int i = 0; i != players.size() && players[i].mo != null; ++i) {
-                zmd_Points.give(zmd_Player(players[i].mo), amount);
-            }
-        } else {
-            for (int i = 0; i != players.size() && players[i].mo != null; ++i) {
-                players[i].mo.giveInventory(item, amount);
-            }
-        }
+        for (int i = 0; i != players.size() && players[i].mo != null; ++i)
+            players[i].mo.giveInventory(item, amount);
     }
 }
 
 class zmd_InstaKill : zmd_TimedPowerup {
+    Default {
+        zmd_TimedPowerup.iconName 'ikic';
+    }
+
     override bool handlePickup(Inventory item) {
         if (item is 'zmd_Instakill') {
             self.reset();
@@ -177,10 +180,13 @@ class zmd_InstaKillDrop : zmd_SharedDrop {
 }
 
 class zmd_DoublePoints : zmd_TimedPowerup {
+    Default {
+        zmd_TimedPowerup.iconName 'dpic';
+    }
+
     override bool handlePickup(Inventory item) {
-        if (item is 'zmd_DoublePoints') {
-            reset();
-        }
+        if (item is 'zmd_DoublePoints')
+            self.reset();
         return super.handlePickup(item);
     }
 }
@@ -350,9 +356,15 @@ class zmd_NukeDrop : zmd_SharedDrop {
 }
 
 class zmd_FireSale : zmd_TimedPowerup {
+    Default {
+        zmd_TimedPowerup.iconName 'fsic';
+    }
+
     override bool handlePickup(Inventory item) {
-        if (item is 'zmd_FireSale')
-            reset();
+        if (item is 'zmd_FireSale') {
+            self.reset();
+            return false;
+        }
         return super.handlePickup(item);
     }
 }
@@ -392,11 +404,81 @@ class zmd_FireSaleDrop : zmd_SharedDrop {
       Pickup:
         TNT1 A 0 a_startSound("game/powerup_grab", 1);
         TNT1 A 0 giveToAllPlayers('zmd_FireSale');
-        tnt1 a 0 a_giveInventory('zmd_FireSaleRemover', 1);
         tnt1 a 0 spawnBoxes;
         Stop;
       Death:
         TNT1 A 0;
         STOP;
      }
+}
+
+class zmd_PowerupHud : zmd_HudElement {
+    const offsetDelta = 13;
+
+    Array<zmd_PowerupIcon> icons;
+
+    override void tick() {
+        for (let i = 0; i != icons.size(); ++i) {
+            let icon = icons[i];
+            icon.tick();
+            if (icon.ticksLeft == 0) {
+                icons.delete(i);
+                for (let j = 0; j != i; ++j)
+                    icons[j].offset += self.offsetDelta;
+                for (let j = i; j != icons.size(); ++j)
+                    icons[j].offset -= self.offsetDelta;
+                --i;
+            }
+        }
+    }
+
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        foreach (icon : self.icons)
+            icon.draw(hud, state, tickFrac);
+    }
+
+    void add(String name, int ticksLeft) {
+        for (int i = 0; i != self.icons.size(); ++i) {
+            let icon = self.icons[i];
+            if (name == icon.name) {
+                icon.reset(ticksLeft);
+                for (int j = 0; j != i; ++j)
+                    self.icons[j].offset += self.offsetDelta;
+                return;
+            }
+            icon.offset -= self.offsetDelta;
+        }
+        if (self.icons.size() == 0)
+            self.icons.push(zmd_PowerupIcon.create(name, 0, ticksLeft));
+        else
+            self.icons.push(zmd_PowerupIcon.create(name, self.icons[self.icons.size() - 1].offset + 2 * self.offsetDelta, ticksLeft));
+    }
+}
+
+class zmd_PowerupIcon : zmd_HudElement {
+    String name;
+    int offset;
+    int ticksLeft;
+    double alpha;
+
+    static zmd_PowerupIcon create(String name, int offset, int ticksLeft) {
+        let icon = new('zmd_PowerupIcon');
+        icon.name = name;
+        icon.offset = offset;
+        icon.ticksLeft = ticksLeft;
+        icon.alpha = 1.0;
+        return icon;
+    }
+
+    override void tick() {
+        --self.ticksLeft;
+    }
+
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        hud.drawImage(self.name, (self.offset, -3), hud.di_screen_center_bottom | hud.di_item_center_bottom, alpha, scale: (0.5, 0.5));
+    }
+
+    void reset(int ticksLeft) {
+        self.ticksLeft = ticksLeft;
+    }
 }

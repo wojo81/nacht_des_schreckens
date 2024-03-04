@@ -25,6 +25,7 @@ class zmd_Weapon : Weapon abstract {
         self.toggledZoom = CVar.getCVar('toggledZoom', owner.player).getBool();
         self.clipSize += self.clipCapacity;
         self.owner.takeInventory(self.ammoType1, self.clipCapacity);
+        zmd_Player(owner).enableWeaponPerks();
     }
 
     action State toggleZoom() {
@@ -73,9 +74,8 @@ class zmd_Weapon : Weapon abstract {
         let maxActive = invoker.clipCapacity;
 
         let transferAmmo = min(maxActive - activeAmmo, reserveAmmo);
-        if (transferAmmo == 0) {
+        if (transferAmmo == 0)
             invoker.owner.takeInventory(invoker.ammoType1, reserveAmmo);
-        }
         invoker.owner.takeInventory(invoker.ammoType1, transferAmmo);
         invoker.clipSize += transferAmmo;
     }

@@ -10,18 +10,14 @@ class zmd_Player : DoomPlayer {
     Array<String> perks;
     bool justTookDamage;
 
-    String message;
-    int messageTics;
-
-    Array<int> pointDeltas;
-    bool usedPointDeltas;
-
-    int reviveCountup;
-    int flashingTicks;
-    int flashCount;
-    bool flashRevive;
-
     zmd_DownedPlayerSelection downedPlayerSelection;
+
+    Array<zmd_HudElement> hudElements;
+    zmd_PointsHud pointsHud;
+    zmd_HintHud hintHud;
+    zmd_ReviveHud reviveHud;
+    zmd_PowerupHud powerupHud;
+    zmd_RoundHud roundHud;
 
     Default {
         Player.StartItem 'Colt';
@@ -31,7 +27,7 @@ class zmd_Player : DoomPlayer {
         Player.StartItem 'NTM_QuickMelee';
         Player.StartItem 'zmd_InventoryManager';
 
-        Player.WeaponSlot 1, 'ZPistol', 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun';
+        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun';
 
         Player.maxHealth 250;
     }
@@ -42,20 +38,34 @@ class zmd_Player : DoomPlayer {
         self.weaponCount = 0;
         self.maxWeaponCount = 2;
         self.justTookDamage = false;
+
+        self.pointsHud = new('zmd_PointsHud');
+        self.hintHud = new('zmd_HintHud');
+        self.powerupHud = new('zmd_PowerupHud');
+        self.reviveHud = new('zmd_ReviveHud');
+        self.roundHud = new('zmd_RoundHud');
+        let ammoHud = new('zmd_AmmoHud');
+
+
+        self.hudElements.push(self.pointsHud);
+        self.hudElements.push(self.hintHud);
+        self.hudElements.push(self.powerupHud);
+        self.hudElements.push(self.reviveHud);
+        self.hudElements.push(self.roundHud);
+        self.hudElements.push(ammoHud);
     }
 
     override void postBeginPlay() {
         super.postBeginPlay();
         self.downedPlayerSelection = zmd_DownedPlayerSelection(EventHandler.find('zmd_DownedPlayerSelection'));
+        self.roundHud.rounds = zmd_RoundHandler(EventHandler.find('zmd_RoundHandler')).rounds;
     }
 
     bool atWeaponCapacity() {
-        if (self.weaponCount == self.maxWeaponCount) {
+        if (self.weaponCount == self.maxWeaponCount)
             return true;
-        } else {
-            ++self.weaponCount;
-            return false;
-        }
+        ++self.weaponCount;
+        return false;
     }
 
     void enableWeaponPerks() {
@@ -92,56 +102,52 @@ class zmd_Player : DoomPlayer {
     }
 
     bool maybePurchase(int cost) {
-        if (countInv('zmd_Points') >= cost) {
-            takeInventory('zmd_Points', cost);
-            pointDeltas.push(-cost);
+        if (self.countInv('zmd_Points') >= cost) {
+            self.takeInventory('zmd_Points', cost);
+            self.pointsHud.addDecrease(cost);
             return true;
         }
         return false;
     }
+}
+
+class zmd_HintHud : zmd_HudElement {
+    String message;
+    int ticksLeft;
+    double alpha;
+
+    override void tick() {
+        if (self.ticksLeft != 0) {
+            --self.ticksLeft;
+            self.alpha = self.ticksLeft / 10.0;
+        }
+    }
+
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        if (self.ticksLeft != 0)
+            hud.drawString(hud.hintFont, self.message, (0, -42), hud.di_screen_center_bottom | hud.di_text_align_center, Font.cr_blue, alpha, scale: (1.5, 1.5));
+    }
 
     void setMessage(String message) {
         self.message = message;
-        self.messageTics = 35;
+        self.ticksLeft = 50;
+        self.alpha = 1.0;
     }
 
     void clearMessage() {
-        self.message = '';
-        self.messageTics = 0;
+        self.ticksLeft = 0;
     }
+}
 
-    override void tick() {
-        super.tick();
-
-        if (self.messageTics-- == 0) {
-            self.message = '';
+class zmd_AmmoHud : zmd_HudElement {
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        let ammo = hud.getCurrentAmmo();
+        let weapon = zmd_Weapon(hud.cplayer.readyWeapon);
+        if (ammo && weapon) {
+            if (weapon.clipCapacity > 0)
+                hud.drawString(hud.defaultFont, weapon.clipSize..'/'..ammo.amount, (hud.right_margin, hud.bottom_margin), hud.di_screen_right_bottom | hud.di_text_align_right, Font.cr_green);
+            else
+                hud.drawString(hud.defaultFont, ''..ammo.amount, (hud.right_margin, hud.bottom_margin), hud.di_screen_right_bottom | hud.di_text_align_right, Font.cr_green);
         }
-        if (self.usedPointDeltas) {
-            self.pointDeltas.clear();
-            self.usedPointDeltas = false;
-        }
-        if (self.pointDeltas.size() != 0) {
-            self.usedPointDeltas = true;
-        }
-
-        if (self.flashRevive) {
-            ++self.flashingTicks;
-            if (self.flashingTicks == 10) {
-                self.flashingTicks = 0;
-                if (self.flashCount++ == 2) {
-                    self.flashRevive = false;
-                    self.flashCount = 0;
-                }
-            }
-        }
-    }
-
-    void updateReviveIndicator(int countdown) {
-        self.reviveCountup = zmd_DownedPlayer.reviveTime - countdown;
-    }
-
-    void flashReviveIndicator() {
-        self.reviveCountup = 0;
-        self.flashRevive = true;
     }
 }

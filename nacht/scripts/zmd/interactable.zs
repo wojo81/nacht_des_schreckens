@@ -4,16 +4,15 @@ class zmd_Interactable : Actor abstract {
     property active: active;
 
     Default {
-       zmd_Interactable.active true;
+        zmd_Interactable.active true;
         +special
     }
 
     override void touch(Actor toucher) {
         if (active) {
             let player = zmd_Player(toucher);
-            if (player) {
+            if (player)
                 doTouch(player);
-            }
         }
     }
 
@@ -22,9 +21,8 @@ class zmd_Interactable : Actor abstract {
             let player = zmd_Player(user);
             if (player) {
                 let wasUsed = doUse(player);
-                if (wasUsed) {
-                    player.clearMessage();
-                }
+                if (wasUsed)
+                    player.hintHud.clearMessage();
             }
         }
         return false;

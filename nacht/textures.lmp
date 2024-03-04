@@ -1,0 +1,13 @@
+sprite revfore, 164, 84 {
+    xscale 2
+    yscale 2
+
+    sprite revfore, 0, -2
+}
+
+sprite revback, 164, 84 {
+    xscale 2
+    yscale 2
+
+    sprite revback, 0, 0
+}

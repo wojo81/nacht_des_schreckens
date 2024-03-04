@@ -122,3 +122,11 @@ class zmd_RoundChangeSound : Actor {
         a_startSound("game/round", attenuation: attn_none);
     }
 }
+
+class zmd_RoundHud : zmd_HudElement {
+    zmd_Rounds rounds;
+
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        hud.drawString(hud.defaultFont, ''..self.rounds.currentRound, (hud.margin, hud.margin), translation: Font.cr_darkRed);
+    }
+}

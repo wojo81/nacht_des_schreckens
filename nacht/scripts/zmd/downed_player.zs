@@ -38,10 +38,12 @@ class zmd_DownedPlayerWithRaygun : zmd_DownedPlayer {
 class zmd_DownedFlash : Actor {}
 
 class zmd_DownedPlayer : DoomPlayer {
-    const reviveTime = 35 * 5;
+    const totalTicksTillRevive = 35 * 5;
+    const totalTicksTillQuickRevive = 35 * 3;
+    const totalTicksTillReset = 10;
 
-    int reviveCountdown;
-    int reviveCooldown;
+    int ticksTillRevive;
+    int ticksTillReset;
 
     bool beingRevived;
 
@@ -57,21 +59,23 @@ class zmd_DownedPlayer : DoomPlayer {
         speed 0.2;
     }
 
-    override void beginPlay() {
-        self.reviveCountdown = self.reviveTime;
-    }
-
     override void touch(Actor toucher) {
-        let toucher = zmd_Player(toucher);
-        if (toucher)
-            toucher.setMessage('[Revive]');
+        let player = zmd_Player(toucher);
+        if (player)
+            player.hintHud.setMessage('[Tap to Revive]');
     }
 
     override bool used(Actor user) {
         let player = zmd_Player(user);
         if (player) {
-            player.clearMessage();
-            advanceRevive(player);
+            player.hintHud.clearMessage();
+            if (self.beingRevived)
+                if (self.ticksTillRevive <= 0)
+                    self.finishRevive();
+                else
+                    self.ticksTillReset = self.totalTicksTillReset;
+            else
+                self.initiateRevive(player);
             return true;
         }
         return false;
@@ -81,43 +85,39 @@ class zmd_DownedPlayer : DoomPlayer {
         let player = zmd_Player(mo);
         foreach (perk : player.perks)
             player.takeInventory(perk, 1);
-        if (mo.countInv('zmd_Revive') == 0) {
+        if (mo.countInv('zmd_Revive') == 0)
             mo.die(mo, mo);
-        } else {
+        else {
             mo.takeInventory('zmd_Revive', 1);
             mo.a_setBlend("red", 0.4, 35 * 3);
         }
     }
 
     override void tick() {
+        super.tick();
         if (self.beingRevived) {
-            self.reviver.updateReviveIndicator(self.reviveCountdown);
-            if (self.reviveCooldown == 0) {
+            --self.ticksTillRevive;
+            --self.ticksTillReset;
+            if (self.ticksTillReset == 0) {
                 self.beingRevived = false;
-                self.reviver.updateReviveIndicator(self.reviveTime);
-            } else {
-                self.reviveCountdown -= self.reviver.countInv('zmd_QuickRevive') + 1;
-                --self.reviveCooldown;
-            }
-        } else if (self.reviveCountdown != self.reviveTime) {
-            self.reviveCountdown += 2;
-            if (self.reviveCountDown > self.reviveTime) {
-                self.reviveCountDown = self.reviveTime;
+                self.reviver.reviveHud.deactivate();
             }
         }
-        super.tick();
     }
 
-    void advanceRevive(zmd_Player reviver) {
+    void initiateRevive(zmd_Player reviver) {
         self.beingRevived = true;
+        self.ticksTillReset = self.totalTicksTillReset;
+        if (reviver.countInv('zmd_QuickRevive'))
+            self.ticksTillRevive = self.totalTicksTillQuickRevive;
+        else
+            self.ticksTillRevive = self.totalTicksTillRevive;
+        reviver.reviveHud.activate(self.ticksTillRevive);
         self.reviver = reviver;
-        self.reviveCooldown = 20;
-        if (self.reviveCountdown <= 0)
-            finishRevive();
     }
 
     void finishRevive() {
-        self.reviver.flashReviveIndicator();
+        self.reviver.reviveHud.deactivate();
         self.giveInventory('zmd_Revive', 1);
         self.unmorph(self, 0, true);
     }
@@ -126,5 +126,32 @@ class zmd_DownedPlayer : DoomPlayer {
 class zmd_Revive : Inventory {
     Default {
         Inventory.maxAmount 1;
+    }
+}
+
+
+class zmd_ReviveHud : zmd_HudElement {
+    bool active;
+    int ticksLeft;
+    int totalTicks;
+
+    override void tick() {
+        if (self.active && self.ticksLeft != 0)
+            --self.ticksLeft;
+    }
+
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        if (self.active)
+            hud.drawBar('revback', 'revfore', self.ticksLeft, self.totalTicks, (0, -30), 1, 0, hud.di_screen_center_bottom);
+    }
+
+    void activate(int totalTicks) {
+        self.active = true;
+        self.ticksLeft = totalTicks;
+        self.totalTicks = totalTicks;
+    }
+
+    void deactivate() {
+        self.active = false;
     }
 }

@@ -16,7 +16,7 @@ class zmd_PerkMachine : zmd_Interactable {
 
     override void doTouch(zmd_Player player) {
         if (!player.countInv(self.perk))
-            player.setMessage(zmd_Interactable.costOf(self.cost));
+            player.hintHud.setMessage(zmd_Interactable.costOf(self.cost));
     }
 
     override bool doUse(zmd_Player player) {

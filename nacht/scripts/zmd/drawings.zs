@@ -31,13 +31,12 @@ class zmd_Drawing : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        if (player.countInv(weaponName)) {
-            player.setMessage(ammoMessage);
-        } else if (player.countInv(upgradedWeaponName)) {
-            player.setMessage(upgradedAmmoMessage);
-        } else {
-            player.setMessage(weaponMessage);
-        }
+        if (player.countInv(weaponName))
+            player.hintHud.setMessage(ammoMessage);
+        else if (player.countInv(upgradedWeaponName))
+            player.hintHud.setMessage(upgradedAmmoMessage);
+        else
+            player.hintHud.setMessage(weaponMessage);
     }
 
     override bool doUse(zmd_Player player) {
@@ -63,7 +62,7 @@ class zmd_Drawing : zmd_Interactable {
 
 class MinigunDrawing : zmd_Drawing {
     Default {
-        zmd_Drawing.weaponName "ZChaingun";
+        zmd_Drawing.weaponName "M1Garand";
         zmd_Drawing.weaponCost 1200;
     }
 

@@ -9,32 +9,29 @@ class zmd_Zombie : Actor {
 
     void maybeSpawnPowerup() {
         let powerup = powerups.maybeGet();
-        if (powerup != 'null') {
-          spawn(powerup, pos);
-        }
+        if (powerup != 'null')
+            spawn(powerup, pos);
     }
 
     override void die(Actor source, Actor inflictor, int dmgflags, Name meansOfDeath) {
+        super.die(source, inflictor, dmgflags, meansOfDeath);
         let player = zmd_Player(source);
         if (player) {
-            if (meansOfDeath == 'zmd_Headshot') {
-                zmd_Points.give(player, 100);
-            } else if (meansOfDeath == 'kick') {
-                zmd_Points.give(player, 120);
-            } else if (meansOfDeath != 'None') {
-                zmd_Points.give(player, 50);
-            }
+            if (meansOfDeath == 'zmd_Headshot')
+                player.giveInventory('zmd_Points', 100);
+            else if (meansOfDeath == 'kick')
+                player.giveInventory('zmd_Points', 120);
+            else if (meansOfDeath != 'None')
+                player.giveInventory('zmd_Points', 50);
         }
-        super.die(source, inflictor, dmgflags, meansOfDeath);
     }
 
     override int damageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle) {
         let headBottom = self.floorz + self.height - 10;
         let headTop = self.floorz + self.height;
 
-        if (source is 'zmd_Player' && mod != 'None') {
-            zmd_Points.give(source, 10);
-        }
+        if (source is 'zmd_Player' && mod != 'None')
+            source.giveInventory('zmd_Points', 10);
 
         if (inflictor && mod != 'kick' && inflictor.pos.z >= headBottom && inflictor.pos.z <= headTop) {
             damage *= 1.5;

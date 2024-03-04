@@ -205,7 +205,7 @@ class zmd_MysteryBox : zmd_Interactable {
     }
 
     action void finishMoving() {
-        zmd_Points.give(invoker.spinItem.receiver, invoker.cost);
+        invoker.spinItem.receiver.giveInventory('zmd_Points', zmd_MysteryBox.cost);
         zmd_MysteryBoxHandler(EventHandler.find('zmd_MysteryBoxHandler')).moveActiveBox();
     }
 
@@ -216,23 +216,23 @@ class zmd_MysteryBox : zmd_Interactable {
     override void doTouch(zmd_Player player) {
         if (self.spinItem == null) {
             if (player.countInv('zmd_FireSale'))
-                player.setMessage(zmd_Interactable.costOf(discountCost));
+                player.hintHud.setMessage(zmd_Interactable.costOf(discountCost));
             else
-                player.setMessage(zmd_Interactable.costOf(cost));
-        } else if (self.spinItem.ready && self.spinItem.receiver == player) {
-            player.setMessage("[Pick Up]");
+                player.hintHud.setMessage(zmd_Interactable.costOf(cost));
         }
+        else if (self.spinItem.ready && self.spinItem.receiver == player)
+            player.hintHud.setMessage("[Pick Up]");
     }
 
     override bool doUse(zmd_Player player) {
         if (self.spinItem == null) {
             if ((player.countInv('zmd_FireSale') && player.maybePurchase(discountCost)) || player.maybePurchase(cost)) {
-                open(player);
+                self.open(player);
                 return true;
             }
         } else if (spinItem.ready && spinItem.receiver == player) {
             player.a_giveInventory(spinItem.itemName);
-            close();
+            self.close();
             return true;
         }
         return false;

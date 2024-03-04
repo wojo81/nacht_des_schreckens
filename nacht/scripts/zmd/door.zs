@@ -13,7 +13,7 @@ class zmd_Door : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        player.setMessage(zmd_Interactable.costOf(cost));
+        player.hintHud.setMessage(zmd_Interactable.costOf(cost));
     }
 
     override bool doUse(zmd_Player player) {
