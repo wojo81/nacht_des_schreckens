@@ -62,19 +62,19 @@ $RANDOM zombie/shot	  { game/nosound zombie/shot1 zombie/shot2 zombie/shot3 zomb
 $RANDOM zombie/fall	  { zombie/fall1 zombie/fall2 zombie/fall3 zombie/fall4 zombie/fall5 }
 $RANDOM zombie/attack { zombie/attack1 zombie/attack2 zombie/attack3 zombie/attack4 zombie/attack5 zombie/attack6 zombie/attack7 zombie/attack8 }
 
-game/nuke     sounds/NUKE
-game/doublepoints   sounds/X2
-game/x2vanish sounds/DPVANISH
-game/instakill   sounds/INSTAK
-game/ikvanish sounds/IKVANISH
-game/maxammo  sounds/MAXAMMO
-game/powerup_grab sounds/POWERGRAB
-game/fire_sale sounds/fire_sale.wav
+game/nuke     sounds/interactions/NUKE
+game/doublepoints   sounds/interactions/X2
+game/x2vanish sounds/interactions/DPVANISH
+game/instakill   sounds/interactions/INSTAK
+game/ikvanish sounds/interactions/IKVANISH
+game/maxammo  sounds/interactions/MAXAMMO
+game/powerup_grab sounds/interactions/POWERGRAB
+game/fire_sale sounds/interactions/fire_sale.wav
 
-game/intro sounds/BEGIN
-game/purchase sounds/PURCHASE
-game/round sounds/ROUND
-game/mystery sounds/MYSTERY
+game/intro sounds/interactions/BEGIN
+game/purchase sounds/interactions/PURCHASE
+game/round sounds/interactions/ROUND
+game/mystery sounds/interactions/MYSTERY
 
 weapons/raygun sounds/weapons/raygun/raygun
 weapons/rayflux sounds/weapons/raygun/rayflux

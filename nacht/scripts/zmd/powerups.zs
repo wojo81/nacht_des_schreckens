@@ -1,5 +1,6 @@
 class zmd_PowerupHandler : EventHandler {
     const maxSpawnCount = 4;
+    const spawnRateDenominator = 7;
 
     Array<String> availablePowerups;
     Array<String> currentPowerups;
@@ -8,9 +9,8 @@ class zmd_PowerupHandler : EventHandler {
     override void worldLoaded(WorldEvent e) {
         self.availablePowerups.push('zmd_InstakillDrop');
         self.availablePowerups.push('zmd_DoublePointsDrop');
-        self.availablePowerups.push('zmd_FireSaleDrop');
-        // self.availablePowerups.push('zmd_MaxAmmoDrop');
-        // self.availablePowerups.push('zmd_NukeDrop');
+        self.availablePowerups.push('zmd_MaxAmmoDrop');
+        self.availablePowerups.push('zmd_NukeDrop');
 
         self.resetCycle();
         self.spawnCount = 0;
@@ -26,7 +26,7 @@ class zmd_PowerupHandler : EventHandler {
     }
 
     string maybeGet() {
-        if (self.spawnCount != maxSpawnCount && random[randomSpawning](1, 1) == 1) {
+        if (self.spawnCount != maxSpawnCount && random[randomSpawning](1, self.spawnRateDenominator) == 1) {
             self.spawnCount++;
             int randomIndex = random[randomSpawning](0, self.currentPowerups.size() - 1);
             let randomPowerup = self.currentPowerups[randomIndex];

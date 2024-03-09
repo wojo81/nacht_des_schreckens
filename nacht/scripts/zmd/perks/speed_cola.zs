@@ -12,6 +12,10 @@ class zmd_SpeedColaMachine : zmd_PerkMachine {
 }
 
 class zmd_SpeedCola : zmd_Perk {
+    Default {
+        Inventory.icon 'dpic';
+    }
+
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
         zmd_Player(owner).enableWeaponPerks();

@@ -17,12 +17,13 @@ class zmd_Player : DoomPlayer {
     zmd_HintHud hintHud;
     zmd_ReviveHud reviveHud;
     zmd_PowerupHud powerupHud;
+    zmd_PerkHud perkHud;
     zmd_RoundHud roundHud;
 
     Default {
         Player.StartItem 'Colt';
         Player.StartItem 'ColtAmmo', 40;
-        Player.startItem 'zmd_Points', 5000;
+        Player.startItem 'zmd_Points', 500;
         Player.StartItem 'zmd_Regen';
         Player.StartItem 'NTM_QuickMelee';
         Player.StartItem 'zmd_InventoryManager';
@@ -44,6 +45,7 @@ class zmd_Player : DoomPlayer {
         self.powerupHud = new('zmd_PowerupHud');
         self.reviveHud = new('zmd_ReviveHud');
         self.roundHud = new('zmd_RoundHud');
+        self.perkHud = new('zmd_PerkHud');
         let ammoHud = new('zmd_AmmoHud');
 
 
@@ -52,6 +54,7 @@ class zmd_Player : DoomPlayer {
         self.hudElements.push(self.powerupHud);
         self.hudElements.push(self.reviveHud);
         self.hudElements.push(self.roundHud);
+        self.hudElements.push(self.perkHud);
         self.hudElements.push(ammoHud);
     }
 

@@ -72,3 +72,37 @@ class zmd_PerkBottle : Weapon {
         goto Deselect;
     }
 }
+
+class zmd_PerkHud : zmd_HudElement {
+    const offsetDelta = 13;
+
+    Array<zmd_PerkIcon> icons;
+    int offset;
+
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        foreach (icon : self.icons)
+            icon.draw(hud, state, tickFrac);
+    }
+
+    void add(Inventory perk) {
+        let perkIcon = new('zmd_PerkIcon');
+        perkIcon.perk = perk;
+        perkIcon.offset = self.offset;
+        self.icons.push(perkIcon);
+        self.offset += self.offsetDelta;
+    }
+
+    void clear() {
+        self.icons.resize(0);
+        self.offset = 0;
+    }
+}
+
+class zmd_PerkIcon : zmd_HudElement {
+    Inventory perk;
+    int offset;
+
+    override void draw(zmd_Hud hud, int state, double tickFrac) {
+        hud.drawInventoryIcon(self.perk, (15 + self.offset, -23), hud.di_screen_left_bottom, scale: (0.3, 0.3));
+    }
+}

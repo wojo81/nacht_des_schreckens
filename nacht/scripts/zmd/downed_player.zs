@@ -85,6 +85,8 @@ class zmd_DownedPlayer : DoomPlayer {
         let player = zmd_Player(mo);
         foreach (perk : player.perks)
             player.takeInventory(perk, 1);
+        player.perks.resize(0);
+        player.perkHud.clear();
         if (mo.countInv('zmd_Revive') == 0)
             mo.die(mo, mo);
         else {
@@ -123,8 +125,9 @@ class zmd_DownedPlayer : DoomPlayer {
     }
 }
 
-class zmd_Revive : Inventory {
+class zmd_Revive : zmd_Perk {
     Default {
+        Inventory.icon 'ikic';
         Inventory.maxAmount 1;
     }
 }
