@@ -40,22 +40,21 @@ class zmd_Player : DoomPlayer {
         self.maxWeaponCount = 2;
         self.justTookDamage = false;
 
+        let ammoHud = new('zmd_AmmoHud');
         self.pointsHud = new('zmd_PointsHud');
         self.hintHud = new('zmd_HintHud');
         self.powerupHud = new('zmd_PowerupHud');
         self.reviveHud = new('zmd_ReviveHud');
         self.roundHud = new('zmd_RoundHud');
         self.perkHud = new('zmd_PerkHud');
-        let ammoHud = new('zmd_AmmoHud');
 
-
+        self.hudElements.push(ammoHud);
         self.hudElements.push(self.pointsHud);
         self.hudElements.push(self.hintHud);
         self.hudElements.push(self.powerupHud);
         self.hudElements.push(self.reviveHud);
         self.hudElements.push(self.roundHud);
         self.hudElements.push(self.perkHud);
-        self.hudElements.push(ammoHud);
     }
 
     override void postBeginPlay() {
@@ -96,8 +95,12 @@ class zmd_Player : DoomPlayer {
 
     override int damageMobJ(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle) {
         if (inflictor != self && self.health - damage <= self.healthMin) {
+            console.printf("\cf"..self.player.getUserName().."\cj went down!");
             self.disableWeaponPerks();
-            self.morph(self, self.downedPlayerSelection.pick(self), null, 30 * 35, mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
+            let downTime = 35 * 30;
+            if (self.countInv('zmd_Revive'))
+                downTime = 35 * 10;
+            self.morph(self, self.downedPlayerSelection.chooseFor(self), null, downTime, mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
             return 0;
         }
         self.justTookDamage = true;

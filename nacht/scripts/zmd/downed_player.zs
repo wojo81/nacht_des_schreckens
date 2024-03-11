@@ -9,7 +9,7 @@ class zmd_DownedPlayerSelection : EventHandler {
         self.morphClasses.push(morphClass);
     }
 
-    class<zmd_DownedPlayer> pick(zmd_Player player) {
+    class<zmd_DownedPlayer> chooseFor(zmd_Player player) {
         for (int i = 0; i != self.morphWeapons.size(); ++i) {
             if (player.countInv(self.morphWeapons[i]))
                 return self.morphClasses[i];
@@ -49,6 +49,8 @@ class zmd_DownedPlayer : DoomPlayer {
 
     zmd_Player reviver;
 
+    zmd_HudElement ammoHud;
+
     Default {
         +invulnerable
         +special
@@ -57,6 +59,10 @@ class zmd_DownedPlayer : DoomPlayer {
         Player.runHealth 101;
 
         speed 0.2;
+    }
+
+    override void beginPlay() {
+        self.ammoHud = new('zmd_AmmoHud');
     }
 
     override void touch(Actor toucher) {
@@ -128,10 +134,8 @@ class zmd_DownedPlayer : DoomPlayer {
 class zmd_Revive : zmd_Perk {
     Default {
         Inventory.icon 'ikic';
-        Inventory.maxAmount 1;
     }
 }
-
 
 class zmd_ReviveHud : zmd_HudElement {
     bool active;

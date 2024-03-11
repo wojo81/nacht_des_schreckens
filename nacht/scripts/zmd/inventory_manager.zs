@@ -1,9 +1,9 @@
 class zmd_InventoryManager : Inventory {
     Default {
         Inventory.maxAmount 1;
-        +INVENTORY.UNDROPPABLE
-        +INVENTORY.UNTOSSABLE
-        +INVENTORY.PERSISTENTPOWER
+        +Inventory.undroppable
+        +Inventory.untossable
+        +Inventory.persistentPower
     }
 
     override bool handlePickup(Inventory item) {

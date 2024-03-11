@@ -11,11 +11,11 @@ class zmd_MysteryBoxSelection : EventHandler {
         return random[randomItem](0, self.names.size() - 1);
     }
 
-    String pickSprite() {
+    String chooseSprite() {
         return self.sprites[self.randomIndex()];
     }
 
-    String, String pick(zmd_Player player) {
+    String, String chooseFor(zmd_Player player) {
         let index = self.randomIndex();
         while (player.countInv(self.names[index]))
             index = self.randomIndex();
@@ -38,7 +38,7 @@ class zmd_MysteryBoxHandler : EventHandler {
     void moveActiveBox() {
         ++self.moveCount;
         if (self.moveCount == 1)
-            zmd_PowerupHandler(EventHandler.find('zmd_PowerupHandler')).availablePowerups.push('zmd_FireSaleDrop');
+            zmd_DropHandler(EventHandler.find('zmd_DropHandler')).drops.push('zmd_FireSaleDrop');
         self.removeBox(self.activeIndex);
         self.spawnBox(self.activeIndex = self.randomIndex(self.activeIndex), true);
     }
@@ -129,10 +129,10 @@ class zmd_SpinItem : Actor {
                 invoker.spriteName = 'ikic';
                 return resolveState('MoveBox');
             }
-            [invoker.itemName, invoker.spriteName] = invoker.selection.pick(invoker.receiver);
+            [invoker.itemName, invoker.spriteName] = invoker.selection.chooseFor(invoker.receiver);
             return resolveState('View');
         } else {
-            invoker.spriteName = invoker.selection.pickSprite();
+            invoker.spriteName = invoker.selection.chooseSprite();
             ++invoker.cycleCount;
             return resolveState(null);
         }
@@ -155,11 +155,11 @@ class zmd_SpinItem : Actor {
     Spawn:
         tnt1 a 25;
     Spin:
-        #### a 0 cycle;
+        tnt1 a 0 cycle;
         #### a 8 bright display;
         loop;
     View:
-        #### a 0 enablePickup;
+        tnt1 a 0 enablePickup;
         #### a 250 bright display;
         stop;
     MoveBox:
@@ -268,8 +268,10 @@ class zmd_MysteryBoxLocation : Actor {
     }
 
     void removeBox() {
-        if (self.box.spinItem != null)
-            self.box.spinItem.destroy();
-        self.box.destroy();
+        if (self.box != null) {
+            if (self.box.spinItem != null)
+                self.box.spinItem.destroy();
+            self.box.destroy();
+        }
     }
 }

@@ -9,7 +9,7 @@ class zmd_Rounds : Thinker {
     int tickCount;
     bool isTransitioning;
 
-    zmd_PowerupHandler powerups;
+    zmd_DropHandler drops;
 
     zmd_RoundChangeSound roundChange;
 
@@ -32,8 +32,8 @@ class zmd_Rounds : Thinker {
         unspawnedZombies = calcZombiesCount();
         zombiesLeft = unspawnedZombies;
         isTransitioning = false;
-        if (powerups != null) {
-            powerups.resetCount();
+        if (drops != null) {
+            drops.resetCount();
         }
 
         if (currentRound == 2) {
@@ -62,12 +62,12 @@ class zmd_RoundDelay : Thinker {
     zmd_Rounds rounds;
     int delay;
 
-    override void PostBeginPlay() {
+    override void postBeginPlay() {
         delay = 35 * 5;
     }
 
-    override void Tick() {
-        delay--;
+    override void tick() {
+        --delay;
         if (delay == 0) {
             self.rounds.nextRound();
             self.destroy();
@@ -78,24 +78,24 @@ class zmd_RoundDelay : Thinker {
 class zmd_RoundHandler : EventHandler {
     zmd_Rounds rounds;
 
-    override void WorldLoaded(WorldEvent e) {
-        let spawning = zmd_Spawning(EventHandler.find("zmd_Spawning"));
+    override void worldLoaded(WorldEvent e) {
+        let spawning = zmd_Spawning(EventHandler.find('zmd_Spawning'));
         spawning.init();
         self.rounds = spawning.rounds;
     }
 
-    override void WorldThingDied(WorldEvent e) {
+    override void worldThingDied(WorldEvent e) {
         if (e.thing && e.thing.bIsMonster) {
             rounds.zombieKilled();
             if (rounds.roundOver()) {
                 rounds.isTransitioning = true;
-                let round_delay = new("zmd_RoundDelay");
+                let round_delay = new('zmd_RoundDelay');
                 round_delay.rounds = rounds;
             }
         }
     }
 
-    override void WorldTick() {
+    override void worldTick() {
 // 		console.printf("");
 // 		console.printf("unspawned %d", rounds_.unspawnedZombies);
 // 		console.printf("live zombies %d", rounds_.liveZombies);
@@ -127,6 +127,6 @@ class zmd_RoundHud : zmd_HudElement {
     zmd_Rounds rounds;
 
     override void draw(zmd_Hud hud, int state, double tickFrac) {
-        hud.drawString(hud.defaultFont, ''..self.rounds.currentRound, (hud.margin, hud.margin), translation: Font.cr_darkRed);
+        hud.drawString(hud.defaultFont, ''..self.rounds.currentRound, (hud.right_margin - 10, hud.margin), hud.di_screen_right_top | hud.di_item_right_top, translation: Font.cr_darkRed);
     }
 }

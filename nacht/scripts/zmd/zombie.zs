@@ -5,12 +5,12 @@ class zmd_Headshot : Actor {
 }
 
 class zmd_Zombie : Actor {
-    zmd_PowerupHandler powerups;
+    zmd_DropHandler drops;
 
     void maybeSpawnPowerup() {
-        let powerup = powerups.maybeGet();
-        if (powerup != 'null')
-            spawn(powerup, pos);
+        let drop = self.drops.choose();
+        if (drop != null)
+            self.spawn(drop, pos);
     }
 
     override void die(Actor source, Actor inflictor, int dmgflags, Name meansOfDeath) {

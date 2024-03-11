@@ -18,7 +18,7 @@ GameInfo {
     StatusBarClass = "zmd_Hud"
     AddEventHandlers =
         "zmd_RoundHandler", "zmd_MysteryBoxSelection", "zmd_Spawning",
-        "zmd_DownedPlayerSelection", "zmd_MysteryBoxHandler", "zmd_PowerupHandler"
+        "zmd_DownedPlayerSelection", "zmd_MysteryBoxHandler", "zmd_DropHandler"
 }
 
 DoomEdNums {

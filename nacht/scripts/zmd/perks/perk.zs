@@ -15,7 +15,7 @@ class zmd_PerkMachine : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        if (!player.countInv(self.perk))
+        if (player.countInv(self.perk) == 0)
             player.hintHud.setMessage(zmd_Interactable.costOf(self.cost));
     }
 
@@ -61,8 +61,8 @@ class zmd_PerkBottle : Weapon {
         rayf a 1 a_raise;
         wait;
     Deselect:
-        rayf a 1 a_lower;
         rayf a 0 a_takeInventory('zmd_PerkBottle', 1);
+        rayf a 1 a_lower;
         wait;
     Fire:
         rayf a 1 a_fireBullets(0.0, 0.0, 1, 99999);
@@ -74,7 +74,7 @@ class zmd_PerkBottle : Weapon {
 }
 
 class zmd_PerkHud : zmd_HudElement {
-    const offsetDelta = 13;
+    const offsetDelta = 15;
 
     Array<zmd_PerkIcon> icons;
     int offset;

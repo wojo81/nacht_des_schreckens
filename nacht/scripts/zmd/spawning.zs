@@ -1,8 +1,8 @@
 class zmd_Spawner : Actor {
-    void spawnIn(int health, zmd_PowerupHandler powerups) {
+    void spawnIn(int health, zmd_DropHandler drops) {
         let zombie = self.spawn("zmd_Zombie", self.pos, allow_replace);
         zombie.health = health;
-        zmd_Zombie(zombie).powerups = powerups;
+        zmd_Zombie(zombie).drops = drops;
     }
 }
 
@@ -11,7 +11,7 @@ class zmd_Spawning : EventHandler {
     const maxDelay = 70;
 
     zmd_Rounds rounds;
-    zmd_PowerupHandler powerups;
+    zmd_DropHandler drops;
     Array<int> spawnerIds;
     Array<zmd_Spawner> spawners;
     int tickCount;
@@ -37,17 +37,17 @@ class zmd_Spawning : EventHandler {
 
     void init() {
         self.rounds = new("zmd_Rounds");
-        self.powerups = zmd_PowerupHandler(EventHandler.find('zmd_PowerupHandler'));
+        self.drops = zmd_DropHandler(EventHandler.find('zmd_DropHandler'));
         self.nextDelay();
         self.isStopped = false;
-        self.rounds.powerups = self.powerups;
+        self.rounds.drops = self.drops;
     }
 
     override void worldTick() {
         if (!self.isStopped && self.rounds.readyToSpawn()) {
             self.delay--;
             if (self.delay == 0 && self.spawners.size() != 0) {
-                self.spawners[random[randomSpawning](0, self.spawners.size() - 1)].spawnIn(self.rounds.zombieHealth, self.powerups);
+                self.spawners[random[randomSpawning](0, self.spawners.size() - 1)].spawnIn(self.rounds.zombieHealth, self.drops);
                 ++self.rounds.liveZombies;
                 --self.rounds.unspawnedZombies;
                 nextDelay();
