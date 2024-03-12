@@ -13,7 +13,7 @@ class zmd_SpeedColaMachine : zmd_PerkMachine {
 
 class zmd_SpeedCola : zmd_Perk {
     Default {
-        Inventory.icon 'dpic';
+        Inventory.icon 'scic';
     }
 
     override void attachToOwner(Actor other) {

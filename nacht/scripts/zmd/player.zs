@@ -23,7 +23,7 @@ class zmd_Player : DoomPlayer {
     Default {
         Player.StartItem 'Colt';
         Player.StartItem 'ColtAmmo', 40;
-        Player.startItem 'zmd_Points', 500;
+        Player.startItem 'zmd_Points', 5000;
         Player.StartItem 'zmd_Regen';
         Player.StartItem 'NTM_QuickMelee';
         Player.StartItem 'zmd_InventoryManager';

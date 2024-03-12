@@ -133,7 +133,7 @@ class zmd_DownedPlayer : DoomPlayer {
 
 class zmd_Revive : zmd_Perk {
     Default {
-        Inventory.icon 'ikic';
+        Inventory.icon 'qric';
     }
 }
 

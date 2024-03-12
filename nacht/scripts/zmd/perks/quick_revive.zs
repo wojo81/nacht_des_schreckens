@@ -40,6 +40,6 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
 
 class zmd_QuickRevive : zmd_Perk {
     Default {
-        Inventory.Icon 'ikic';
+        Inventory.Icon 'qric';
     }
 }

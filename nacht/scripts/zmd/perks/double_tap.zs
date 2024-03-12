@@ -12,6 +12,10 @@ class zmd_DoubleTapMachine : zmd_PerkMachine {
 }
 
 class zmd_DoubleTap : zmd_Perk {
+    Default {
+        Inventory.icon 'dtic';
+    }
+
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
         zmd_Player(owner).enableWeaponPerks();

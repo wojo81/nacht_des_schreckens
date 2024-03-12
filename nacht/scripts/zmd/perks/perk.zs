@@ -15,12 +15,12 @@ class zmd_PerkMachine : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        if (player.countInv(self.perk) == 0)
+        if (!player.countInv(self.perk) && !player.countInv('zmd_PerkBottle'))
             player.hintHud.setMessage(zmd_Interactable.costOf(self.cost));
     }
 
     override bool doUse(zmd_Player player) {
-        if (!player.countInv(self.perk) && player.maybePurchase(self.cost)) {
+        if (!player.countInv(self.perk) && !player.countInv('zmd_PerkBottle') && player.maybePurchase(self.cost)) {
             player.a_giveInventory('zmd_PerkBottle', 1);
             zmd_PerkBottle(player.findInventory('zmd_PerkBottle')).perk = self.perk;
             player.a_selectWeapon('zmd_PerkBottle');
