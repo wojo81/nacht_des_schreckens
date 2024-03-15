@@ -1,5 +1,5 @@
 class zmd_QuickReviveMachine : zmd_PerkMachine {
-    bool selfRevive;
+    bool isSolo;
     int buyCount;
 
     Default {
@@ -16,17 +16,16 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
         if (playerCount == 1) {
             self.cost = 500;
             self.perk = 'zmd_Revive';
-            self.selfRevive = true;
+            self.isSolo = true;
         }
     }
 
     override bool doUse(zmd_Player player) {
-        if (super.doUse(player) && self.selfRevive) {
+        let used = super.doUse(player);
+        if (used && self.isSolo)
             if (++self.buyCount == 3)
                 self.setStateLabel('Disappear');
-            return true;
-        }
-        return false;
+        return used;
     }
 
     States {
@@ -41,5 +40,11 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
 class zmd_QuickRevive : zmd_Perk {
     Default {
         Inventory.Icon 'qric';
+    }
+}
+
+class zmd_Revive : zmd_Perk {
+    Default {
+        Inventory.icon 'qric';
     }
 }

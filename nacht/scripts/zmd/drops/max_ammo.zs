@@ -1,4 +1,4 @@
-class zmd_MaxAmmoDrop : zmd_Drop {
+class zmd_MaxAmmo : zmd_Drop {
     action void giveAllMaxAmmo() {
         foreach (player : players) {
             if (player.mo == null)

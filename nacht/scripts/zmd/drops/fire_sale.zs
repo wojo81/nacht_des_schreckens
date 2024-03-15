@@ -1,16 +1,6 @@
-class zmd_FireSale : zmd_Powerup {
-    Default {
-        Inventory.icon 'fsic';
-    }
-
-    override void detachFromOwner() {
-        zmd_MysteryBoxHandler(EventHandler.find('zmd_MysteryBoxHandler')).removeAllBoxes();
-    }
-}
-
-class zmd_FireSaleDrop : zmd_Drop {
+class zmd_FireSale : zmd_Drop {
     action void spawnBoxes() {
-        zmd_MysteryBoxHandler(EventHandler.find('zmd_MysteryBoxHandler')).spawnAllBoxes();
+        zmd_MysteryBoxHandler.fetch().spawnAllBoxes();
     }
 
     States {
@@ -34,9 +24,20 @@ class zmd_FireSaleDrop : zmd_Drop {
         stop;
     Pickup:
         tnt1 a 0 a_startSound("game/fire_sale", 0, attenuation: attn_none);
-        tnt1 a 0 giveAll('zmd_FireSale');
+        tnt1 a 0 giveAll('zmd_FireSalePowerup');
         tnt1 a 0 spawnBoxes;
         tnt1 a 0 {console.printf('Fire Sale!');}
         stop;
+    }
+}
+
+class zmd_FireSalePowerup : zmd_Powerup {
+    Default {
+        Inventory.icon 'fsic';
+    }
+
+    override void detachFromOwner() {
+        if (self.owner.playerNumber() == 0)
+            zmd_MysteryBoxHandler.fetch().removeAllBoxes();
     }
 }

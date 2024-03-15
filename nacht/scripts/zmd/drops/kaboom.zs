@@ -1,4 +1,4 @@
-class zmd_NukeDrop : zmd_Drop {
+class zmd_Kaboom : zmd_Drop {
     States {
     Spawn:
         nuke a 350 bright;

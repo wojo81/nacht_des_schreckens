@@ -1,5 +1,8 @@
-class zmd_Rounds : Thinker {
+class zmd_Rounds : EventHandler {
     const maxHordeCount = 32;
+    const introSound = "game/intro";
+    const beginRoundSound = "game/round";
+    const endRoundSound = "game/siren";
 
     int currentRound;
     int zombieHealth;
@@ -9,124 +12,134 @@ class zmd_Rounds : Thinker {
     int tickCount;
     bool isTransitioning;
 
-    zmd_DropHandler drops;
+    zmd_Spawning spawning;
+    zmd_DropPool dropPool;
+    zmd_GlobalSound globalSound;
 
-    zmd_RoundChangeSound roundChange;
-
-    override void postBeginPlay() {
-        currentRound = 0;
-        nextRound();
+    static zmd_Rounds fetch() {
+        return zmd_Rounds(EventHandler.find('zmd_Rounds'));
     }
 
+    override void worldLoaded(WorldEvent e) {
+        self.dropPool = zmd_DropPool.fetch();
+        self.spawning = zmd_Spawning.init(self);
+        self.globalSound = zmd_GlobalSound.create();
+        self.globalSound.start(self.introSound);
+        self.nextRound();
+    }
+
+    override void worldThingDied(WorldEvent e) {
+        if (e.thing && e.thing.bIsMonster) {
+            self.zombieKilled();
+            if (self.roundOver()) {
+                self.globalSound.start(self.endRoundSound);
+                self.isTransitioning = true;
+                zmd_RoundDelay.create(self);
+            }
+        }
+    }
+
+    // override void worldTick() {
+    //     super.worldTick();
+    //     console.printf("");
+    //     console.printf("unspawned %d", rounds_.unspawnedZombies);
+    //     console.printf("live zombies %d", rounds_.liveZombies);
+    //     console.printf("zombies left %d", rounds_.zombiesLeft);
+    // }
+
     int calcZombiesHealth() {
-        return 25 + 20 * (currentRound - 1);
+        return 25 + 20 * (self.currentRound - 1);
     }
 
     int calcZombiesCount() {
-        return 4 + 3 * (currentRound - 1);
+        return 4 + 3 * (self.currentRound - 1);
     }
 
     void nextRound() {
-        currentRound += 1;
-        zombieHealth = calcZombiesHealth();
-        unspawnedZombies = calcZombiesCount();
-        zombiesLeft = unspawnedZombies;
-        isTransitioning = false;
-        if (drops != null) {
-            drops.resetCount();
-        }
+        ++self.currentRound;
+        self.zombieHealth = self.calcZombiesHealth();
+        self.unspawnedZombies = self.calcZombiesCount();
+        self.zombiesLeft = self.unspawnedZombies;
+        self.isTransitioning = false;
+        self.dropPool.handleRoundChange();
 
-        if (currentRound == 2) {
-            roundChange = zmd_RoundChangeSound(Level.createActorIterator(114, "zmd_RoundChangeSound").next());
-            roundChange.playRound();
-        } else if (currentRound != 1) {
-            roundChange.playRound();
-        }
+        if (self.currentRound != 1)
+            self.globalSound.start(self.beginRoundSound);
     }
 
     void zombieKilled() {
-        liveZombies--;
-        zombiesLeft--;
+        --self.liveZombies;
+        --self.zombiesLeft;
     }
 
     bool roundOver() {
-        return zombiesLeft == 0;
+        return self.zombiesLeft == 0;
     }
 
     bool readyToSpawn() {
-        return !isTransitioning && liveZombies != maxHordeCount && unspawnedZombies != 0;
+        return !self.isTransitioning && self.liveZombies != self.maxHordeCount && self.unspawnedZombies != 0;
     }
 }
 
 class zmd_RoundDelay : Thinker {
-    zmd_Rounds rounds;
-    int delay;
+    const delay = 35 * 20;
 
-    override void postBeginPlay() {
-        delay = 35 * 5;
+    zmd_Rounds rounds;
+    int ticksLeft;
+
+    static zmd_RoundDelay create(zmd_Rounds rounds) {
+        let self = new('zmd_RoundDelay');
+        self.rounds = rounds;
+        self.ticksLeft = delay;
+        return self;
     }
 
     override void tick() {
-        --delay;
-        if (delay == 0) {
+        if (self.ticksLeft-- == 0) {
             self.rounds.nextRound();
             self.destroy();
         }
     }
 }
 
-class zmd_RoundHandler : EventHandler {
-    zmd_Rounds rounds;
-
-    override void worldLoaded(WorldEvent e) {
-        let spawning = zmd_Spawning(EventHandler.find('zmd_Spawning'));
-        spawning.init();
-        self.rounds = spawning.rounds;
-    }
-
-    override void worldThingDied(WorldEvent e) {
-        if (e.thing && e.thing.bIsMonster) {
-            rounds.zombieKilled();
-            if (rounds.roundOver()) {
-                rounds.isTransitioning = true;
-                let round_delay = new('zmd_RoundDelay');
-                round_delay.rounds = rounds;
-            }
-        }
-    }
-
-    override void worldTick() {
-// 		console.printf("");
-// 		console.printf("unspawned %d", rounds_.unspawnedZombies);
-// 		console.printf("live zombies %d", rounds_.liveZombies);
-//		console.printf("zombies left %d", rounds_.zombiesLeft);
-
-        rounds.tickCount++;
-        if (rounds.tickCount == 40) {
-            rounds.tickCount = 0;
-        }
-    }
-}
-
-class zmd_RoundChangeSound : Actor {
-    override void postBeginPlay() {
-        thing_changeTID(0, 114);
-        playIntro();
-    }
-
-    void playIntro() {
-        a_startSound("game/intro", attenuation: attn_none);
-    }
-
-    void playRound() {
-        a_startSound("game/round", attenuation: attn_none);
-    }
-}
-
 class zmd_RoundHud : zmd_HudElement {
+    const fadeInDelay = 35 * 2;
+    const fadeOutDelay = 35 * 5;
+    const flashDelay = 35;
+
     zmd_Rounds rounds;
+    bool isTransitioning;
+    int ticksSinceTransition;
+    int color;
+    double alpha;
+
+    play static zmd_RoundHud create() {
+        let self = new('zmd_RoundHud');
+        self.rounds = zmd_Rounds.fetch();
+        self.ticksSinceTransition = self.fadeInDelay;
+        self.color = Font.cr_red;
+        return self;
+    }
+
+    override void tick() {
+        if (self.rounds.isTransitioning) {
+            if (self.ticksSinceTransition == self.fadeOutDelay) {
+                self.alpha = 0.0;
+                self.color = Font.cr_red;
+            } else if (self.ticksSinceTransition < self.fadeOutDelay) {
+                ++self.ticksSinceTransition;
+                self.alpha = abs((self.ticksSinceTransition % (self.flashDelay * 2) - self.flashDelay) / double(self.flashDelay));
+                self.color = Font.cr_untranslated;
+            }
+        } else if (self.ticksSinceTransition != 0) {
+            if (self.ticksSinceTransition == self.fadeOutDelay)
+                self.ticksSinceTransition = self.fadeInDelay;
+            --self.ticksSinceTransition;
+            self.alpha = (self.fadeInDelay - self.ticksSinceTransition) / double(self.fadeInDelay);
+        }
+    }
 
     override void draw(zmd_Hud hud, int state, double tickFrac) {
-        hud.drawString(hud.defaultFont, ''..self.rounds.currentRound, (hud.right_margin - 10, hud.margin), hud.di_screen_right_top | hud.di_item_right_top, translation: Font.cr_darkRed);
+        hud.drawString(hud.defaultFont, ''..self.rounds.currentRound, (hud.right_margin - 10, hud.margin), hud.di_screen_right_top | hud.di_item_right_top, translation: self.color, alpha: self.alpha);
     }
 }

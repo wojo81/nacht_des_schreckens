@@ -1,11 +1,11 @@
 class zmd_Door : zmd_Interactable {
-    int cost;
+    meta int cost;
 
     property cost: cost;
 
     Default {
         radius 30;
-        height 80;
+        height 150;
         zmd_Door.cost 1000;
 
         +solid;
@@ -13,11 +13,11 @@ class zmd_Door : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        player.hintHud.setMessage(zmd_Interactable.costOf(cost));
+        player.hintHud.setMessage(self.costOf(cost));
     }
 
     override bool doUse(zmd_Player player) {
-        if (player.maybePurchase(cost)) {
+        if (player.purchase(cost)) {
             player.a_startSound("game/purchase");
             foreach (tid : self.args)
                 zmd_Spawning.addSpawners(tid);

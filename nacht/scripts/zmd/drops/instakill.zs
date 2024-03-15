@@ -1,10 +1,4 @@
-class zmd_InstaKill : zmd_Powerup {
-    Default {
-        Inventory.icon 'ikic';
-    }
-}
-
-class zmd_InstaKillDrop : zmd_Drop {
+class zmd_Instakill : zmd_Drop {
     States {
     Spawn:
         inst abcdefgh 5 bright;
@@ -33,9 +27,15 @@ class zmd_InstaKillDrop : zmd_Drop {
 
         stop;
     Pickup:
-        tnt1 a 0 a_startSound("game/instaKill", 0, attenuation: attn_none);
-        tnt1 a 0 giveAll('zmd_Instakill');
+        tnt1 a 0 a_startSound("game/instakill", 0, attenuation: attn_none);
+        tnt1 a 0 giveAll('zmd_InstakillPowerup');
         tnt1 a 0 {console.printf('Insta-kill!');}
         stop;
+    }
+}
+
+class zmd_InstakillPowerup : zmd_Powerup {
+    Default {
+        Inventory.icon 'ikic';
     }
 }

@@ -1,37 +1,45 @@
-class zmd_DropHandler : EventHandler {
-    const maxSpawnedCount = 4;
-    const spawnChance = 7;
+class zmd_DropPool : EventHandler {
+    const dropsPerRound = 4;
+    const dropChance = 7;
 
-    Array<class<zmd_Drop> > drops;
-    Array<class<zmd_Drop> > dropPool;
-    int spawnedCount;
+    Array<class<zmd_Drop> > fullPool;
+    Array<class<zmd_Drop> > pool;
+    int dropsLeft;
+
+    static zmd_DropPool fetch() {
+        return zmd_DropPool(EventHandler.find('zmd_DropPool'));
+    }
 
     override void worldLoaded(WorldEvent e) {
-        self.drops.push('zmd_InstakillDrop');
-        self.drops.push('zmd_DoublePointsDrop');
-        self.drops.push('zmd_MaxAmmoDrop');
-        self.drops.push('zmd_NukeDrop');
-        self.setPool();
+        self.add('zmd_Instakill');
+        self.add('zmd_DoublePoints');
+        self.add('zmd_MaxAmmo');
+        self.add('zmd_Kaboom');
+        // self.add('zmd_FireSale');
+        self.fill();
     }
 
-    void setPool() {
-        foreach (drop : self.drops)
-            self.dropPool.push(drop);
+    void add(class<zmd_Drop> drop) {
+        self.fullPool.push(drop);
     }
 
-    void resetCount() {
-        self.spawnedCount = 0;
+    void fill() {
+        self.pool.copy(self.fullPool);
+    }
+
+    void handleRoundChange() {
+        self.dropsLeft = 4;
     }
 
     class<zmd_Drop> choose() {
-        if (self.spawnedCount != maxSpawnedCount && random[randomSpawning](1, self.spawnChance) == 1) {
-            ++self.spawnedCount;
-            let randomIndex = random[randomSpawning](0, self.dropPool.size() - 1);
-            let randomDrop = self.dropPool[randomIndex];
-            self.dropPool.delete(randomIndex);
-            if (self.dropPool.size() == 0)
-                self.setPool();
-            return randomDrop;
+        if (self.dropsLeft != 0 && random[randomSpawning](1, self.dropChance) == 1) {
+            --self.dropsLeft;
+            let index = random[randomSpawning](0, self.pool.size() - 1);
+            let drop = self.pool[index];
+            self.pool.delete(index);
+            if (self.pool.size() == 0)
+                self.fill();
+            return drop;
         }
         return null;
     }

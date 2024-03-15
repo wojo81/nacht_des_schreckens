@@ -1,8 +1,17 @@
-class zmd_DownedPlayerSelection : EventHandler {
+class zmd_DownedPlayerPool : EventHandler {
     class<zmd_DownedPlayer> defaultMorph;
 
     Array<class<Weapon> > morphWeapons;
     Array<class<zmd_DownedPlayer> > morphClasses;
+
+    static zmd_DownedPlayerPool fetch() {
+        return zmd_DownedPlayerPool(EventHandler.find('zmd_DownedPlayerPool'));
+    }
+
+    override void worldLoaded(WorldEvent e) {
+        self.defaultMorph = 'zmd_DownedPlayerWithColt';
+        self.addMorph('Raygun', 'zmd_DownedPlayerWithRaygun');
+    }
 
     void addMorph(class<Weapon> morphWeapon, class<zmd_DownedPlayer> morphClass) {
         self.morphWeapons.push(morphWeapon);
@@ -11,33 +20,19 @@ class zmd_DownedPlayerSelection : EventHandler {
 
     class<zmd_DownedPlayer> chooseFor(zmd_Player player) {
         for (int i = 0; i != self.morphWeapons.size(); ++i) {
-            if (player.countInv(self.morphWeapons[i]))
+            if (player.countInv(self.morphWeapons[i]) != 0)
                 return self.morphClasses[i];
         }
         return self.defaultMorph;
-    }
-
-    override void worldLoaded(WorldEvent e) {
-        self.defaultMorph = 'zmd_DownedPlayerWithColt';
-        self.addMorph('Raygun', 'zmd_DownedPlayerWithRaygun');
-    }
-}
-
-class zmd_DownedPlayerWithColt : zmd_DownedPlayer {
-    Default {
-        Player.morphWeapon 'Colt';
-    }
-}
-
-class zmd_DownedPlayerWithRaygun : zmd_DownedPlayer {
-    Default {
-        Player.morphWeapon 'Raygun';
     }
 }
 
 class zmd_DownedFlash : Actor {}
 
 class zmd_DownedPlayer : DoomPlayer {
+    const regularDownTime = 35 * 30;
+    const soloDownTime = 35 * 10;
+
     const totalTicksTillRevive = 35 * 5;
     const totalTicksTillQuickRevive = 35 * 3;
     const totalTicksTillReset = 10;
@@ -59,6 +54,14 @@ class zmd_DownedPlayer : DoomPlayer {
         Player.runHealth 101;
 
         speed 0.2;
+    }
+
+    static void morphFrom(zmd_Player player) {
+        let downedPool = zmd_DownedPlayerPool.fetch();
+        let downTime = zmd_DownedPlayer.regularDownTime;
+        if (player.countInv('zmd_Revive'))
+            downTime = zmd_DownedPlayer.soloDownTime;
+        player.morph(player, downedPool.chooseFor(player), null, downTime, mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
     }
 
     override void beginPlay() {
@@ -87,17 +90,17 @@ class zmd_DownedPlayer : DoomPlayer {
         return false;
     }
 
-    override void postUnmorph(Actor mo, bool current) {
-        let player = zmd_Player(mo);
+    override void postUnmorph(Actor revivedPlayer, bool current) {
+        let player = zmd_Player(revivedPlayer);
         foreach (perk : player.perks)
             player.takeInventory(perk, 1);
         player.perks.resize(0);
         player.perkHud.clear();
-        if (mo.countInv('zmd_Revive') == 0)
-            mo.die(mo, mo);
+        if (player.countInv('zmd_Revive') == 0)
+            player.die(player, player);
         else {
-            mo.takeInventory('zmd_Revive', 1);
-            mo.a_setBlend("red", 0.4, 35 * 3);
+            player.takeInventory('zmd_Revive', 1);
+            player.a_setBlend("red", 0.4, 35 * 3);
         }
     }
 
@@ -131,9 +134,15 @@ class zmd_DownedPlayer : DoomPlayer {
     }
 }
 
-class zmd_Revive : zmd_Perk {
+class zmd_DownedPlayerWithColt : zmd_DownedPlayer {
     Default {
-        Inventory.icon 'qric';
+        Player.morphWeapon 'Colt';
+    }
+}
+
+class zmd_DownedPlayerWithRaygun : zmd_DownedPlayer {
+    Default {
+        Player.morphWeapon 'Raygun';
     }
 }
 

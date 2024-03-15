@@ -5,12 +5,14 @@ class zmd_Headshot : Actor {
 }
 
 class zmd_Zombie : Actor {
-    zmd_DropHandler drops;
+    const tid = 115;
+
+    zmd_DropPool dropPool;
 
     void maybeSpawnPowerup() {
-        let drop = self.drops.choose();
+        let drop = self.dropPool.choose();
         if (drop != null)
-            self.spawn(drop, pos);
+            self.spawn(drop, self.pos);
     }
 
     override void die(Actor source, Actor inflictor, int dmgflags, Name meansOfDeath) {
@@ -26,29 +28,29 @@ class zmd_Zombie : Actor {
         }
     }
 
-    override int damageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle) {
+    override int damageMobj(Actor inflictor, Actor source, int damage, Name meansOfDamage, int flags, double angle) {
         let headBottom = self.floorz + self.height - 10;
         let headTop = self.floorz + self.height;
 
-        if (source is 'zmd_Player' && mod != 'None')
+        if (source is 'zmd_Player' && meansOfDamage != 'None')
             source.giveInventory('zmd_Points', 10);
 
-        if (inflictor && mod != 'kick' && inflictor.pos.z >= headBottom && inflictor.pos.z <= headTop) {
+        if (inflictor && meansOfDamage != 'kick' && inflictor.pos.z >= headBottom && inflictor.pos.z <= headTop) {
             damage *= 1.5;
-            mod = 'zmd_Headshot';
+            meansOfDamage = 'zmd_Headshot';
         }
 
-        if (source && source.countInv('zmd_InstaKill')) {
-            die(source, inflictor, 0, mod);
+        if (source && source.countInv('zmd_InstaKillPowerup')) {
+            die(source, inflictor, 0, meansOfDamage);
             return health;
         }
 
-        return super.damageMobj(inflictor, source, damage, mod, flags, angle);
+        return super.damageMobj(inflictor, source, damage, meansOfDamage, flags, angle);
     }
 
     override void beginPlay() {
-      super.beginPlay();
-      thing_changeTID(0, 115);
+        super.beginPlay();
+        thing_changeTid(0, self.tid);
     }
 
     Default {

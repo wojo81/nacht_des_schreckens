@@ -1,61 +1,63 @@
 class zmd_Spawner : Actor {
-    void spawnIn(int health, zmd_DropHandler drops) {
-        let zombie = self.spawn("zmd_Zombie", self.pos, allow_replace);
+    void spawnIn(int health, zmd_DropPool dropPool) {
+        let zombie = Actor.spawn('zmd_Zombie', self.pos, allow_replace);
         zombie.health = health;
-        zmd_Zombie(zombie).drops = drops;
+        zmd_Zombie(zombie).dropPool = dropPool;
     }
 }
 
 class zmd_Spawning : EventHandler {
+    const initialSpawnersTid = 5;
     const minDelay = 30;
     const maxDelay = 70;
 
     zmd_Rounds rounds;
-    zmd_DropHandler drops;
-    Array<int> spawnerIds;
+    zmd_DropPool dropPool;
+    Array<int> spawnerTids;
     Array<zmd_Spawner> spawners;
-    int tickCount;
-    bool isStopped;
-    int delay;
+    int ticksTillSpawn;
+    bool paused;
+
+    static zmd_Spawning fetch() {
+        return zmd_Spawning(EventHandler.find('zmd_Spawning'));
+    }
+
+    static zmd_Spawning init(zmd_Rounds rounds) {
+        let self = zmd_Spawning.fetch();
+        self.rounds = rounds;
+        self.dropPool = rounds.dropPool;
+        self.countdownSpawn();
+        return self;
+    }
 
     static void addSpawners(int tid) {
-        let spawning = zmd_Spawning(EventHandler.find("zmd_Spawning"));
+        let spawning = zmd_Spawning.fetch();
 
-        if (spawning.spawnerIds.find(tid) == spawning.spawnerIds.size()) {
-            spawning.spawnerIds.push(tid);
-            let iterator = Level.createActorIterator(tid, "zmd_Spawner");
+        if (spawning.spawnerTids.find(tid) == spawning.spawnerTids.size()) {
+            spawning.spawnerTids.push(tid);
+            let iterator = Level.createActorIterator(tid, 'zmd_Spawner');
             zmd_Spawner spawner;
-            while (spawner = zmd_Spawner(iterator.next())) {
+            while (spawner = zmd_Spawner(iterator.next()))
                 spawning.spawners.push(spawner);
-            }
         }
     }
 
-    void nextDelay() {
-        self.delay = random[randomSpawning](minDelay, maxDelay);
-    }
-
-    void init() {
-        self.rounds = new("zmd_Rounds");
-        self.drops = zmd_DropHandler(EventHandler.find('zmd_DropHandler'));
-        self.nextDelay();
-        self.isStopped = false;
-        self.rounds.drops = self.drops;
-    }
-
     override void worldTick() {
-        if (!self.isStopped && self.rounds.readyToSpawn()) {
-            self.delay--;
-            if (self.delay == 0 && self.spawners.size() != 0) {
-                self.spawners[random[randomSpawning](0, self.spawners.size() - 1)].spawnIn(self.rounds.zombieHealth, self.drops);
+        if (!self.paused && self.rounds.readyToSpawn()) {
+            if (self.ticksTillSpawn-- == 0) {
+                self.spawners[random[randomSpawning](0, self.spawners.size() - 1)].spawnIn(self.rounds.zombieHealth, self.dropPool);
                 ++self.rounds.liveZombies;
                 --self.rounds.unspawnedZombies;
-                nextDelay();
+                self.countdownSpawn();
             }
         }
     }
 
     override void worldLoaded(WorldEvent e) {
-        zmd_Spawning.addSpawners(5);
+        zmd_Spawning.addSpawners(self.initialSpawnersTid);
+    }
+
+    void countdownSpawn() {
+        self.ticksTillSpawn = random[randomSpawning](self.minDelay, self.maxDelay);
     }
 }

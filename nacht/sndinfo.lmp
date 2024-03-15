@@ -72,8 +72,9 @@ game/powerup_grab sounds/interactions/POWERGRAB
 game/fire_sale sounds/interactions/fire_sale.wav
 
 game/intro sounds/interactions/BEGIN
-game/purchase sounds/interactions/PURCHASE
 game/round sounds/interactions/ROUND
+game/siren sounds/interactions/SIREN
+game/purchase sounds/interactions/PURCHASE
 game/mystery sounds/interactions/MYSTERY
 
 weapons/raygun sounds/weapons/raygun/raygun

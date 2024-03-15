@@ -17,15 +17,15 @@ GameInfo {
     PlayerClasses = "zmd_Player"
     StatusBarClass = "zmd_Hud"
     AddEventHandlers =
-        "zmd_RoundHandler", "zmd_MysteryBoxSelection", "zmd_Spawning",
-        "zmd_DownedPlayerSelection", "zmd_MysteryBoxHandler", "zmd_DropHandler"
+        "zmd_Rounds", "zmd_MysteryBoxPool", "zmd_Spawning",
+        "zmd_DownedPlayerPool", "zmd_MysteryBoxHandler", "zmd_DropPool"
 }
 
 DoomEdNums {
     1003 = "zmd_Spawner"
     1004 = "zmd_MysteryBox"
     1005 = "MinigunDrawing"
-    1006 = "zmd_RoundChangeSound"
+    1006 = "zmd_GlobalSound"
     1007 = "zmd_Door"
     1008 = "zmd_MysteryBoxLocation"
     1009 = "zmd_QuickReviveMachine"

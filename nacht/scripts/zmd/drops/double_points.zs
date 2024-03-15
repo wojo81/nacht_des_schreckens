@@ -1,16 +1,4 @@
-class zmd_DoublePoints : zmd_Powerup {
-    Default {
-        Inventory.icon 'dpic';
-    }
-
-    override bool handlePickup(Inventory item) {
-        if (item is 'zmd_DoublePoints')
-            ++self.amount;
-        return super.handlePickup(item);
-    }
-}
-
-class zmd_DoublePointsDrop : zmd_Drop {
+class zmd_DoublePoints : zmd_Drop {
     States {
     Spawn:
         inst a 350 bright;
@@ -32,8 +20,20 @@ class zmd_DoublePointsDrop : zmd_Drop {
         stop;
     Pickup:
         tnt1 a 0 a_startSound("game/doublePoints", 0, attenuation: attn_none);
-        tnt1 a 0 giveAll('zmd_DoublePoints');
+        tnt1 a 0 giveAll('zmd_DoublePointsPowerup');
         tnt1 a 0 {console.printf('Double Points!');}
         stop;
+    }
+}
+
+class zmd_DoublePointsPowerup : zmd_Powerup {
+    Default {
+        Inventory.icon 'dpic';
+    }
+
+    override bool handlePickup(Inventory item) {
+        if (item is 'zmd_DoublePointsPowerup')
+            ++self.amount;
+        return super.handlePickup(item);
     }
 }

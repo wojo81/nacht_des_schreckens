@@ -1,13 +1,13 @@
 class zmd_PerkMachine : zmd_Interactable {
+    class<zmd_Perk> perk;
     int cost;
-    class<Inventory> perk;
 
     property cost: cost;
     property perk: perk;
 
     Default {
         radius 30;
-        height 60;
+        height 80;
 
         +solid
         +special
@@ -15,15 +15,13 @@ class zmd_PerkMachine : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        if (!player.countInv(self.perk) && !player.countInv('zmd_PerkBottle'))
-            player.hintHud.setMessage(zmd_Interactable.costOf(self.cost));
+        if (player.countInv(self.perk) == 0 && player.countInv('zmd_PerkBottle') == 0)
+            player.hintHud.setMessage(self.costOf(self.cost));
     }
 
     override bool doUse(zmd_Player player) {
-        if (!player.countInv(self.perk) && !player.countInv('zmd_PerkBottle') && player.maybePurchase(self.cost)) {
-            player.a_giveInventory('zmd_PerkBottle', 1);
-            zmd_PerkBottle(player.findInventory('zmd_PerkBottle')).perk = self.perk;
-            player.a_selectWeapon('zmd_PerkBottle');
+        if (player.countInv(self.perk) == 0 && player.countInv('zmd_PerkBottle') == 0 && player.purchase(self.cost)) {
+            zmd_PerkBottle.giveTo(player, self.perk);
             return true;
         }
         return false;
@@ -37,8 +35,8 @@ class zmd_Perk : Inventory {
 }
 
 class zmd_PerkBottle : Weapon {
-    class<Inventory> perk;
-    int tickCount;
+    class<zmd_Perk> perk;
+    int ticksLeft;
 
     Default {
         Weapon.ammoType 'clip';
@@ -46,30 +44,35 @@ class zmd_PerkBottle : Weapon {
         +Weapon.ammo_optional
     }
 
-    action State maybeGivePerk() {
-        if (invoker.tickCount++ == 70)
-            return resolveState('GivePerk');
-        return resolveState(null);
+    static void giveTo(zmd_Player player, class<zmd_Perk> perk) {
+        player.a_giveInventory('zmd_PerkBottle', 1);
+        let self = zmd_PerkBottle(player.findInventory('zmd_PerkBottle'));
+        self.perk = perk;
+        self.ticksLeft = 70;
+        player.a_selectWeapon('zmd_PerkBottle');
+    }
+
+    override void tick() {
+        super.tick();
+        if (self.ticksLeft-- == 0) {
+            self.owner.giveInventory(self.perk, 1);
+            self.setStateLabel('Deselect');
+        }
     }
 
     States {
     Ready:
         rayf a 1 a_weaponReady;
-        rayf a 0 maybeGivePerk;
         loop;
     Select:
         rayf a 1 a_raise;
         wait;
     Deselect:
-        rayf a 0 a_takeInventory('zmd_PerkBottle', 1);
-        rayf a 1 a_lower;
-        wait;
+        tnt1 a 0;
+        stop;
     Fire:
         rayf a 1 a_fireBullets(0.0, 0.0, 1, 99999);
         goto deselect;
-    GivePerk:
-        rayf a 0 a_giveInventory(invoker.perk, 1);
-        goto Deselect;
     }
 }
 

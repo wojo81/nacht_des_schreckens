@@ -10,8 +10,6 @@ class zmd_Player : DoomPlayer {
     Array<String> perks;
     bool justTookDamage;
 
-    zmd_DownedPlayerSelection downedPlayerSelection;
-
     Array<zmd_HudElement> hudElements;
     zmd_PointsHud pointsHud;
     zmd_HintHud hintHud;
@@ -23,7 +21,7 @@ class zmd_Player : DoomPlayer {
     Default {
         Player.StartItem 'Colt';
         Player.StartItem 'ColtAmmo', 40;
-        Player.startItem 'zmd_Points', 5000;
+        Player.startItem 'zmd_Points', 500;
         Player.StartItem 'zmd_Regen';
         Player.StartItem 'NTM_QuickMelee';
         Player.StartItem 'zmd_InventoryManager';
@@ -35,6 +33,7 @@ class zmd_Player : DoomPlayer {
 
     override void beginPlay() {
         super.beginPlay();
+
         self.healthMin = regularHealthMin;
         self.weaponCount = 0;
         self.maxWeaponCount = 2;
@@ -45,22 +44,16 @@ class zmd_Player : DoomPlayer {
         self.hintHud = new('zmd_HintHud');
         self.powerupHud = new('zmd_PowerupHud');
         self.reviveHud = new('zmd_ReviveHud');
-        self.roundHud = new('zmd_RoundHud');
         self.perkHud = new('zmd_PerkHud');
+        self.roundHud = zmd_RoundHud.create();
 
         self.hudElements.push(ammoHud);
         self.hudElements.push(self.pointsHud);
         self.hudElements.push(self.hintHud);
         self.hudElements.push(self.powerupHud);
         self.hudElements.push(self.reviveHud);
-        self.hudElements.push(self.roundHud);
         self.hudElements.push(self.perkHud);
-    }
-
-    override void postBeginPlay() {
-        super.postBeginPlay();
-        self.downedPlayerSelection = zmd_DownedPlayerSelection(EventHandler.find('zmd_DownedPlayerSelection'));
-        self.roundHud.rounds = zmd_RoundHandler(EventHandler.find('zmd_RoundHandler')).rounds;
+        self.hudElements.push(self.roundHud);
     }
 
     bool atWeaponCapacity() {
@@ -71,20 +64,22 @@ class zmd_Player : DoomPlayer {
     }
 
     void enableWeaponPerks() {
-        let useFastReload = self.countInv('zmd_SpeedCola');
-        let useDoubleFire = self.countInv('zmd_DoubleTap');
+        if (self) {
+            let useFastReload = self.countInv('zmd_SpeedCola') == 1;
+            let useDoubleFire = self.countInv('zmd_DoubleTap') == 1;
 
-        foreach (heldWeapon : heldWeapons) {
-            let heldWeapon = zmd_Weapon(self.findInventory(heldWeapon));
-            if (heldWeapon) {
-                heldWeapon.useFastReload = useFastReload;
-                heldWeapon.useDoubleFire = useDoubleFire;
+            foreach (heldWeapon : heldWeapons) {
+                let heldWeapon = zmd_Weapon(self.findInventory(heldWeapon));
+                if (heldWeapon) {
+                    heldWeapon.useFastReload = useFastReload;
+                    heldWeapon.useDoubleFire = useDoubleFire;
+                }
             }
         }
     }
 
     void disableWeaponPerks() {
-        foreach (heldWeapon : heldWeapons) {
+        foreach (heldWeapon : self.heldWeapons) {
             let heldWeapon = zmd_Weapon(self.findInventory(heldWeapon));
             if (heldWeapon) {
                 heldWeapon.useFastReload = false;
@@ -93,21 +88,17 @@ class zmd_Player : DoomPlayer {
         }
     }
 
-    override int damageMobJ(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle) {
+    override int damageMobJ(Actor inflictor, Actor source, int damage, Name meansOfDeath, int flags, double angle) {
         if (inflictor != self && self.health - damage <= self.healthMin) {
             console.printf("\cf"..self.player.getUserName().."\cj went down!");
-            self.disableWeaponPerks();
-            let downTime = 35 * 30;
-            if (self.countInv('zmd_Revive'))
-                downTime = 35 * 10;
-            self.morph(self, self.downedPlayerSelection.chooseFor(self), null, downTime, mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
+            zmd_DownedPlayer.morphFrom(self);
             return 0;
         }
         self.justTookDamage = true;
-        return super.damageMobJ(inflictor, source, damage, mod, flags, angle);
+        return super.damageMobJ(inflictor, source, damage, meansOfDeath, flags, angle);
     }
 
-    bool maybePurchase(int cost) {
+    bool purchase(int cost) {
         if (self.countInv('zmd_Points') >= cost) {
             self.takeInventory('zmd_Points', cost);
             self.pointsHud.addDecrease(cost);
@@ -118,6 +109,8 @@ class zmd_Player : DoomPlayer {
 }
 
 class zmd_HintHud : zmd_HudElement {
+    const fadeDelay = 40;
+
     String message;
     int ticksLeft;
     double alpha;
@@ -125,7 +118,7 @@ class zmd_HintHud : zmd_HudElement {
     override void tick() {
         if (self.ticksLeft != 0) {
             --self.ticksLeft;
-            self.alpha = self.ticksLeft / 10.0;
+            self.alpha = self.ticksLeft / 5.0;
         }
     }
 
@@ -136,12 +129,12 @@ class zmd_HintHud : zmd_HudElement {
 
     void setMessage(String message) {
         self.message = message;
-        self.ticksLeft = 50;
+        self.ticksLeft = self.fadeDelay;
         self.alpha = 1.0;
     }
 
     void clearMessage() {
-        self.ticksLeft = 0;
+        self.ticksLeft = 5;
     }
 }
 

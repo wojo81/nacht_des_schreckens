@@ -1,10 +1,11 @@
 class zmd_Drawing : zmd_Interactable {
+    const upgradedAmmoCost = 4500;
+
     String weaponName;
     String upgradedWeaponName;
 
     int weaponCost;
     int ammoCost;
-    const upgradedAmmoCost = 4500;
 
     String weaponMessage;
     String ammoMessage;
@@ -12,6 +13,7 @@ class zmd_Drawing : zmd_Interactable {
 
     property weaponName: weaponName;
     property weaponCost: weaponCost;
+    property ammoCost: weaponCost;
 
     Default {
         +wallSprite;
@@ -21,34 +23,33 @@ class zmd_Drawing : zmd_Interactable {
     override void beginPlay() {
         super.beginPlay();
 
-        upgradedWeaponName = "Upgraded"..weaponName;
+        self.upgradedWeaponName = 'Upgraded'..self.weaponName;
+        self.ammoCost = self.weaponCost / 2;
 
-        ammoCost = weaponCost / 2;
-
-        weaponMessage = zmd_Interactable.costOf(weaponCost);
-        ammoMessage = zmd_Interactable.costOf(ammoCost);
-        upgradedAmmoMessage = zmd_Interactable.costOf(upgradedAmmoCost);
+        self.weaponMessage = self.costOf(weaponCost);
+        self.ammoMessage = self.costOf(ammoCost);
+        self.upgradedAmmoMessage = self.costOf(upgradedAmmoCost);
     }
 
     override void doTouch(zmd_Player player) {
-        if (player.countInv(weaponName))
-            player.hintHud.setMessage(ammoMessage);
-        else if (player.countInv(upgradedWeaponName))
-            player.hintHud.setMessage(upgradedAmmoMessage);
+        if (player.countInv(self.weaponName))
+            player.hintHud.setMessage(self.ammoMessage);
+        else if (player.countInv(self.upgradedWeaponName))
+            player.hintHud.setMessage(self.upgradedAmmoMessage);
         else
-            player.hintHud.setMessage(weaponMessage);
+            player.hintHud.setMessage(self.weaponMessage);
     }
 
     override bool doUse(zmd_Player player) {
         bool bought = false;
-        if (player.countInv(weaponName)) {
-            if (player.maybePurchase(ammoCost))
-                bought = player.a_giveInventory(weaponName.."Ammo", 999);
-        } else if (player.countInv(upgradedWeaponName)) {
-            if (player.maybePurchase(upgradedAmmoCost))
-                bought = player.a_giveInventory(upgradedWeaponName.."Ammo", 999);
+        if (player.countInv(self.weaponName)) {
+            if (player.purchase(ammoCost))
+                bought = player.a_giveInventory(self.weaponName..'Ammo', 999);
+        } else if (player.countInv(self.upgradedWeaponName)) {
+            if (player.purchase(self.upgradedAmmoCost))
+                bought = player.a_giveInventory(self.upgradedWeaponName..'Ammo', 999);
         } else {
-            if (player.maybePurchase(weaponCost))
+            if (player.purchase(self.weaponCost))
                 bought = player.a_giveInventory(weaponName);
         }
 
