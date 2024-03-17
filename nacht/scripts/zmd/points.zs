@@ -4,7 +4,9 @@ class zmd_Points : Inventory {
     }
 
     override void setGiveAmount(Actor receiver, int amount, bool giveCheat) {
-        let givenAmount = amount << receiver.countInv('zmd_DoublePointsPowerup');
+        let givenAmount = giveCheat?
+            amount:
+            amount << receiver.countInv('zmd_DoublePointsPowerup');
         let player = zmd_Player(receiver);
         if (player)
             player.pointsHud.addIncrease(givenAmount);

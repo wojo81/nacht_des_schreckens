@@ -110,6 +110,7 @@ class zmd_Player : DoomPlayer {
 
 class zmd_HintHud : zmd_HudElement {
     const fadeDelay = 40;
+    const fadeTicks = 5;
 
     String message;
     int ticksLeft;
@@ -118,7 +119,7 @@ class zmd_HintHud : zmd_HudElement {
     override void tick() {
         if (self.ticksLeft != 0) {
             --self.ticksLeft;
-            self.alpha = self.ticksLeft / 5.0;
+            self.alpha = self.ticksLeft / double(self.fadeTicks);
         }
     }
 
@@ -134,7 +135,7 @@ class zmd_HintHud : zmd_HudElement {
     }
 
     void clearMessage() {
-        self.ticksLeft = 5;
+        self.ticksLeft = self.fadeTicks;
     }
 }
 

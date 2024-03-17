@@ -42,12 +42,16 @@ class zmd_Weapon : Weapon abstract {
 
     action void zoomIn() {
         invoker.zoomed = true;
-        a_zoomFactor(1.5);
+        invoker.a_zoomFactor(1.5);
+        invoker.bobRangeX = 0.2;
+        invoker.bobRangeY = 0.2;
     }
 
     action void zoomOut() {
         invoker.zoomed = false;
-        a_zoomFactor(1.0);
+        invoker.a_zoomFactor(1.0);
+        invoker.bobRangeX = 1.0;
+        invoker.bobRangeY = 1.0;
     }
 
     action State perhapsZoomFire() {

@@ -47,24 +47,28 @@ class zmd_DownedPlayer : DoomPlayer {
     zmd_HudElement ammoHud;
 
     Default {
+        +PlayerPawn.noThrustWhenInvul
         +invulnerable
+        +pickup
         +special
 
         Player.viewHeight 20;
         Player.runHealth 101;
 
         speed 0.2;
+        height 20;
     }
 
     static void morphFrom(zmd_Player player) {
         let downedPool = zmd_DownedPlayerPool.fetch();
-        let downTime = zmd_DownedPlayer.regularDownTime;
-        if (player.countInv('zmd_Revive'))
-            downTime = zmd_DownedPlayer.soloDownTime;
-        player.morph(player, downedPool.chooseFor(player), null, downTime, mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
+        let downTime = player.countInv('zmd_Revive') == 0?
+            zmd_DownedPlayer.regularDownTime:
+            zmd_DownedPlayer.soloDownTime;
+        player.a_morph(downedPool.chooseFor(player), downTime,  mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
     }
 
     override void beginPlay() {
+        super.beginPlay();
         self.ammoHud = new('zmd_AmmoHud');
     }
 
@@ -90,18 +94,18 @@ class zmd_DownedPlayer : DoomPlayer {
         return false;
     }
 
-    override void postUnmorph(Actor revivedPlayer, bool current) {
-        let player = zmd_Player(revivedPlayer);
+    override void postUnmorph(Actor player, bool current) {
+        if (player.countInv('zmd_Revive') == 0) {
+            player.die(player, player);
+            return;
+        }
+
+        let player = zmd_Player(player);
         foreach (perk : player.perks)
             player.takeInventory(perk, 1);
         player.perks.resize(0);
         player.perkHud.clear();
-        if (player.countInv('zmd_Revive') == 0)
-            player.die(player, player);
-        else {
-            player.takeInventory('zmd_Revive', 1);
-            player.a_setBlend("red", 0.4, 35 * 3);
-        }
+        player.a_setBlend("red", 0.4, 35 * 3);
     }
 
     override void tick() {

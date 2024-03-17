@@ -28,12 +28,13 @@ class zmd_DoublePoints : zmd_Drop {
 
 class zmd_DoublePointsPowerup : zmd_Powerup {
     Default {
+        Inventory.maxAmount 2;
         Inventory.icon 'dpic';
     }
 
-    override bool handlePickup(Inventory item) {
-        if (item is 'zmd_DoublePointsPowerup')
-            ++self.amount;
-        return super.handlePickup(item);
-    }
+    // override bool handlePickup(Inventory item) {
+    //     if (item is 'zmd_DoublePointsPowerup')
+    //         ++self.amount;
+    //     return super.handlePickup(item);
+    // }
 }

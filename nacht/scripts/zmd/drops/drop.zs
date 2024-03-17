@@ -45,10 +45,27 @@ class zmd_DropPool : EventHandler {
     }
 }
 
+class zmd_Drop : CustomInventory {
+    Default {
+        Inventory.pickupMessage '';
+        Inventory.pickupSound 'game/powerup_grab';
+        FloatBobStrength 0.5;
+
+        +Inventory.alwaysPickup
+        +floatBob
+        +noGravity
+    }
+
+    action void giveAll(class<Inventory> item, int amount = 1) {
+        foreach (player : players)
+            if (player.mo != null && !(zmd_Player(player.mo) == null && item is 'zmd_Points'))
+                player.mo.giveInventory(item, amount);
+    }
+}
+
 class zmd_Powerup : Powerup {
     Default {
         Powerup.duration -30;
-        +Inventory.alwaysPickup
     }
 
     override TextureId getPowerupIcon() {
@@ -60,21 +77,6 @@ class zmd_Powerup : Powerup {
         if (player)
             player.powerupHud.add(self, self.effectTics);
         return super.tryPickup(toucher);
-    }
-}
-
-class zmd_Drop : CustomInventory {
-    Default {
-        Inventory.pickupMessage '';
-        Inventory.pickupSound 'game/powerup_grab';
-        -floatBob
-        +noGravity
-    }
-
-    action void giveAll(class<Inventory> item, int amount = 1) {
-        foreach (player : players)
-            if (player.mo != null)
-                player.mo.giveInventory(item, amount);
     }
 }
 

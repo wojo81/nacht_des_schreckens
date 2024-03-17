@@ -9,8 +9,7 @@ class zmd_InventoryManager : Inventory {
     override bool handlePickup(Inventory item) {
         if (item is 'zmd_Perk') {
             let player = zmd_Player(owner);
-            if (!(item is 'zmd_Revive'))
-                player.perks.push(item.getClassName());
+            player.perks.push(item.getClassName());
             player.perkHud.add(item);
         } if (item is 'Weapon' && !(item is 'zmd_PerkBottle')) {
             let player = zmd_Player(owner);

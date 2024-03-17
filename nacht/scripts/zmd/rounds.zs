@@ -82,7 +82,7 @@ class zmd_Rounds : EventHandler {
 }
 
 class zmd_RoundDelay : Thinker {
-    const delay = 35 * 20;
+    const delay = 35 * 10;
 
     zmd_Rounds rounds;
     int ticksLeft;
