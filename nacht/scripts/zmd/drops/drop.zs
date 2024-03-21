@@ -1,3 +1,42 @@
+class zmd_Drop : CustomInventory {
+    Default {
+        Inventory.pickupMessage '';
+        Inventory.pickupSound 'game/powerup_grab';
+        floatBobStrength 0.5;
+
+        +Inventory.alwaysPickup
+        +floatBob
+        +noGravity
+    }
+
+    action void downScale() {
+        self.scale /= 1.5;
+    }
+
+    action void giveAll(class<Inventory> item, int amount = 1) {
+        foreach (player : players)
+            if (player.mo != null && !(zmd_Player(player.mo) == null && item is 'zmd_Points'))
+                player.mo.giveInventory(item, amount);
+    }
+}
+
+class zmd_Powerup : Powerup {
+    Default {
+        Powerup.duration -30;
+    }
+
+    override TextureId getPowerupIcon() {
+        return self.altHudIcon;
+    }
+
+    override bool tryPickup(in out Actor toucher) {
+        let player = zmd_Player(toucher);
+        if (player)
+            player.powerupHud.add(self, self.effectTics);
+        return super.tryPickup(toucher);
+    }
+}
+
 class zmd_DropPool : EventHandler {
     const dropsPerRound = 4;
     const dropChance = 7;
@@ -42,41 +81,6 @@ class zmd_DropPool : EventHandler {
             return drop;
         }
         return null;
-    }
-}
-
-class zmd_Drop : CustomInventory {
-    Default {
-        Inventory.pickupMessage '';
-        Inventory.pickupSound 'game/powerup_grab';
-        FloatBobStrength 0.5;
-
-        +Inventory.alwaysPickup
-        +floatBob
-        +noGravity
-    }
-
-    action void giveAll(class<Inventory> item, int amount = 1) {
-        foreach (player : players)
-            if (player.mo != null && !(zmd_Player(player.mo) == null && item is 'zmd_Points'))
-                player.mo.giveInventory(item, amount);
-    }
-}
-
-class zmd_Powerup : Powerup {
-    Default {
-        Powerup.duration -30;
-    }
-
-    override TextureId getPowerupIcon() {
-        return self.altHudIcon;
-    }
-
-    override bool tryPickup(in out Actor toucher) {
-        let player = zmd_Player(toucher);
-        if (player)
-            player.powerupHud.add(self, self.effectTics);
-        return super.tryPickup(toucher);
     }
 }
 

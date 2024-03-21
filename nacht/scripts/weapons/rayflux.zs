@@ -4,7 +4,7 @@ class Rayflux : Rocket {
         health 1;
         radius 5;
         height 5;
-        speed 30;
+        speed 25;
         damage 40;
         damageType 'Explosion';
         seeSound "weapons/rayflux";
@@ -28,15 +28,16 @@ class Rayflux : Rocket {
 
     States {
     Spawn:
-        rayl AAAAAAAAAA 1 bright increaseScale;
-        rayl AAAAAAAAAA 1 bright decreaseScale;
+        rayl aaaaaaaaaa 1 bright increaseScale;
+        rayl aaaaaaaaaa 1 bright decreaseScale;
         loop;
 
     Death:
         tnt1 a 0 resetScale;
-        tfog GFEDCB 1 bright;
+        tnt1 aaa 0 increaseScale;
+        bal7 ab 2 bright;
         tnt1 a 0 a_explode(80, 256);
-        tfog BCDEFG 1 bright;
+        bal7 cde 2 bright;
         stop;
     }
 }

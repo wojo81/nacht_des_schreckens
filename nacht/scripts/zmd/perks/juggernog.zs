@@ -18,13 +18,11 @@ class zmd_Juggernog : zmd_Perk {
 
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
-        zmd_Player(owner).healthMin = zmd_Player.juggHealthMin;
+        zmd_Player(self.owner).healthMin = zmd_Player.juggHealthMin;
     }
 
     override void detachFromOwner() {
-        let player = zmd_Player(owner);
-        if (player)
-            player.healthMin = zmd_Player.regularHealthMin;
+        zmd_Player(self.owner).healthMin = zmd_Player.regularHealthMin;
         super.detachFromOwner();
     }
 }

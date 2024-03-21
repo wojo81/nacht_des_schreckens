@@ -5,6 +5,7 @@ class zmd_FireSale : zmd_Drop {
 
     States {
     Spawn:
+        tnt1 a 0 downScale;
         maxa a 350 bright;
 
         tnt1 a 35 bright;
@@ -24,14 +25,14 @@ class zmd_FireSale : zmd_Drop {
         stop;
     Pickup:
         tnt1 a 0 a_startSound("game/fire_sale", 0, attenuation: attn_none);
-        tnt1 a 0 giveAll('zmd_FireSalePowerup');
+        tnt1 a 0 giveAll('zmd_FireSalePower');
         tnt1 a 0 spawnBoxes;
         tnt1 a 0 {console.printf('Fire Sale!');}
         stop;
     }
 }
 
-class zmd_FireSalePowerup : zmd_Powerup {
+class zmd_FireSalePower : zmd_Powerup {
     Default {
         Inventory.icon 'fsic';
     }

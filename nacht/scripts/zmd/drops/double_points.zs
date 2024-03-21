@@ -1,6 +1,7 @@
 class zmd_DoublePoints : zmd_Drop {
     States {
     Spawn:
+        tnt1 a 0 downScale;
         inst a 350 bright;
 
         tnt1 a 35 bright;
@@ -20,21 +21,20 @@ class zmd_DoublePoints : zmd_Drop {
         stop;
     Pickup:
         tnt1 a 0 a_startSound("game/doublePoints", 0, attenuation: attn_none);
-        tnt1 a 0 giveAll('zmd_DoublePointsPowerup');
+        tnt1 a 0 giveAll('zmd_DoublePointsPower');
         tnt1 a 0 {console.printf('Double Points!');}
         stop;
     }
 }
 
-class zmd_DoublePointsPowerup : zmd_Powerup {
+class zmd_DoublePointsPower : zmd_Powerup {
     Default {
-        Inventory.maxAmount 2;
         Inventory.icon 'dpic';
     }
 
-    // override bool handlePickup(Inventory item) {
-    //     if (item is 'zmd_DoublePointsPowerup')
-    //         ++self.amount;
-    //     return super.handlePickup(item);
-    // }
+    override bool handlePickup(Inventory item) {
+        if (item is 'zmd_DoublePointsPower')
+            ++self.amount;
+        return super.handlePickup(item);
+    }
 }

@@ -1,6 +1,7 @@
 class zmd_Instakill : zmd_Drop {
     States {
     Spawn:
+        tnt1 a 0 downScale;
         inst abcdefgh 5 bright;
         inst abcdefgh 5 bright;
         inst abcdefgh 5 bright;
@@ -28,14 +29,27 @@ class zmd_Instakill : zmd_Drop {
         stop;
     Pickup:
         tnt1 a 0 a_startSound("game/instakill", 0, attenuation: attn_none);
-        tnt1 a 0 giveAll('zmd_InstakillPowerup');
+        tnt1 a 0 giveAll('zmd_InstakillPower');
         tnt1 a 0 {console.printf('Insta-kill!');}
         stop;
     }
 }
 
-class zmd_InstakillPowerup : zmd_Powerup {
+class zmd_InstakillPower : zmd_Powerup {
     Default {
         Inventory.icon 'ikic';
+    }
+}
+
+class zmd_InstakillHandler : EventHandler {
+    Array<class<Actor> > unaffected;
+
+    override void worldLoaded(WorldEvent e) {
+
+    }
+
+    override void worldThingDamaged(WorldEvent e) {
+        if (e.damageSource.countInv('zmd_InstakillPower') != 0 && self.unaffected.find(e.thing.getClass()) == self.unaffected.size())
+            e.thing.die(e.damageSource, e.inflictor, e.damageFlags, e.damageType);
     }
 }

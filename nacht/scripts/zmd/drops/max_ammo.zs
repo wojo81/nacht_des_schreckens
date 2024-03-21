@@ -12,6 +12,7 @@ class zmd_MaxAmmo : zmd_Drop {
 
     States {
     Spawn:
+        tnt1 a 0 downScale;
         maxa abcdefgh 5 bright;
         maxa abcdefgh 5 bright;
         maxa abcdefgh 5 bright;

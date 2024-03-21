@@ -32,7 +32,7 @@ class zmd_Rounds : EventHandler {
         if (e.thing && e.thing.bIsMonster) {
             self.zombieKilled();
             if (self.roundOver()) {
-                self.globalSound.start(self.endRoundSound);
+                self.globalSound.start(self.endRoundSound, pitch: 0.75);
                 self.isTransitioning = true;
                 zmd_RoundDelay.create(self);
             }

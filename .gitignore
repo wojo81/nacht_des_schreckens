@@ -1,1 +1,3 @@
-debug.bat
+.gitignore
+map01.dbs
+map01.wad.*

@@ -56,6 +56,16 @@ class zmd_Player : DoomPlayer {
         self.hudElements.push(self.roundHud);
     }
 
+    override int damageMobJ(Actor inflictor, Actor source, int damage, Name meansOfDeath, int flags, double angle) {
+        if (inflictor != self && self.health - damage <= self.healthMin) {
+            console.printf("\cf"..self.player.getUserName().."\cj went down!");
+            zmd_DownedPlayer.morphFrom(self);
+            return 0;
+        }
+        self.justTookDamage = true;
+        return super.damageMobJ(inflictor, source, damage, meansOfDeath, flags, angle);
+    }
+
     bool atWeaponCapacity() {
         if (self.weaponCount == self.maxWeaponCount)
             return true;
@@ -86,16 +96,6 @@ class zmd_Player : DoomPlayer {
                 heldWeapon.useDoubleFire = false;
             }
         }
-    }
-
-    override int damageMobJ(Actor inflictor, Actor source, int damage, Name meansOfDeath, int flags, double angle) {
-        if (inflictor != self && self.health - damage <= self.healthMin) {
-            console.printf("\cf"..self.player.getUserName().."\cj went down!");
-            zmd_DownedPlayer.morphFrom(self);
-            return 0;
-        }
-        self.justTookDamage = true;
-        return super.damageMobJ(inflictor, source, damage, meansOfDeath, flags, angle);
     }
 
     bool purchase(int cost) {

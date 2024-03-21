@@ -20,12 +20,16 @@ class zmd_Weapon : Weapon abstract {
         +Weapon.ammo_optional
     }
 
+    override void beginPlay() {
+        super.beginPlay();
+        self.clipSize += self.clipCapacity;
+    }
+
     override void postBeginPlay() {
         super.postBeginPlay();
-        self.toggledZoom = CVar.getCVar('toggledZoom', owner.player).getBool();
-        self.clipSize += self.clipCapacity;
         self.owner.takeInventory(self.ammoType1, self.clipCapacity);
-        zmd_Player(owner).enableWeaponPerks();
+        self.toggledZoom = CVar.getCVar('toggledZoom', self.owner.player).getBool();
+        zmd_Player(self.owner).enableWeaponPerks();
     }
 
     action State toggleZoom() {
@@ -41,15 +45,15 @@ class zmd_Weapon : Weapon abstract {
     }
 
     action void zoomIn() {
+        a_zoomFactor(1.5);
         invoker.zoomed = true;
-        invoker.a_zoomFactor(1.5);
         invoker.bobRangeX = 0.2;
         invoker.bobRangeY = 0.2;
     }
 
     action void zoomOut() {
+        a_zoomFactor(1.0);
         invoker.zoomed = false;
-        invoker.a_zoomFactor(1.0);
         invoker.bobRangeX = 1.0;
         invoker.bobRangeY = 1.0;
     }

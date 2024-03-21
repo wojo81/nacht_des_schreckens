@@ -1,3 +1,169 @@
+class zmd_MysteryBox : zmd_Interactable {
+    const regularCost = 950;
+    const discountCost = 10;
+
+    zmd_SpinItem spinItem;
+
+    bool canMove;
+    int spinCount;
+
+    Default {
+        radius 50;
+        height 200;
+
+        +wallSprite
+        +solid;
+    }
+
+    static zmd_MysteryBox create(zmd_MysteryBoxLocation location, bool canMove) {
+        let self = zmd_MysteryBox(Actor.spawn('zmd_MysteryBox', location.pos, allow_replace));
+        self.angle = location.angle;
+        self.canMove = canMove;
+        return self;
+    }
+
+    override void doTouch(zmd_Player player) {
+        if (self.spinItem == null) {
+            if (player.countInv('zmd_FireSalePower') != 0)
+                player.hintHud.setMessage(self.costOf(self.discountCost));
+            else
+                player.hintHud.setMessage(self.costOf(self.regularCost));
+        }
+        else if (self.spinItem.ready && self.spinItem.receiver == player)
+            player.hintHud.setMessage("[Pick Up]");
+    }
+
+    override bool doUse(zmd_Player player) {
+        if (self.spinItem == null) {
+            if ((player.countInv('zmd_FireSalePower') != 0 && player.purchase(self.discountCost)) || player.purchase(self.regularCost)) {
+                self.open(player);
+                return true;
+            }
+        } else if (self.spinItem.ready && self.spinItem.receiver == player) {
+            player.a_giveInventory(self.spinItem.itemName);
+            self.close();
+            return true;
+        }
+        return false;
+    }
+
+    bool shouldMove() {
+        return self.canMove && self.spinCount > 4 && random[boxSwitching](1, 3) == 1;
+    }
+
+    void open(zmd_Player receiver) {
+        ++self.spinCount;
+        self.spinItem = zmd_SpinItem.create(self, receiver);
+
+        if (self.spinItem.isBoxMoving)
+            self.setStateLabel('Move');
+        else
+            self.setStateLabel('Spin');
+    }
+
+    void close() {
+        self.spinItem.destroy();
+        self.spinItem = null;
+        self.setStateLabel('Idle');
+    }
+
+    void finishMoving() {
+        self.spinItem.receiver.giveInventory('zmd_Points', zmd_MysteryBox.regularCost);
+        zmd_MysteryBoxHandler.fetch().moveActiveBox();
+    }
+
+    States {
+    Idle:
+        tnt1 a 0 {active = false;}
+        msty b 70 bright;
+        tnt1 a 0 {active = true;}
+    Spawn:
+        msty a 1 bright;
+        loop;
+    Spin:
+        tnt1 a 0 a_startSound("game/mystery", volume: 0.5);
+        msty b 350 bright;
+        tnt1 a 0 close;
+    Move:
+        tnt1 a 0 a_startSound("game/mystery", volume: 0.5);
+        msty b 250 bright;
+        tnt1 a 0 finishMoving;
+        stop;
+    }
+}
+
+class zmd_SpinItem : Actor {
+    zmd_MysteryBoxPool pool;
+
+    zmd_Player receiver;
+    bool ready;
+
+    String itemName;
+    String spriteName;
+    int cycleCount;
+    bool isBoxMoving;
+
+    Default {
+        floatBobStrength 0.1;
+
+        +noGravity
+        +wallSprite
+        +floatBob
+    }
+
+    static zmd_SpinItem create(zmd_MysteryBox box, zmd_Player receiver) {
+        let self = zmd_SpinItem(Actor.spawn('zmd_SpinItem', zmd_SpinItem.offsetFrom(box), allow_replace));
+        self.receiver = receiver;
+        self.pool = zmd_MysteryBoxPool.fetch();
+        self.isBoxMoving = box.shouldMove();
+        self.angle = box.angle;
+        return self;
+    }
+
+    static Vector3 offsetFrom(zmd_MysteryBox box) {
+        let offset = Actor.angleToVector(box.angle, 6);
+        return box.pos + (offset.x, offset.y, 15);
+    }
+
+    State cycle() {
+        if (self.cycleCount++ == 15) {
+            if (self.isBoxMoving) {
+                self.spriteName = 'ikic';
+                return resolveState('MoveBox');
+            }
+            [self.itemName, self.spriteName] = self.pool.chooseFor(self.receiver);
+            return resolveState('View');
+        } else {
+            self.spriteName = self.pool.chooseSprite();
+            return resolveState(null);
+        }
+    }
+
+    void display() {
+        self.sprite = Actor.getSpriteIndex(self.spriteName);
+    }
+
+    void enablePickup() {
+        self.ready = true;
+    }
+
+    States {
+    Spawn:
+        tnt1 a 25;
+    Spin:
+        tnt1 a 0 cycle;
+        #### a 8 bright display;
+        loop;
+    View:
+        tnt1 a 0 enablePickup;
+        #### a 250 bright display;
+        stop;
+    MoveBox:
+        #### a 350 bright display;
+        stop;
+    }
+}
+
 class zmd_MysteryBoxPool : EventHandler {
     Array<String> items;
     Array<String> sprites;
@@ -111,169 +277,6 @@ class zmd_MysteryBoxHandler : EventHandler {
             self.locations.push(location);
 
         self.spawnBox(self.activeIndex, locations.size() > 1);
-    }
-}
-
-class zmd_SpinItem : Actor {
-    zmd_MysteryBoxPool pool;
-
-    zmd_Player receiver;
-    bool ready;
-
-    String itemName;
-    String spriteName;
-    int cycleCount;
-    bool isBoxMoving;
-
-    Default {
-        +noGravity
-        +wallSprite
-    }
-
-    static zmd_SpinItem create(zmd_MysteryBox box, zmd_Player receiver) {
-        let self = zmd_SpinItem(Actor.spawn('zmd_SpinItem', zmd_SpinItem.offsetFrom(box), allow_replace));
-        self.receiver = receiver;
-        self.pool = zmd_MysteryBoxPool.fetch();
-        self.isBoxMoving = box.shouldMove();
-        self.angle = box.angle;
-        return self;
-    }
-
-    static Vector3 offsetFrom(zmd_MysteryBox box) {
-        let offset = Actor.angleToVector(box.angle, 6);
-        return box.pos + (offset.x, offset.y, 15);
-    }
-
-    action State cycle() {
-        if (invoker.cycleCount++ == 15) {
-            if (invoker.isBoxMoving) {
-                invoker.spriteName = 'ikic';
-                return resolveState('MoveBox');
-            }
-            [invoker.itemName, invoker.spriteName] = invoker.pool.chooseFor(invoker.receiver);
-            return resolveState('View');
-        } else {
-            invoker.spriteName = invoker.pool.chooseSprite();
-            return resolveState(null);
-        }
-    }
-
-    action void display() {
-        invoker.sprite = Actor.getSpriteIndex(invoker.spriteName);
-    }
-
-    action void enablePickup() {
-        invoker.ready = true;
-    }
-
-    States {
-    Spawn:
-        tnt1 a 25;
-    Spin:
-        tnt1 a 0 cycle;
-        #### a 8 bright display;
-        loop;
-    View:
-        tnt1 a 0 enablePickup;
-        #### a 250 bright display;
-        stop;
-    MoveBox:
-        #### a 350 bright display;
-        stop;
-    }
-}
-
-class zmd_MysteryBox : zmd_Interactable {
-    const regularCost = 950;
-    const discountCost = 10;
-
-    zmd_SpinItem spinItem;
-
-    bool canMove;
-    int spinCount;
-
-    Default {
-        radius 50;
-        height 200;
-
-        +wallSprite
-        +solid;
-    }
-
-    static zmd_MysteryBox create(zmd_MysteryBoxLocation location, bool canMove) {
-        let self = zmd_MysteryBox(Actor.spawn('zmd_MysteryBox', location.pos, allow_replace));
-        self.angle = location.angle;
-        self.canMove = canMove;
-        return self;
-    }
-
-    override void doTouch(zmd_Player player) {
-        if (self.spinItem == null) {
-            if (player.countInv('zmd_FireSale'))
-                player.hintHud.setMessage(self.costOf(self.discountCost));
-            else
-                player.hintHud.setMessage(self.costOf(self.regularCost));
-        }
-        else if (self.spinItem.ready && self.spinItem.receiver == player)
-            player.hintHud.setMessage("[Pick Up]");
-    }
-
-    override bool doUse(zmd_Player player) {
-        if (self.spinItem == null) {
-            if ((player.countInv('zmd_FireSalePowerup') && player.purchase(self.discountCost)) || player.purchase(self.regularCost)) {
-                self.open(player);
-                return true;
-            }
-        } else if (self.spinItem.ready && self.spinItem.receiver == player) {
-            player.a_giveInventory(self.spinItem.itemName);
-            self.close();
-            return true;
-        }
-        return false;
-    }
-
-    bool shouldMove() {
-        return self.canMove && self.spinCount > 4 && random[boxSwitching](1, 3) == 1;
-    }
-
-    void open(zmd_Player receiver) {
-        ++self.spinCount;
-        self.spinItem = zmd_SpinItem.create(self, receiver);
-
-        if (self.spinItem.isBoxMoving)
-            self.setStateLabel('Move');
-        else
-            self.setStateLabel('Spin');
-    }
-
-    action void close() {
-        invoker.spinItem.destroy();
-        invoker.spinItem = null;
-        invoker.setStateLabel('Idle');
-    }
-
-    action void finishMoving() {
-        invoker.spinItem.receiver.giveInventory('zmd_Points', zmd_MysteryBox.regularCost);
-        zmd_MysteryBoxHandler.fetch().moveActiveBox();
-    }
-
-    States {
-    Idle:
-        tnt1 a 0 {active = false;}
-        msty b 70 bright;
-        tnt1 a 0 {active = true;}
-    Spawn:
-        msty a 1 bright;
-        loop;
-    Spin:
-        tnt1 a 0 a_startSound("game/mystery", volume: 0.5);
-        msty b 350 bright;
-        tnt1 a 0 close;
-    Move:
-        tnt1 a 0 a_startSound("game/mystery", volume: 0.5);
-        msty b 250 bright;
-        tnt1 a 0 finishMoving;
-        stop;
     }
 }
 

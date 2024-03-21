@@ -4,13 +4,15 @@ class zmd_Points : Inventory {
     }
 
     override void setGiveAmount(Actor receiver, int amount, bool giveCheat) {
-        let givenAmount = giveCheat?
-            amount:
-            amount << receiver.countInv('zmd_DoublePointsPowerup');
+        if (!giveCheat)
+            amount <<= receiver.countInv('zmd_DoublePointsPower');
+        else if (amount == 1)
+            amount = 10000;
+
         let player = zmd_Player(receiver);
         if (player)
-            player.pointsHud.addIncrease(givenAmount);
-        super.setGiveAmount(receiver, givenAmount, giveCheat);
+            player.pointsHud.addIncrease(amount);
+        super.setGiveAmount(receiver, amount, giveCheat);
     }
 }
 
