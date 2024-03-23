@@ -1,5 +1,5 @@
 class zmd_FireSale : zmd_Drop {
-    void spawnBoxes() {
+    action void spawnBoxes() {
         zmd_MysteryBoxHandler.fetch().spawnAllBoxes();
     }
 
