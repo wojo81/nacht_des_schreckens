@@ -20,4 +20,4 @@ https://forum.zdoom.org/viewtopic.php?p=1181624#p1181624
 
 ## Next Milestone
 
-This mod is still early in development, so the map is very basic, the weapon roster is limited, and there are many placeholder textures. Currently, I am working towards a demo filling in these issues by creating a memorable starting area, porting more weapons from World at War, creating and pulling more assets, having a stabilizing the multiplayer experience, and adding and easter egg or two :)
+This mod is still early in development, so the map is very basic, the weapon roster is limited, and there are many placeholder textures. Currently, I am working towards a demo filling in these issues by creating a memorable starting area, porting more weapons from World at War, creating and pulling more assets, stabilizing the multiplayer experience, and adding and easter egg or two :)
