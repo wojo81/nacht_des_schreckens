@@ -10,6 +10,9 @@ class zmd_Player : DoomPlayer {
     Array<String> perks;
     bool justTookDamage;
 
+    bool fastReload;
+    bool fastFire;
+
     Array<zmd_HudElement> hudElements;
     zmd_PointsHud pointsHud;
     zmd_HintHud hintHud;
@@ -73,29 +76,9 @@ class zmd_Player : DoomPlayer {
         return false;
     }
 
-    void enableWeaponPerks() {
-        if (self) {
-            let useFastReload = self.countInv('zmd_SpeedCola') == 1;
-            let useDoubleFire = self.countInv('zmd_DoubleTap') == 1;
-
-            foreach (heldWeapon : heldWeapons) {
-                let heldWeapon = zmd_Weapon(self.findInventory(heldWeapon));
-                if (heldWeapon) {
-                    heldWeapon.useFastReload = useFastReload;
-                    heldWeapon.useDoubleFire = useDoubleFire;
-                }
-            }
-        }
-    }
-
     void disableWeaponPerks() {
-        foreach (heldWeapon : self.heldWeapons) {
-            let heldWeapon = zmd_Weapon(self.findInventory(heldWeapon));
-            if (heldWeapon) {
-                heldWeapon.useFastReload = false;
-                heldWeapon.useDoubleFire = false;
-            }
-        }
+        self.fastReload = false;
+        self.fastFire = false;
     }
 
     bool purchase(int cost) {

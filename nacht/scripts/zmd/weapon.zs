@@ -1,6 +1,4 @@
 class zmd_Weapon : Weapon abstract {
-    bool useDoubleFire;
-    bool useFastReload;
     bool zoomed;
     bool toggledZoom;
     readonly int clipCapacity;
@@ -29,7 +27,6 @@ class zmd_Weapon : Weapon abstract {
         super.postBeginPlay();
         self.owner.takeInventory(self.ammoType1, self.clipCapacity);
         self.toggledZoom = CVar.getCVar('toggledZoom', self.owner.player).getBool();
-        zmd_Player(self.owner).enableWeaponPerks();
     }
 
     action State toggleZoom() {
@@ -89,7 +86,7 @@ class zmd_Weapon : Weapon abstract {
     }
 
     action void shoot(double spread, int damage, int bullets = -1) {
-        a_fireBullets(spread, spread, bullets, damage << invoker.useDoubleFire, flags: fbf_noRandom);
+        a_fireBullets(spread, spread, bullets, damage << zmd_Player(self).fastFire, flags: fbf_noRandom);
         --invoker.clipSize;
     }
 
@@ -188,13 +185,13 @@ class zmd_Weapon : Weapon abstract {
         return resolveState(null);
     }
 
-    action void ff() {
-        if (invoker.useDoubleFire)
-            a_setTics(invoker.fastFireRate);
+    action void fr() {
+        if (zmd_Player(self).fastReload)
+            self.a_setTics(invoker.fastReloadRate);
     }
 
-    action void fr() {
-        if (invoker.useFastReload)
-            a_setTics(invoker.fastReloadRate);
+    action void ff() {
+        if (zmd_Player(self).fastFire)
+            self.a_setTics(invoker.fastFireRate);
     }
 }

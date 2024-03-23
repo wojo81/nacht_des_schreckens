@@ -11,7 +11,7 @@ class zmd_InventoryManager : Inventory {
             let player = zmd_Player(owner);
             player.perks.push(item.getClassName());
             player.perkHud.add(item);
-        } if (item is 'Weapon' && !(item is 'zmd_PerkBottle')) {
+        } if (item is 'Weapon' && !(item is 'zmd_Drink')) {
             let player = zmd_Player(owner);
             if (player) {
                 player.heldWeapons.push(item.getClassName());

@@ -1,9 +1,9 @@
 class zmd_PerkMachine : zmd_Interactable {
-    class<zmd_Perk> perk;
+    class<zmd_Drink> drink;
     int cost;
 
     property cost: cost;
-    property perk: perk;
+    property drink: drink;
 
     Default {
         radius 30;
@@ -15,16 +15,12 @@ class zmd_PerkMachine : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        if (player.countInv(self.perk) == 0 && player.countInv('zmd_PerkBottle') == 0)
+        if (player.findInventory(getDefaultByType(self.drink).perk) == null && player.findInventory('zmd_Drink', subclass: true) == null)
             player.hintHud.setMessage(self.costOf(self.cost));
     }
 
     override bool doUse(zmd_Player player) {
-        if (player.countInv(self.perk) == 0 && player.countInv('zmd_PerkBottle') == 0 && player.purchase(self.cost)) {
-            zmd_PerkBottle.giveTo(player, self.perk);
-            return true;
-        }
-        return false;
+        return player.findInventory(getDefaultByType(self.drink).perk) == null && player.findInventory('zmd_Drink', subclass: true) == null && player.purchase(self.cost) && player.a_giveInventory(self.drink);
     }
 }
 
@@ -34,45 +30,54 @@ class zmd_Perk : Inventory {
     }
 }
 
-class zmd_PerkBottle : Weapon {
-    class<zmd_Perk> perk;
-    int ticksLeft;
+class zmd_Drink : zmd_Weapon {
+    readonly class<zmd_Perk> perk;
+
+    property perk: perk;
 
     Default {
         Weapon.ammoType 'clip';
         Weapon.ammoGive 1;
+        zmd_Weapon.fastReloadRate 1;
         +Weapon.ammo_optional
     }
 
-    static void giveTo(zmd_Player player, class<zmd_Perk> perk) {
-        player.a_giveInventory('zmd_PerkBottle', 1);
-        let self = zmd_PerkBottle(player.findInventory('zmd_PerkBottle'));
-        self.perk = perk;
-        self.ticksLeft = 70;
-        player.a_selectWeapon('zmd_PerkBottle');
-    }
-
-    override void tick() {
-        super.tick();
-        if (self.ticksLeft-- == 0) {
-            self.owner.giveInventory(self.perk, 1);
-            self.setStateLabel('Deselect');
+    action State loadSprites(int index) {
+        switch (index) {
+        case 0:
+            return resolveState('Sprites0');
+        case 1:
+            return resolveState('Sprites1');
+        case 2:
+            return resolveState('Sprites2');
         }
+        return null;
     }
 
     States {
     Ready:
-        rayf a 1 a_weaponReady;
-        loop;
+        tnt1 a 2;
+        tnt1 a 0 loadSprites(0);
+    Sprites0:
+        #### abcdefghijklmnopqrstuvwxyz 2 {a_weaponReady(); fr();}
+        tnt1 a 0 loadSprites(1);
+    Sprites1:
+        #### abcdefghijklmnopqrstuvwxyz 2 {a_weaponReady(); fr();}
+        tnt1 a 0 loadSprites(2);
+    Sprites2:
+        #### abcdefghijkl 2 {a_weaponReady(); fr();}
+        tnt1 a 0 a_giveInventory(invoker.perk);
+        goto Deselect;
     Select:
-        rayf a 1 a_raise;
+        tnt1 a 0 a_raise;
         wait;
     Deselect:
-        tnt1 a 0;
+        tnt1 a 0 a_lower;
+        tnt1 a 0 a_takeInventory(invoker.getClassName(), 1);
         stop;
     Fire:
-        rayf a 1 a_fireBullets(0.0, 0.0, 1, 99999);
-        goto deselect;
+        tnt1 a 1 a_fireBullets(0.0, 0.0, 1, 99999);
+        goto Deselect;
     }
 }
 

@@ -4,7 +4,7 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
 
     Default {
         zmd_PerkMachine.cost 1500;
-        zmd_PerkMachine.perk 'zmd_QuickRevive';
+        zmd_PerkMachine.drink 'zmd_QuickReviveDrink';
     }
 
     override void postBeginPlay() {
@@ -15,7 +15,7 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
 
         if (playerCount == 1) {
             self.cost = 500;
-            self.perk = 'zmd_Revive';
+            self.drink = 'zmd_ReviveDrink';
             self.isSolo = true;
         }
     }
@@ -37,14 +37,22 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
     }
 }
 
+class zmd_QuickReviveDrink : zmd_Drink {
+    Default {
+        zmd_Drink.perk 'zmd_QuickRevive';
+    }
+}
+
+class zmd_ReviveDrink : zmd_QuickReviveDrink {
+    Default {
+        zmd_Drink.perk 'zmd_Revive';
+    }
+}
+
 class zmd_QuickRevive : zmd_Perk {
     Default {
         Inventory.Icon 'qric';
     }
 }
 
-class zmd_Revive : zmd_Perk {
-    Default {
-        Inventory.icon 'qric';
-    }
-}
+class zmd_Revive : zmd_QuickRevive {}
