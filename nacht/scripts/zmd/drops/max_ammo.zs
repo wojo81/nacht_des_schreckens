@@ -1,12 +1,10 @@
 class zmd_MaxAmmo : zmd_Drop {
     action void giveAllMaxAmmo() {
         foreach (player : players) {
-            if (player.mo == null)
-                return;
             let player = zmd_Player(player.mo);
             if (player)
                 foreach (weapon : player.heldWeapons)
-                    player.giveInventory(weapon..'Ammo', 9999);
+                    player.giveInventory(weapon.getClassName()..'Ammo', 9999);
         }
     }
 

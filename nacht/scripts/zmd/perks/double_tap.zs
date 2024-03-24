@@ -15,6 +15,18 @@ class zmd_DoubleTapDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_DoubleTap';
     }
+
+    States {
+    Sprites0:
+        dd0t a 0;
+        goto super::Sprites0;
+    Sprites1:
+        dd1t a 0;
+        goto super::Sprites1;
+    Sprites2:
+        dd2t a 0;
+        goto super::Sprites2;
+    }
 }
 
 class zmd_DoubleTap : zmd_Perk {
@@ -24,6 +36,17 @@ class zmd_DoubleTap : zmd_Perk {
 
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
-        zmd_Player(owner).fastFire = true;
+        let player = zmd_Player(owner);
+        player.doubleFire = true;
+        foreach (weapon : player.heldWeapons)
+            weapon.activateDoubleFire();
+    }
+
+    override void detachFromOwner() {
+        let player = zmd_Player(owner);
+        player.doubleFire = false;
+        foreach (weapon : player.heldWeapons)
+            weapon.deactivateDoubleFire();
+        super.detachFromOwner();
     }
 }

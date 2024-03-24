@@ -3,8 +3,16 @@ class M1Garand : zmd_Weapon {
         Weapon.ammoGive 64;
         Weapon.ammoType 'M1GarandAmmo';
         zmd_Weapon.clipCapacity 8;
-        zmd_Weapon.fastFireRate 1;
-        zmd_Weapon.fastReloadRate 2;
+        zmd_Weapon.reloadRate 3;
+        zmd_Weapon.fireRate 2;
+    }
+
+    override void activateFastReload() {
+        self.reloadRate = 2;
+    }
+
+    override void activateDoubleFire() {
+        self.fireRate = 1;
     }
 
     States {

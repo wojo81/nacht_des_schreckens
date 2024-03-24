@@ -15,12 +15,12 @@ class zmd_PerkMachine : zmd_Interactable {
     }
 
     override void doTouch(zmd_Player player) {
-        if (player.findInventory(getDefaultByType(self.drink).perk) == null && player.findInventory('zmd_Drink', subclass: true) == null)
+        if (player.findInventory(getDefaultByType(self.drink).perk) == null)
             player.hintHud.setMessage(self.costOf(self.cost));
     }
 
     override bool doUse(zmd_Player player) {
-        return player.findInventory(getDefaultByType(self.drink).perk) == null && player.findInventory('zmd_Drink', subclass: true) == null && player.purchase(self.cost) && player.a_giveInventory(self.drink);
+        return player.findInventory(getDefaultByType(self.drink).perk) == null && player.purchase(self.cost) && player.a_giveInventory(self.drink);
     }
 }
 
@@ -38,8 +38,12 @@ class zmd_Drink : zmd_Weapon {
     Default {
         Weapon.ammoType 'clip';
         Weapon.ammoGive 1;
-        zmd_Weapon.fastReloadRate 1;
+        zmd_Weapon.reloadRate 2;
         +Weapon.ammo_optional
+    }
+
+    override void activateFastReload() {
+        self.reloadRate = 1;
     }
 
     action State loadSprites(int index) {
@@ -72,7 +76,6 @@ class zmd_Drink : zmd_Weapon {
         tnt1 a 0 a_raise;
         wait;
     Deselect:
-        tnt1 a 0 a_lower;
         tnt1 a 0 a_takeInventory(invoker.getClassName(), 1);
         stop;
     Fire:

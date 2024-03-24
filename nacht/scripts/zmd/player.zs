@@ -6,12 +6,12 @@ class zmd_Player : DoomPlayer {
 
     int weaponCount;
     int maxWeaponCount;
-    Array<String> heldWeapons;
+    Array<zmd_Weapon> heldWeapons;
     Array<String> perks;
     bool justTookDamage;
 
     bool fastReload;
-    bool fastFire;
+    bool doubleFire;
 
     Array<zmd_HudElement> hudElements;
     zmd_PointsHud pointsHud;
@@ -74,11 +74,6 @@ class zmd_Player : DoomPlayer {
             return true;
         ++self.weaponCount;
         return false;
-    }
-
-    void disableWeaponPerks() {
-        self.fastReload = false;
-        self.fastFire = false;
     }
 
     bool purchase(int cost) {

@@ -15,6 +15,18 @@ class zmd_SpeedColaDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_SpeedCola';
     }
+
+    States {
+    Sprites0:
+        ds0c a 0;
+        goto super::Sprites0;
+    Sprites1:
+        ds1c a 0;
+        goto super::Sprites1;
+    Sprites2:
+        ds2c a 0;
+        goto super::Sprites2;
+    }
 }
 
 class zmd_SpeedCola : zmd_Perk {
@@ -24,6 +36,17 @@ class zmd_SpeedCola : zmd_Perk {
 
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
-        zmd_Player(owner).fastReload = true;
+        let player = zmd_Player(owner);
+        player.fastReload = true;
+        foreach (weapon : player.heldWeapons)
+            weapon.activateFastReload();
+    }
+
+    override void detachFromOwner() {
+        let player = zmd_Player(owner);
+        player.fastReload = false;
+        foreach (weapon : player.heldWeapons)
+            weapon.deactivateFastReload();
+        super.detachFromOwner();
     }
 }

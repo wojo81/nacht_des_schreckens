@@ -3,12 +3,12 @@ class zmd_Weapon : Weapon abstract {
     bool toggledZoom;
     readonly int clipCapacity;
     int clipSize;
-    readonly int fastReloadRate;
-    readonly int fastFireRate;
+    int reloadRate;
+    int fireRate;
 
     property clipCapacity: clipCapacity;
-    property fastReloadRate: fastReloadRate;
-    property fastFireRate: fastFireRate;
+    property reloadRate: reloadRate;
+    property fireRate: fireRate;
 
     Default {
         Weapon.bobStyle 'InverseSmooth';
@@ -16,6 +16,18 @@ class zmd_Weapon : Weapon abstract {
         +Weapon.noAutoAim
         +Weapon.noAutoFire
         +Weapon.ammo_optional
+    }
+
+    virtual void activateFastReload() {}
+
+    virtual void activateDoubleFire() {}
+
+    void deactivateFastReload() {
+        self.reloadRate = self.Default.reloadRate;
+    }
+
+    void deactivateDoubleFire() {
+        self.fireRate = self.Default.fireRate;
     }
 
     override void beginPlay() {
@@ -86,7 +98,7 @@ class zmd_Weapon : Weapon abstract {
     }
 
     action void shoot(double spread, int damage, int bullets = -1) {
-        a_fireBullets(spread, spread, bullets, damage << zmd_Player(self).fastFire, flags: fbf_noRandom);
+        a_fireBullets(spread, spread, bullets, damage << (invoker.fireRate != invoker.Default.fireRate), flags: fbf_noRandom);
         --invoker.clipSize;
     }
 
@@ -186,12 +198,10 @@ class zmd_Weapon : Weapon abstract {
     }
 
     action void fr() {
-        if (zmd_Player(self).fastReload)
-            self.a_setTics(invoker.fastReloadRate);
+        self.a_setTics(invoker.reloadRate);
     }
 
     action void ff() {
-        if (zmd_Player(self).fastFire)
-            self.a_setTics(invoker.fastFireRate);
+        self.a_setTics(invoker.fireRate);
     }
 }

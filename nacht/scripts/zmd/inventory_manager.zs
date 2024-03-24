@@ -7,19 +7,32 @@ class zmd_InventoryManager : Inventory {
     }
 
     override bool handlePickup(Inventory item) {
+        if (item is 'zmd_Drink') {
+            let player = zmd_Player(owner);
+            let drink = zmd_Drink(item);
+            if (player.fastReload)
+                drink.activateFastReload();
+            return super.handlePickup(item);
+        }
+
         if (item is 'zmd_Perk') {
             let player = zmd_Player(owner);
             player.perks.push(item.getClassName());
             player.perkHud.add(item);
-        } if (item is 'Weapon' && !(item is 'zmd_Drink')) {
+        } if (item is 'zmd_Weapon') {
             let player = zmd_Player(owner);
+            let weapon = zmd_Weapon(item);
             if (player) {
-                player.heldWeapons.push(item.getClassName());
+                if (player.fastReload)
+                    weapon.activateFastReload();
+                if (player.doubleFire)
+                    weapon.activateDoubleFire();
+                player.heldWeapons.push(weapon);
                 if (player.atWeaponCapacity()) {
-                    let removedWeaponName = owner.player.readyWeapon.getClassName();
-                    player.heldWeapons.delete(player.heldWeapons.find(removedWeaponName));
-                    owner.takeInventory(removedWeaponName, 1);
-                    owner.takeInventory(removedWeaponName..'Ammo', 999);
+                    let removedWeapon = player.heldWeapons[player.heldWeapons.size() - 1];
+                    player.heldWeapons.delete(player.heldWeapons.find(removedWeapon));
+                    owner.takeInventory(removedWeapon.getClass(), 1);
+                    owner.takeInventory(removedWeapon.getClass()..'Ammo', 999);
                 }
             }
         }

@@ -41,6 +41,18 @@ class zmd_QuickReviveDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_QuickRevive';
     }
+
+    States {
+    Sprites0:
+        dq0r a 0;
+        goto super::Sprites0;
+    Sprites1:
+        dq1r a 0;
+        goto super::Sprites1;
+    Sprites2:
+        dq2r a 0;
+        goto super::Sprites2;
+    }
 }
 
 class zmd_ReviveDrink : zmd_QuickReviveDrink {
