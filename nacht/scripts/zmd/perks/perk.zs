@@ -69,7 +69,7 @@ class zmd_Drink : zmd_Weapon {
         #### abcdefghijklmnopqrstuvwxyz 2 {a_weaponReady(); fr();}
         tnt1 a 0 loadSprites(2);
     Sprites2:
-        #### abcdefghijkl 2 {a_weaponReady(); fr();}
+        #### ab 2 {a_weaponReady(); fr();}
         tnt1 a 0 a_giveInventory(invoker.perk);
         goto Deselect;
     Select:
