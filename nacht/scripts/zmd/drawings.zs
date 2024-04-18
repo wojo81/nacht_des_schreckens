@@ -23,7 +23,7 @@ class zmd_Drawing : zmd_Interactable {
     override void beginPlay() {
         super.beginPlay();
 
-        self.upgradedWeaponName = 'Upgraded'..self.weaponName;
+        // self.upgradedWeaponName = 'Upgraded'..self.weaponName;
         self.ammoCost = self.weaponCost / 2;
 
         self.weaponMessage = self.costOf(weaponCost);

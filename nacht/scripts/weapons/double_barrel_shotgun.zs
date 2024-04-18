@@ -1,87 +1,80 @@
 class DoubleBarrelShotgun : zmd_Weapon {
     Default {
-        Weapon.ammoGive 30;
+        Weapon.ammoGive 28;
         Weapon.ammoType 'DoubleBarrelShotgunAmmo';
-        zmd_Weapon.clipCapacity 2;
-        zmd_Weapon.reloadRate 3;
-        zmd_Weapon.fireRate 2;
-    }
-
-    override void activateFastReload() {
-        self.reloadRate = 2;
-    }
-
-    override void activateDoubleFire() {
-        self.fireRate = 1;
+        zmd_Weapon.activeAmmo 2;
+        zmd_Weapon.reloadFrameRate 3;
+        zmd_Weapon.fireFrameRate 2;
+        zmd_Weapon.keepPartialReload true;
     }
 
     States {
     Spawn:
-        dbla a -1;
+        dba0 a -1;
         loop;
     Select:
     Raise:
-        dbli a 1 a_raise;
+        dbc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 perhapsZoomReady;
+        tnt1 a 0 whenZoomed('Zoom.Ready');
     Idle:
-        dbli a 1 readyWeapon;
+        dbc0 a 1 readyWeapon;
         loop;
     Deselect:
         tnt1 a 0 zoomOut;
     Lower:
-        dbli a 1 a_lower;
+        dbc0 a 1 a_lower;
         loop;
     Fire:
-        tnt1 a 0 perhapsNoFire;
-        tnt1 a 0 perhapsZoomFire;
-        dblf a 2 ff;
-        tnt1 a 0 shoot(5, 15, 4);
+        tnt1 a 0 whenNoActiveAmmo('Ready');
+        tnt1 a 0 whenZoomed('Zoom.Fire');
         tnt1 a 0 a_startSound("weapons/shotgun_fire");
-        dblf bcdef 2 ff;
+        dbf0 a 2 ff;
+        tnt1 a 0 shootBullets(5, 15, 4);
+        dbf0 bcdef 2 ff;
         goto Ready;
     Reload:
-        tnt1 a 0 perhapsNoReload;
+        tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        tnt1 a 0 perhapsReloadPartialOnly;
-        dblr abcdefghijk 3 fr;
+        tnt1 a 0 whenAnyActiveAmmo('Reload.Partial');
+        dbd0 abcdefghij 3 fr;
         tnt1 a 0 a_startSound("weapons/shotgun_pull");
-        dblr lmnopqrstuvwxyz 3 fr;
-        db1r abcdefghijklmnopqrstuvw 3 fr;
+        dbd0 klmnopqrstuvwxyz 3 fr;
+        dbd1 abcdefghijklmnopqrstuv 3 fr;
         tnt1 a 0 a_startSound("weapons/shotgun_push");
-        db1r xyz 3 fr;
-        db2r abcd 3 fr;
+        dbd1 wxyz 3 fr;
+        dbd2 abcd 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
     Zoom.In:
         tnt1 a 0 zoomIn;
-        dblz abcdefgh 2;
+        dbb0 abcdefgh 2;
     Zoom.Ready:
     Zoom.Idle:
-        tnt1 a 0 perhapsZoomOut;
-        dblj a 1 readyWeapon;
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+        dbg0 a 2 readyWeapon;
         loop;
     Zoom.Out:
         tnt1 a 0 zoomOut;
-        dblz hgfedcba 2;
+        dbb0 hgfedcba 2;
         goto Ready;
     Zoom.Fire:
-        dblv a 2 ff;
-        tnt1 a 0 shoot(3, 15, 4);
         tnt1 a 0 a_startSound("weapons/shotgun_fire");
-        dblv bcdef 2 ff;
+        dbh0 a 2 ff;
+        tnt1 a 0 shootBullets(3, 15, 4);
+        dbh0 bcdef 2 ff;
         goto Ready;
     Reload.Partial:
-        dblp abcdefghijk 3 fr;
+        dbe0 abcdefgh 2 fr;
         tnt1 a 0 a_startSound("weapons/shotgun_pull");
-        dblp lmnopqrstuvwxyz 3 fr;
-        db1p abcdefghijklmnop 3 fr;
+        dbe0 ijklmnopqrstuvwxyz 2 fr;
+        dbe1 abcdefghijklmno 2 fr;
         tnt1 a 0 a_startSound("weapons/shotgun_push");
-        db1p qrstuv 3 fr;
-        tnt1 a 0 reloadPartially;
+        dbe1 pqrstuv 2 fr;
+        tnt1 a 0 reload;
         goto Ready;
     }
 }

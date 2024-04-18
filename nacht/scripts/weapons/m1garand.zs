@@ -1,132 +1,125 @@
 class M1Garand : zmd_Weapon {
     Default {
-        Weapon.ammoGive 64;
+        Weapon.ammoGive 56;
         Weapon.ammoType 'M1GarandAmmo';
-        zmd_Weapon.clipCapacity 8;
-        zmd_Weapon.reloadRate 3;
-        zmd_Weapon.fireRate 2;
-    }
-
-    override void activateFastReload() {
-        self.reloadRate = 2;
-    }
-
-    override void activateDoubleFire() {
-        self.fireRate = 1;
+        zmd_Weapon.activeAmmo 8;
+        zmd_Weapon.reloadFrameRate 3;
+        zmd_Weapon.fireFrameRate 2;
+        zmd_Weapon.keepPartialReload false;
     }
 
     States {
     Spawn:
-        m1ga a -1;
+        m1a0 a -1;
         loop;
     Select:
-        tnt1 a 0 perhapsRaiseEmpty;
+        tnt1 a 0 whenNoActiveAmmo('Raise.Empty');
     Raise:
-        m1gi a 1 a_raise;
+        m1c0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 perhapsZoomReady;
-        tnt1 a 0 perhapsIdleEmpty;
+        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenNoActiveAmmo('Idle.Empty');
     Idle:
-        m1gi a 1 readyWeapon;
+        m1c0 a 1 readyWeapon;
         loop;
     Deselect:
         tnt1 a 0 zoomOut;
-        tnt1 a 0 perhapsLowerEmpty;
+        tnt1 a 0 whenNoActiveAmmo('Lower.Empty');
     Lower:
-        m1gi a 1 a_lower;
+        m1c0 a 1 a_lower;
         loop;
     Fire:
-        tnt1 a 0 perhapsNoFire;
-        tnt1 a 0 perhapsZoomFire;
-        tnt1 a 0 perhapsFireLast;
-        m1gf a 2 ff;
-        tnt1 a 0 shoot(3, 25);
+        tnt1 a 0 whenNoActiveAmmo('Ready');
+        tnt1 a 0 whenZoomed('Zoom.Fire');
+        tnt1 a 0 whenLastActiveAmmo('Fire.Last');
+        m1f0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_fire");
-        m1gf bcde 2 ff;
+        tnt1 a 0 shootBullets(3, 25, 1);
+        m1f0 bcdef 2 ff;
         goto Ready;
     Reload:
-        tnt1 a 0 perhapsNoReload;
+        tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        tnt1 a 0 perhapsReloadPartial;
-        m1gr abcdefghijk 3 fr;
+        tnt1 a 0 whenAnyActiveAmmo('Reload.Partial');
+        m1d0 abcdefghijk 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_clipin");
-        m1gr lmnop 3 fr;
+        m1d0 lmnop 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_close");
-        m1gr qrstuvwx 3 fr;
+        m1d0 qrstuvwx 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
     Zoom.In:
         tnt1 a 0 zoomIn;
-        tnt1 a 0 perhapsZoomInEmpty;
-        m1gz abcdef 2;
+        tnt1 a 0 whenNoActiveAmmo('Zoom.In.Empty');
+        m1b0 abcdef 2;
     Zoom.Ready:
-        tnt1 a 0 perhapsZoomIdleEmpty;
+        tnt1 a 0 whenNoActiveAmmo('Zoom.Idle.Empty');
     Zoom.Idle:
-        tnt1 a 0 perhapsZoomOut;
-        m1gj a 1 readyWeapon;
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+        m1h0 a 2 readyWeapon;
         loop;
     Zoom.Out:
         tnt1 a 0 zoomOut;
-        tnt1 a 0 perhapsZoomOutEmpty;
-        m1gz fedcba 2;
+        tnt1 a 0 whenNoActiveAmmo('Zoom.Out.Empty');
+        m1b0 fedcba 2;
         goto Ready;
     Zoom.Fire:
-        tnt1 a 0 perhapsZoomFireLast;
-        m1gv a 2 ff;
-        tnt1 a 0 shoot(0.5, 25);
+        tnt1 a 0 whenLastActiveAmmo('Zoom.Fire.Last');
+        m1i0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_fire");
-        m1gv bcde 2 ff;
+        tnt1 a 0 shootBullets(0.5, 25, 1);
+        m1i0 bcdef 2 ff;
         goto Ready;
     Fire.Last:
-        m1gl a 2 ff;
-        tnt1 a 0 shoot(3, 25);
+        m1g0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_fire");
-        m1gl bcd 2 ff;
+        tnt1 a 0 shootBullets(3, 25, 1);
+        m1g0 bcd 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_ping");
-        m1gl e 2 ff;
+        m1g0 e 2 ff;
         goto Ready;
     Zoom.Fire.Last:
-        m1gy a 2 ff;
-        tnt1 a 0 shoot(0.5, 25);
+        m1j0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_fire");
-        m1gy bcd 2 ff;
+        tnt1 a 0 shootBullets(0.5, 25, 1);
+        m1j0 bcd 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_ping");
-        m1gy e 2 ff;
+        m1j0 ef 2 ff;
         goto Ready;
     Reload.Partial:
-        m1gp abcdefghi 3 fr;
+        m1e0 abcdefghi 2 fr;
         tnt1 a 0 a_startSound("weapons/m1g_open");
-        m1gp jk 3 fr;
+        m1e0 jk 2 fr;
         tnt1 a 0 a_startSound("weapons/m1g_clipout");
-        m1gp lmnopqrstuvwxyz 3 fr;
-        m11p abcdefg 3 fr;
+        m1e0 lmnopqrstuvwxyz 2 fr;
+        m1e1 abcdefg 2 fr;
         tnt1 a 0 a_startSound("weapons/m1g_clipin");
-        m11p hijkl 3 fr;
+        m1e1 hijkl 2 fr;
         tnt1 a 0 a_startSound("weapons/m1g_close");
-        m11p mnopqrstuvwxyz 3 fr;
-        m12p a 3 fr;
+        m1e1 mnopqrstuvwxyz 2 fr;
+        m1e2 a 2 fr;
         tnt1 a 0 reload;
         goto Ready;
     Raise.Empty:
-        m1gt a 1 a_raise;
+        m1l0 a 1 a_raise;
         loop;
     Idle.Empty:
-        m1gt a 1 readyWeapon;
+        m1l0 a 1 readyWeapon;
         loop;
     Lower.Empty:
-        m1gt a 1 a_lower;
+        m1l0 a 1 a_lower;
         loop;
     Zoom.In.Empty:
-        m1gs abcdef 2;
+        m1k0 abcdef 2;
     Zoom.Idle.Empty:
-        tnt1 a 0 perhapsZoomOut;
-        m1gg a 1 readyWeapon;
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out.Empty');
+        m1m0 a 1 readyWeapon;
         loop;
     Zoom.Out.Empty:
-        m1gs fedcba 2;
+        m1k0 fedcba 2;
         goto Ready;
     }
 }

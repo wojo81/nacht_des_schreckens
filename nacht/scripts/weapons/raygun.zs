@@ -1,80 +1,73 @@
 class Raygun : zmd_Weapon {
     Default {
-        Weapon.ammoGive 40;
+        Weapon.ammoGive 60;
         Weapon.ammoType 'RaygunAmmo';
-        zmd_Weapon.clipCapacity 20;
-        zmd_Weapon.reloadRate 3;
-        zmd_Weapon.fireRate 2;
-    }
-
-    override void activateFastReload() {
-        self.reloadRate = 2;
-    }
-
-    override void activateDoubleFire() {
-        self.fireRate = 1;
+        zmd_Weapon.activeAmmo 20;
+        zmd_Weapon.reloadFrameRate 3;
+        zmd_Weapon.fireFrameRate 2;
+        zmd_Weapon.keepPartialReload false;
     }
 
     States {
     Spawn:
-        rayp a -1;
+        rga0 a -1;
         loop;
     Select:
     Raise:
-        rayi a 1 a_raise;
+        rgc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 perhapsZoomReady;
+        tnt1 a 0 whenZoomed('Zoom.Ready');
     Idle:
-        rayi a 1 readyWeapon;
+        rgc0 a 1 readyWeapon;
         loop;
     Deselect:
         tnt1 a 0 zoomOut;
     Lower:
-        rayi a 1 a_lower;
+        rgc0 a 1 a_lower;
         loop;
     Fire:
-        tnt1 a 0 perhapsNoFire;
-        tnt1 a 0 perhapsZoomFire;
-        rayf a 2 ff;
-        tnt1 a 0 shootProjectile('Rayflux');
+        tnt1 a 0 whenNoActiveAmmo('Ready');
+        tnt1 a 0 whenZoomed('Zoom.Fire');
+        rge0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
-        rayf bcdefg 2 ff;
+        tnt1 a 0 shootProjectile('Rayflux');
+        rge0 bcdefg 2 ff;
         tnt1 a 0 a_refire;
         goto Ready;
     Reload:
-        tnt1 a 0 perhapsNoReload;
+        tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        rayr abcdefghijklmn 3 fr;
+        rgd0 abcdefghijklmn 3 fr;
         tnt1 a 0 a_startSound("weapons/raygunReload1");
-        rayr opqrstuvwxyz 3 fr;
-        ra1r abcdefghijklmnopqrstu 3 fr;
+        rgd0 opqrstuvwxyz 3 fr;
+        rgd1 abcdefghijklmnopqrstu 3 fr;
         tnt1 a 0 a_startSound("weapons/raygunReload2");
-        ra1r v 3 fr;
+        rgd1 v 3 fr;
         tnt1 a 0 a_startSound("weapons/raygunReload3");
-        ra1r wxyz 3 fr;
-        ra2r abcdefgh 3 fr;
+        rgd1 wxyz 3 fr;
+        rgd2 abcdefgh 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
     Zoom.In:
         tnt1 a 0 zoomIn;
-        rayz abcde 2;
+        rgb0 abcde 2;
     Zoom.Ready:
     Zoom.Idle:
-        tnt1 a 0 perhapsZoomOut;
-        rayj a 1 readyWeapon;
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+        rgf0 a 2 readyWeapon;
         loop;
     Zoom.Out:
         tnt1 a 0 zoomOut;
-        rayz edcba 2;
+        rgb0 edcba 2;
         goto Ready;
     Zoom.Fire:
-        rayv a 2 ff;
-        tnt1 a 0 shootProjectile('Rayflux');
+        rgg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
-        rayv bccdde 2 ff;
+        tnt1 a 0 shootProjectile('Rayflux');
+        rgg0 bcdefg 2 ff;
         tnt1 a 0 a_refire;
         goto Ready;
     }

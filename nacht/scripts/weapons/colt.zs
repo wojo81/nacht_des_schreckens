@@ -1,124 +1,117 @@
 class Colt : zmd_Weapon {
     Default {
-        Weapon.ammoGive 40;
+        Weapon.ammoGive 32;
         Weapon.ammoType 'ColtAmmo';
-        zmd_Weapon.clipCapacity 8;
-        zmd_Weapon.reloadRate 3;
-        zmd_Weapon.fireRate 2;
-    }
-
-    override void activateFastReload() {
-        self.reloadRate = 2;
-    }
-
-    override void activateDoubleFire() {
-        self.fireRate = 1;
+        zmd_Weapon.activeAmmo 8;
+        zmd_Weapon.reloadFrameRate 3;
+        zmd_Weapon.fireFrameRate 2;
+        zmd_Weapon.keepPartialReload false;
     }
 
     States {
     Spawn:
-        cola a -1;
+        cla0 a -1;
         loop;
     Select:
-        tnt1 a 0 perhapsRaiseEmpty;
+        tnt1 a 0 whenNoActiveAmmo('Raise.Empty');
     Raise:
-        coli a 1 a_raise;
+        clc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 perhapsZoomReady;
-        tnt1 a 0 perhapsIdleEmpty;
+        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenNoActiveAmmo('Idle.Empty');
     Idle:
-        coli a 1 readyWeapon;
+        clc0 a 1 readyWeapon;
         loop;
     Deselect:
         tnt1 a 0 zoomOut;
-        tnt1 a 0 perhapsLowerEmpty;
+        tnt1 a 0 whenNoActiveAmmo('Lower.Empty');
     Lower:
-        coli a 1 a_lower;
+        clc0 a 1 a_lower;
         loop;
     Fire:
-        tnt1 a 0 perhapsNoFire;
-        tnt1 a 0 perhapsZoomFire;
-        tnt1 a 0 perhapsFireLast;
-        colf a 2 ff;
-        tnt1 a 0 shoot(3, 5);
+        tnt1 a 0 whenNoActiveAmmo('Ready');
+        tnt1 a 0 whenZoomed('Zoom.Fire');
+        tnt1 a 0 whenLastActiveAmmo('Fire.Last');
+        clf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/colt");
-        colf bc 2 ff;
+        tnt1 a 0 shootBullets(3, 5, 1);
+        clf0 bc 2 ff;
         goto Ready;
     Reload:
-        tnt1 a 0 perhapsNoReload;
+        tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        tnt1 a 0 perhapsReloadPartial;
-        colr ab 3 fr;
+        tnt1 a 0 whenAnyActiveAmmo('Reload.Partial');
+        cld0 ab 3 fr;
         tnt1 a 0 a_startSound("weapons/coltReload1");
-        colr cdefghijklmnopqrstuv 3 fr;
+        cld0 cdefghijklmnopqrstuv 3 fr;
         tnt1 a 0 a_startSound("weapons/coltReload2");
-        colr wxyz 3 fr;
-        co1r abcdefghij 3 fr;
+        cld0 wxyz 3 fr;
+        cld1 abcdefghij 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
     Zoom.In:
         tnt1 a 0 zoomIn;
-        tnt1 a 0 perhapsZoomInEmpty;
-        colz abcdef 2;
+        tnt1 a 0 whenNoActiveAmmo('Zoom.In.Empty');
+        clb0 abcdef 2;
     Zoom.Ready:
-        tnt1 a 0 perhapsZoomIdleEmpty;
+        tnt1 a 0 whenNoActiveAmmo('Zoom.Idle.Empty');
     Zoom.Idle:
-        tnt1 a 0 perhapsZoomOut;
-        colj a 1 readyWeapon;
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+        clh0 a 2 readyWeapon;
         loop;
     Zoom.Out:
         tnt1 a 0 zoomOut;
-        tnt1 a 0 perhapsZoomOutEmpty;
-        colz fedcba 2;
+        tnt1 a 0 whenNoActiveAmmo('Zoom.Out.Empty');
+        clb0 fedcba 2;
         goto Ready;
     Zoom.Fire:
-        tnt1 a 0 perhapsZoomFireLast;
-        colv a 2 ff;
-        tnt1 a 0 shoot(0.25, 5);
+        tnt1 a 0 whenLastActiveAmmo('Zoom.Fire.Last');
+        cli0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/colt");
-        colv bc 2 ff;
+        tnt1 a 0 shootBullets(0.25, 5, 1);
+        cli0 bc 2 ff;
         goto Ready;
     Fire.Last:
-        coll a 2 ff;
-        tnt1 a 0 shoot(3, 5);
+        clg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/colt");
-        coll bc 2 ff;
+        tnt1 a 0 shootBullets(3, 5, 1);
+        clg0 bc 2 ff;
         goto Ready;
     Zoom.Fire.Last:
-        coly a 2 ff;
-        tnt1 a 0 shoot(0.25, 5);
+        clj0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/colt");
-        coly bc 2 ff;
+        tnt1 a 0 shootBullets(0.25, 5, 1);
+        clj0 bc 2 ff;
         goto Ready;
     Reload.Partial:
-        colp ab 3 fr;
+        cle0 ab 2 fr;
         tnt1 a 0 a_startSound("weapons/coltReload1");
-        colp cdefghijklmnopqrstuv 3 fr;
+        cle0 cdefghijklmnopqrstuv 2 fr;
         tnt1 a 0 a_startSound("weapons/coltReload2");
-        colp wxyz 3 fr;
-        co1p abcdef 3 fr;
+        cle0 wxyz 2 fr;
+        cle1 abcdef 2 fr;
         tnt1 a 0 reload;
         goto Ready;
     Raise.Empty:
-        colt a 1 a_raise;
+        cll0 a 1 a_raise;
         loop;
     Idle.Empty:
-        colt a 1 readyWeapon;
+        cll0 a 1 readyWeapon;
         loop;
     Lower.Empty:
-        colt a 1 a_lower;
+        cll0 a 1 a_lower;
         loop;
     Zoom.In.Empty:
-        cols abcdef 2;
+        clk0 abcdef 2;
     Zoom.Idle.Empty:
-        tnt1 a 0 perhapsZoomOut;
-        colg a 1 readyWeapon;
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out.Empty');
+        clm0 a 1 readyWeapon;
         loop;
     Zoom.Out.Empty:
-        cols fedcba 2;
+        clk0 fedcba 2;
         goto Ready;
     }
 }

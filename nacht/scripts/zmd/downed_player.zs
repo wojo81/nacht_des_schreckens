@@ -11,6 +11,7 @@ class zmd_DownedPlayerPool : EventHandler {
     override void worldLoaded(WorldEvent e) {
         self.defaultMorph = 'zmd_DownedPlayerWithColt';
         self.addMorph('Raygun', 'zmd_DownedPlayerWithRaygun');
+        self.addMorph('Magnum', 'zmd_DownedPlayerWithMagnum');
     }
 
     void addMorph(class<Weapon> morphWeapon, class<zmd_DownedPlayer> morphClass) {
@@ -147,6 +148,12 @@ class zmd_DownedPlayerWithColt : zmd_DownedPlayer {
 class zmd_DownedPlayerWithRaygun : zmd_DownedPlayer {
     Default {
         Player.morphWeapon 'Raygun';
+    }
+}
+
+class zmd_DownedPlayerWithMagnum : zmd_DownedPlayer {
+    Default {
+        Player.morphWeapon 'Magnum';
     }
 }
 

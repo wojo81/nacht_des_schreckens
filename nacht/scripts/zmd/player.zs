@@ -6,7 +6,7 @@ class zmd_Player : DoomPlayer {
 
     int weaponCount;
     int maxWeaponCount;
-    Array<zmd_Weapon> heldWeapons;
+    Array<Weapon> heldWeapons;
     Array<String> perks;
     bool justTookDamage;
 
@@ -23,13 +23,13 @@ class zmd_Player : DoomPlayer {
 
     Default {
         Player.StartItem 'Colt';
-        Player.StartItem 'ColtAmmo', 40;
+        Player.StartItem 'ColtAmmo', 32;
         Player.startItem 'zmd_Points', 500;
         Player.StartItem 'zmd_Regen';
         Player.StartItem 'NTM_QuickMelee';
         Player.StartItem 'zmd_InventoryManager';
 
-        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun';
+        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun', 'Magnum', 'Thompson';
 
         Player.maxHealth 250;
     }
@@ -41,6 +41,7 @@ class zmd_Player : DoomPlayer {
         self.weaponCount = 0;
         self.maxWeaponCount = 2;
         self.justTookDamage = false;
+
 
         let ammoHud = new('zmd_AmmoHud');
         self.pointsHud = new('zmd_PointsHud');
@@ -122,8 +123,8 @@ class zmd_AmmoHud : zmd_HudElement {
         let ammo = hud.getCurrentAmmo();
         let weapon = zmd_Weapon(hud.cplayer.readyWeapon);
         if (ammo && weapon) {
-            if (weapon.clipCapacity > 0)
-                hud.drawString(hud.defaultFont, weapon.clipSize..'/'..ammo.amount, (hud.right_margin, hud.bottom_margin), hud.di_screen_right_bottom | hud.di_text_align_right, Font.cr_green);
+            if (weapon.Default.activeAmmo > 0)
+                hud.drawString(hud.defaultFont, weapon.activeAmmo..'/'..ammo.amount, (hud.right_margin, hud.bottom_margin), hud.di_screen_right_bottom | hud.di_text_align_right, Font.cr_green);
             else
                 hud.drawString(hud.defaultFont, ''..ammo.amount, (hud.right_margin, hud.bottom_margin), hud.di_screen_right_bottom | hud.di_text_align_right, Font.cr_green);
         }

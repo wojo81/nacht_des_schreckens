@@ -1,6 +1,6 @@
 class zmd_DoubleTapMachine : zmd_PerkMachine {
     Default {
-        zmd_PerkMachine.cost 2000;
+        zmd_PerkMachine.cost 4000;
         zmd_PerkMachine.drink 'zmd_DoubleTapDrink';
     }
 
@@ -39,14 +39,14 @@ class zmd_DoubleTap : zmd_Perk {
         let player = zmd_Player(owner);
         player.doubleFire = true;
         foreach (weapon : player.heldWeapons)
-            weapon.activateDoubleFire();
+            zmd_Weapon(weapon).activateDoubleFire();
     }
 
     override void detachFromOwner() {
         let player = zmd_Player(owner);
         player.doubleFire = false;
         foreach (weapon : player.heldWeapons)
-            weapon.deactivateDoubleFire();
+            zmd_Weapon(weapon).deactivateDoubleFire();
         super.detachFromOwner();
     }
 }

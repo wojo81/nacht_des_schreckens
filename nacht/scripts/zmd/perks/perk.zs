@@ -35,15 +35,13 @@ class zmd_Drink : zmd_Weapon {
 
     property perk: perk;
 
+    String spriteBase;
+
     Default {
         Weapon.ammoType 'clip';
         Weapon.ammoGive 1;
-        zmd_Weapon.reloadRate 2;
+        zmd_Weapon.reloadFrameRate 2;
         +Weapon.ammo_optional
-    }
-
-    override void activateFastReload() {
-        self.reloadRate = 1;
     }
 
     action State loadSprites(int index) {
@@ -60,7 +58,6 @@ class zmd_Drink : zmd_Weapon {
 
     States {
     Ready:
-        tnt1 a 2;
         tnt1 a 0 loadSprites(0);
     Sprites0:
         #### abcdefghijklmnopqrstuvwxyz 2 {a_weaponReady(); fr();}
@@ -76,6 +73,7 @@ class zmd_Drink : zmd_Weapon {
         tnt1 a 0 a_raise;
         wait;
     Deselect:
+        tnt1 a 0 a_takeInventory('clip', 1);
         tnt1 a 0 a_takeInventory(invoker.getClassName(), 1);
         stop;
     Fire:

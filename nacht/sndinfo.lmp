@@ -106,3 +106,14 @@ weapons/m1g_ping sounds/weapons/m1garand/wpn_m1garand_clip.wav
 weapons/shotgun_fire sounds/weapons/double_barrel_shotgun/shotgun_fire.wav
 weapons/shotgun_push sounds/weapons/double_barrel_shotgun/shotgun_push.wav
 weapons/shotgun_pull sounds/weapons/double_barrel_shotgun/shotgun_pull.wav
+
+weapons/magnum_fire sounds/weapons/magnum/wpn_357_st_shot.wav
+weapons/magnum_open sounds/weapons/magnum/gr_357_open.wav
+weapons/magnum_empty sounds/weapons/magnum/gr_357_empty.wav
+weapons/magnum_load sounds/weapons/magnum/gr_357_load.wav
+weapons/magnum_close sounds/weapons/magnum/gr_357_close.wav
+
+weapons/thompson_fire sounds/weapons/thompson/wpn_thompson_st_act.wav
+weapons/thompson_magout sounds/weapons/thompson/gr_thompson_mag_out.wav
+weapons/thompson_magin sounds/weapons/thompson/gr_thompson_mag_in.wav
+weapons/thompson_charge sounds/weapons/thompson/gr_thompson_charge.wav

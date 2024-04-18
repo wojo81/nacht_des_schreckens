@@ -1,56 +1,48 @@
-class zmd_Weapon : Weapon abstract {
+class zmd_Weapon : Weapon {
     bool zoomed;
     bool toggledZoom;
-    readonly int clipCapacity;
-    int clipSize;
-    int reloadRate;
-    int fireRate;
+    bool keepPartialReload;
+    int activeAmmo;
+    int reloadFrameRate;
+    int fireFrameRate;
 
-    property clipCapacity: clipCapacity;
-    property reloadRate: reloadRate;
-    property fireRate: fireRate;
+    property activeAmmo: activeAmmo;
+    property reloadFrameRate: reloadFrameRate;
+    property fireFrameRate: fireFrameRate;
+    property keepPartialReload: keepPartialReload;
 
     Default {
         Weapon.bobStyle 'InverseSmooth';
+        Weapon.ammoUse 1;
 
         +Weapon.noAutoAim
         +Weapon.noAutoFire
         +Weapon.ammo_optional
     }
 
-    virtual void activateFastReload() {}
+    override void postBeginPlay() {
+        super.postBeginPlay();
+        self.toggledZoom = CVar.getCVar('toggledZoom', players[self.playerNumber()]).getBool();
+    }
 
-    virtual void activateDoubleFire() {}
+    void activateFastReload() {
+        self.reloadFrameRate = self.Default.reloadFrameRate - 1;
+    }
+
+    void activateDoubleFire() {
+        self.fireFrameRate = self.Default.fireFrameRate - 1;
+    }
 
     void deactivateFastReload() {
-        self.reloadRate = self.Default.reloadRate;
+        self.reloadFrameRate = self.Default.reloadFrameRate;
     }
 
     void deactivateDoubleFire() {
-        self.fireRate = self.Default.fireRate;
-    }
-
-    override void beginPlay() {
-        super.beginPlay();
-        self.clipSize += self.clipCapacity;
-    }
-
-    override void postBeginPlay() {
-        super.postBeginPlay();
-        self.owner.takeInventory(self.ammoType1, self.clipCapacity);
-        self.toggledZoom = CVar.getCVar('toggledZoom', self.owner.player).getBool();
+        self.fireFrameRate = self.Default.fireFrameRate;
     }
 
     action State toggleZoom() {
-        if (!invoker.zoomed)
-            return resolveState('Zoom.In');
-        return resolveState('Zoom.Out');
-    }
-
-    action State perhapsZoomOut() {
-        if (!invoker.toggledZoom && !(invoker.owner.player.cmd.buttons & bt_zoom))
-            return resolveState('Zoom.Out');
-        return resolveState(null);
+        return invoker.zoomed? resolveState('Zoom.Out'): resolveState('Zoom.In');
     }
 
     action void zoomIn() {
@@ -67,12 +59,6 @@ class zmd_Weapon : Weapon abstract {
         invoker.bobRangeY = 1.0;
     }
 
-    action State perhapsZoomFire() {
-        if (invoker.zoomed)
-            return resolveState('Zoom.Fire');
-        return resolveState(null);
-    }
-
     action void readyWeapon() {
         if (invoker.zoomed && !invoker.toggledZoom)
             a_weaponReady(wrf_allowReload);
@@ -81,127 +67,104 @@ class zmd_Weapon : Weapon abstract {
     }
 
     action void reload() {
-        invoker.clipSize = invoker.clipCapacity;
-        invoker.owner.takeInventory(invoker.ammoType1, invoker.clipCapacity);
+        if (invoker.keepPartialReload) {
+            let ammo = self.countInv(invoker.ammoType1);
+            let transferAmmo = min(invoker.Default.activeAmmo - invoker.activeAmmo, ammo);
+            invoker.owner.takeInventory(invoker.ammoType1, transferAmmo);
+            invoker.activeAmmo += transferAmmo;
+        } else {
+            invoker.activeAmmo = invoker.Default.activeAmmo;
+            invoker.owner.takeInventory(invoker.ammoType1, invoker.Default.activeAmmo);
+        }
     }
 
-    action void reloadPartially() {
-        let reserveAmmo = invoker.owner.countInv(invoker.ammoType1);
-        let activeAmmo = invoker.clipSize;
-        let maxActive = invoker.clipCapacity;
-
-        let transferAmmo = min(maxActive - activeAmmo, reserveAmmo);
-        if (transferAmmo == 0)
-            invoker.owner.takeInventory(invoker.ammoType1, reserveAmmo);
-        invoker.owner.takeInventory(invoker.ammoType1, transferAmmo);
-        invoker.clipSize += transferAmmo;
-    }
-
-    action void shoot(double spread, int damage, int bullets = -1) {
-        a_fireBullets(spread, spread, bullets, damage << (invoker.fireRate != invoker.Default.fireRate), flags: fbf_noRandom);
-        --invoker.clipSize;
+    action void shootBullets(double spread, int damage, int bullets) {
+        if (bullets == 1)
+            bullets = -1;
+        a_fireBullets(spread, spread, bullets, damage << (invoker.fireFrameRate != invoker.Default.fireFrameRate), flags: fbf_noRandom);
+        invoker.activeAmmo -= invoker.ammoUse1;
     }
 
     action void shootProjectile(String projectile) {
         a_fireProjectile(projectile, useAmmo: false);
-        --invoker.clipSize;
+        invoker.activeAmmo -= invoker.Default.ammoUse1;
     }
 
-    action State perhapsNoFire() {
-        if (!invoker.clipSize)
-            return resolveState('Ready');
-        return resolveState(null);
+    action State when(bool condition, StateLabel label) {
+        return condition? resolveState(label): resolveState(null);
     }
 
-    action State perhapsNoReload() {
-        if (!invoker.owner.countInv(invoker.ammoType1))
-            return resolveState('Ready');
-        return resolveState(null);
+    action State whenZoomed(StateLabel label) {
+        return invoker.when(invoker.zoomed, label);
     }
 
-    action State perhapsFireLast() {
-        if (invoker.clipSize == 1)
-            return resolveState('Fire.Last');
-        return resolveState(null);
+    action State whenNotZoomed(StateLabel label) {
+        return invoker.when(!invoker.zoomed, label);
     }
 
-    action State perhapsZoomReady() {
-        if (invoker.zoomed)
-            return resolveState('Zoom.Ready');
-        return resolveState(null);
+    action State whenShouldZoomOut(StateLabel label) {
+        return invoker.when(!invoker.toggledZoom && !(invoker.owner.player.cmd.buttons & bt_zoom), label);
     }
 
-    action State perhapsZoomFireLast() {
-        if (invoker.clipSize == 1)
-            return resolveState('Zoom.Fire.Last');
-        return resolveState(null);
+    action State whenNoActiveAmmo(StateLabel label) {
+        return invoker.when(invoker.activeAmmo == 0, label);
     }
 
-    action State perhapsReloadPartial() {
-        if (invoker.clipSize)
-            return resolveState('Reload.Partial');
-        return resolveState(null);
+    action State whenAnyActiveAmmo(StateLabel label) {
+        return invoker.when(invoker.activeAmmo != 0, label);
     }
 
-    action State perhapsReloadPartialOnly() {
-        if ((invoker.clipSize != 0 && invoker.clipSize != invoker.clipCapacity) || invoker.owner.countInv(invoker.ammoType1) < invoker.clipCapacity)
-            return resolveState('Reload.Partial');
-        return resolveState(null);
+    action State whenLastActiveAmmo(StateLabel label) {
+        return invoker.when(invoker.activeAmmo == invoker.Default.ammoUse1, label);
     }
 
-    action State perhapsRaiseEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Raise.Empty');
-        return resolveState(null);
-    }
-
-    action State perhapsIdleEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Idle.Empty');
-        return resolveState(null);
-    }
-
-    action State perhapsLowerEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Lower.Empty');
-        return resolveState(null);
-    }
-
-    action State perhapsZoomInEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Zoom.In.Empty');
-        return resolveState(null);
-    }
-
-    action State perhapsZoomIdleEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Zoom.Idle.Empty');
-        return resolveState(null);
-    }
-
-    action State perhapsZoomOutEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Zoom.Out.Empty');
-        return resolveState(null);
-    }
-
-    action State perhapsNoFireEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Ready.Empty');
-        return resolveState(null);
-    }
-
-    action State perhapsNoZoomFireEmpty() {
-        if (!invoker.clipSize)
-            return resolveState('Zoom.Ready.Empty');
-        return resolveState(null);
+    action State whenNoAmmo(StateLabel label) {
+        return invoker.when(self.countInv(invoker.ammoType1) == 0, label);
     }
 
     action void fr() {
-        self.a_setTics(invoker.reloadRate);
+        self.a_setTics(invoker.reloadFrameRate);
     }
 
     action void ff() {
-        self.a_setTics(invoker.fireRate);
+        self.a_setTics(invoker.fireFrameRate);
+    }
+}
+
+class zmd_Pickup : zmd_Interactable {
+    class<Inventory> item;
+
+    property item: item;
+
+    Default {
+        xScale 0.5;
+        yScale 0.5;
+    }
+
+    static zmd_Pickup spawnIn(Vector3 position, class<Inventory> item, int spriteIndex) {
+        let self = zmd_Pickup(Actor.spawn('zmd_Pickup', position, allow_replace));
+        self.item = item;
+        self.sprite = spriteIndex;
+        return self;
+    }
+
+    override void doTouch(zmd_Player player) {
+        player.hintHud.setMessage('[Pickup]');
+    }
+
+    override bool doUse(zmd_Player player) {
+        if (player.countInv(self.item) == 0) {
+            player.a_giveInventory(self.item);
+            self.destroy();
+            return true;
+        }
+        return false;
+    }
+
+    States {
+    Spawn:
+        tnt1 a 0;
+        #### a -1;
+        wait;
     }
 }

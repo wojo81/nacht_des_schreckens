@@ -39,14 +39,14 @@ class zmd_SpeedCola : zmd_Perk {
         let player = zmd_Player(owner);
         player.fastReload = true;
         foreach (weapon : player.heldWeapons)
-            weapon.activateFastReload();
+            zmd_Weapon(weapon).activateFastReload();
     }
 
     override void detachFromOwner() {
         let player = zmd_Player(owner);
         player.fastReload = false;
         foreach (weapon : player.heldWeapons)
-            weapon.deactivateFastReload();
+            zmd_Weapon(weapon).deactivateFastReload();
         super.detachFromOwner();
     }
 }
