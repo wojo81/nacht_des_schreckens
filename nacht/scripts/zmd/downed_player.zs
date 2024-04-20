@@ -92,7 +92,6 @@ class zmd_DownedPlayer : DoomPlayer {
     }
 
     override void postMorph(Actor player, bool current) {
-        console.printf("test");
         let player = zmd_Player(player);
         self.ammoHud = zmd_AmmoHud(self.findInventory('zmd_AmmoHud'));
         self.powerupHud = zmd_PowerupHud(self.findInventory('zmd_PowerupHud'));
@@ -114,7 +113,6 @@ class zmd_DownedPlayer : DoomPlayer {
 
     override void tick() {
         super.tick();
-        self.powerupHud.update();
         if (self.beingRevived) {
             --self.ticksTillRevive;
             --self.ticksTillReset;

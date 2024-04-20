@@ -18,16 +18,17 @@ class zmd_Points : Inventory {
 
 class zmd_PointsHandler : EventHandler {
     override void worldThingDamaged(WorldEvent e) {
-        if (e.damageSource is 'zmd_Player' && e.thing.damageType != 'none')
+        if (e.damageSource is 'zmd_Player' && e.thing.bisMonster) {
             e.damageSource.giveInventory('zmd_Points', 10);
 
-        if (e.thing.health <= 0) {
-            if (e.thing.damageType == 'kick')
-                e.damageSource.giveInventory('zmd_Points', 120);
-            else if (e.thing.damageType == 'zmd_headshot')
-                e.damageSource.giveInventory('zmd_points', 100);
-            else if (e.thing.damageType != 'none')
-                e.damageSource.giveInventory('zmd_points', 50);
+            if (e.thing.health <= 0 || e.damageSource.countInv('zmd_InstakillPower') != 0) {
+                if (e.damageType == 'kick')
+                    e.damageSource.giveInventory('zmd_Points', 120);
+                else if (e.damageType == 'zmd_headshot')
+                    e.damageSource.giveInventory('zmd_points', 100);
+                else
+                    e.damageSource.giveInventory('zmd_points', 50);
+            }
         }
     }
 }
@@ -86,9 +87,9 @@ class zmd_PointDelta : zmd_HudElement {
 class zmd_PointIncrease : zmd_PointDelta {
     override void init(int value) {
         super.init(value);
-        if (value < 100)
+        if (value < 50)
             self.color = Font.cr_gold;
-        else if (value == 100)
+        else if (value == 50)
             self.color = Font.cr_orange;
         else
             self.color = Font.cr_red;

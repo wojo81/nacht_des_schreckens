@@ -13,8 +13,8 @@ class zmd_Zombie : Actor {
         let headTop = self.floorz + self.height;
 
         if (inflictor && meansOfDamage != 'kick' && inflictor.pos.z >= headBottom && inflictor.pos.z <= headTop) {
+            meansOfDamage = 'zmd_headshot';
             damage *= 1.5;
-            meansOfDamage = 'zmd_Headshot';
         }
 
         return super.damageMobj(inflictor, source, damage, meansOfDamage, flags, angle);

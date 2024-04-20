@@ -11,7 +11,7 @@ class zmd_Worry : Inventory {
         zmd_Worry.tickLeft 35 * 5;
     }
 
-    static void giveTo(zmd_Player player, zmd_WorryHandler handler) {
+    static void giveTo(PlayerPawn player, zmd_WorryHandler handler) {
         player.a_giveInventory('zmd_Worry');
         zmd_Worry(player.findInventory('zmd_Worry')).handler = handler;
     }
@@ -36,18 +36,16 @@ class zmd_WorryHandler : EventHandler {
 
     void activate() {
         foreach (player : players) {
-            let player = zmd_Player(player.mo);
-            if (player != null)
-                zmd_Worry.giveTo(player, self);
+            if (player.mo != null)
+                zmd_Worry.giveTo(player.mo, self);
         }
     }
 
     void deactivate() {
         self.rounds.nextRound();
         foreach (player : players) {
-            let player = zmd_Player(player.mo);
-            if (player != null)
-                player.a_takeInventory('zmd_worry', 1);
+            if (player.mo != null)
+                player.mo.a_takeInventory('zmd_worry', 1);
         }
     }
 }
