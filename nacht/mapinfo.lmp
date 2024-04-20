@@ -19,7 +19,7 @@ GameInfo {
     AddEventHandlers =
         "zmd_Rounds", "zmd_MysteryBoxPool", "zmd_Spawning",
         "zmd_DownedPlayerPool", "zmd_MysteryBoxHandler", "zmd_DropPool",
-        "zmd_InstakillHandler"
+        "zmd_InstakillHandler", "zmd_WorryHandler", "zmd_PointsHandler"
 }
 
 DoomEdNums {

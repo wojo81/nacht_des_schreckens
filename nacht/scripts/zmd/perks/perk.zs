@@ -82,7 +82,7 @@ class zmd_Drink : zmd_Weapon {
     }
 }
 
-class zmd_PerkHud : zmd_HudElement {
+class zmd_PerkHud : zmd_HudItem {
     const offsetDelta = 15;
 
     Array<zmd_PerkIcon> icons;

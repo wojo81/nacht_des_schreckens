@@ -15,14 +15,14 @@ class zmd_Drop : CustomInventory {
 
     action void giveAll(class<Inventory> item, int amount = 1) {
         foreach (player : players)
-            if (player.mo != null && !(zmd_Player(player.mo) == null && item is 'zmd_Points'))
+            if (player.mo != null)
                 player.mo.giveInventory(item, amount);
     }
 }
 
 class zmd_Powerup : Powerup {
     Default {
-        Powerup.duration -30;
+        Powerup.duration 30 * 35;
     }
 
     override TextureId getPowerupIcon() {
@@ -33,6 +33,11 @@ class zmd_Powerup : Powerup {
         let player = zmd_Player(toucher);
         if (player)
             player.powerupHud.add(self, self.effectTics);
+        else {
+            let player = zmd_DownedPlayer(toucher);
+            if (player)
+                player.powerupHud.add(self, self.effectTics);
+        }
         return super.tryPickup(toucher);
     }
 }
@@ -84,15 +89,15 @@ class zmd_DropPool : EventHandler {
     }
 }
 
-class zmd_PowerupHud : zmd_HudElement {
+class zmd_PowerupHud : zmd_HudItem {
     const offsetDelta = 13;
 
     Array<zmd_PowerupIcon> icons;
 
-    override void tick() {
+    override void update() {
         for (let i = 0; i != icons.size(); ++i) {
             let icon = icons[i];
-            icon.tick();
+            icon.update();
             if (icon.ticksLeft == 0) {
                 icons.delete(i);
                 for (let j = 0; j != i; ++j)
@@ -140,7 +145,7 @@ class zmd_PowerupIcon : zmd_HudElement {
         return icon;
     }
 
-    override void tick() {
+    override void update() {
         --self.ticksLeft;
     }
 

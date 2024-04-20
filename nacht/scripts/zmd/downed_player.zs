@@ -45,7 +45,8 @@ class zmd_DownedPlayer : DoomPlayer {
 
     zmd_Player reviver;
 
-    zmd_HudElement ammoHud;
+    zmd_AmmoHud ammoHud;
+    zmd_PowerupHud powerupHud;
 
     Default {
         +PlayerPawn.noThrustWhenInvul
@@ -66,11 +67,6 @@ class zmd_DownedPlayer : DoomPlayer {
             zmd_DownedPlayer.regularDownTime:
             zmd_DownedPlayer.soloDownTime;
         player.a_morph(downedPool.chooseFor(player), downTime,  mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
-    }
-
-    override void beginPlay() {
-        super.beginPlay();
-        self.ammoHud = new('zmd_AmmoHud');
     }
 
     override void touch(Actor toucher) {
@@ -95,6 +91,13 @@ class zmd_DownedPlayer : DoomPlayer {
         return false;
     }
 
+    override void postMorph(Actor player, bool current) {
+        console.printf("test");
+        let player = zmd_Player(player);
+        self.ammoHud = zmd_AmmoHud(self.findInventory('zmd_AmmoHud'));
+        self.powerupHud = zmd_PowerupHud(self.findInventory('zmd_PowerupHud'));
+    }
+
     override void postUnmorph(Actor player, bool current) {
         if (player.countInv('zmd_Revive') == 0) {
             player.die(player, player);
@@ -111,12 +114,13 @@ class zmd_DownedPlayer : DoomPlayer {
 
     override void tick() {
         super.tick();
+        self.powerupHud.update();
         if (self.beingRevived) {
             --self.ticksTillRevive;
             --self.ticksTillReset;
             if (self.ticksTillReset == 0) {
                 self.beingRevived = false;
-                self.reviver.reviveHud.deactivate();
+                self.reviver.reviveHud.end();
             }
         }
     }
@@ -128,12 +132,12 @@ class zmd_DownedPlayer : DoomPlayer {
             self.ticksTillRevive = self.totalTicksTillQuickRevive;
         else
             self.ticksTillRevive = self.totalTicksTillRevive;
-        reviver.reviveHud.activate(self.ticksTillRevive);
+        reviver.reviveHud.begin(self.ticksTillRevive);
         self.reviver = reviver;
     }
 
     void finishRevive() {
-        self.reviver.reviveHud.deactivate();
+        self.reviver.reviveHud.end();
         self.giveInventory('zmd_Revive', 1);
         self.unmorph(self, 0, true);
     }
@@ -157,12 +161,12 @@ class zmd_DownedPlayerWithMagnum : zmd_DownedPlayer {
     }
 }
 
-class zmd_ReviveHud : zmd_HudElement {
+class zmd_ReviveHud : zmd_HudItem {
     bool active;
     int ticksLeft;
     int totalTicks;
 
-    override void tick() {
+    override void update() {
         if (self.active && self.ticksLeft != 0)
             --self.ticksLeft;
     }
@@ -172,13 +176,13 @@ class zmd_ReviveHud : zmd_HudElement {
             hud.drawBar('revback', 'revfore', self.ticksLeft, self.totalTicks, (0, -30), 1, 0, hud.di_screen_center_bottom);
     }
 
-    void activate(int totalTicks) {
+    void begin(int totalTicks) {
         self.active = true;
         self.ticksLeft = totalTicks;
         self.totalTicks = totalTicks;
     }
 
-    void deactivate() {
+    void end() {
         self.active = false;
     }
 }

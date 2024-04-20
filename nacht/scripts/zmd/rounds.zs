@@ -14,6 +14,7 @@ class zmd_Rounds : EventHandler {
 
     zmd_Spawning spawning;
     zmd_DropPool dropPool;
+    zmd_WorryHandler worryHandler;
     zmd_GlobalSound globalSound;
 
     static zmd_Rounds fetch() {
@@ -23,6 +24,7 @@ class zmd_Rounds : EventHandler {
     override void worldLoaded(WorldEvent e) {
         self.dropPool = zmd_DropPool.fetch();
         self.spawning = zmd_Spawning.init(self);
+        zmd_WorryHandler.bind_with(self);
         self.globalSound = zmd_GlobalSound.create();
         self.globalSound.start(self.introSound);
         self.nextRound();
@@ -42,9 +44,9 @@ class zmd_Rounds : EventHandler {
     // override void worldTick() {
     //     super.worldTick();
     //     console.printf("");
-    //     console.printf("unspawned %d", rounds_.unspawnedZombies);
-    //     console.printf("live zombies %d", rounds_.liveZombies);
-    //     console.printf("zombies left %d", rounds_.zombiesLeft);
+    //     console.printf("unspawned %d", self.unspawnedZombies);
+    //     console.printf("live zombies %d", self.liveZombies);
+    //     console.printf("zombies left %d", self.zombiesLeft);
     // }
 
     int calcZombiesHealth() {
@@ -79,6 +81,10 @@ class zmd_Rounds : EventHandler {
     bool readyToSpawn() {
         return !self.isTransitioning && self.liveZombies != self.maxHordeCount && self.unspawnedZombies != 0;
     }
+
+    void startWorrying() {
+        self.worryHandler.activate();
+    }
 }
 
 class zmd_RoundDelay : Thinker {
@@ -96,13 +102,13 @@ class zmd_RoundDelay : Thinker {
 
     override void tick() {
         if (self.ticksLeft-- == 0) {
-            self.rounds.nextRound();
+            self.rounds.startWorrying();
             self.destroy();
         }
     }
 }
 
-class zmd_RoundHud : zmd_HudElement {
+class zmd_RoundHud : zmd_HudItem {
     const fadeInDelay = 35 * 2;
     const fadeOutDelay = 35 * 5;
     const flashDelay = 35;
@@ -113,15 +119,13 @@ class zmd_RoundHud : zmd_HudElement {
     int color;
     double alpha;
 
-    play static zmd_RoundHud create() {
-        let self = new('zmd_RoundHud');
+    override void beginPlay() {
         self.rounds = zmd_Rounds.fetch();
         self.ticksSinceTransition = self.fadeInDelay;
         self.color = Font.cr_red;
-        return self;
     }
 
-    override void tick() {
+    override void update() {
         if (self.rounds.isTransitioning) {
             if (self.ticksSinceTransition == self.fadeOutDelay) {
                 self.alpha = 0.0;

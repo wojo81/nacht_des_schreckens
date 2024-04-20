@@ -49,7 +49,7 @@ class zmd_InstakillHandler : EventHandler {
     }
 
     override void worldThingDamaged(WorldEvent e) {
-        if (e.damageSource.countInv('zmd_InstakillPower') != 0 && self.unaffected.find(e.thing.getClass()) == self.unaffected.size())
+        if (e.damage < e.thing.health && e.damageSource.countInv('zmd_InstakillPower') != 0 && self.unaffected.find(e.thing.getClassName()) == self.unaffected.size())
             e.thing.die(e.damageSource, e.inflictor, e.damageFlags, e.damageType);
     }
 }

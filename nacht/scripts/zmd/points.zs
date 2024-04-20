@@ -16,14 +16,30 @@ class zmd_Points : Inventory {
     }
 }
 
-class zmd_PointsHud : zmd_HudElement {
+class zmd_PointsHandler : EventHandler {
+    override void worldThingDamaged(WorldEvent e) {
+        if (e.damageSource is 'zmd_Player' && e.thing.damageType != 'none')
+            e.damageSource.giveInventory('zmd_Points', 10);
+
+        if (e.thing.health <= 0) {
+            if (e.thing.damageType == 'kick')
+                e.damageSource.giveInventory('zmd_Points', 120);
+            else if (e.thing.damageType == 'zmd_headshot')
+                e.damageSource.giveInventory('zmd_points', 100);
+            else if (e.thing.damageType != 'none')
+                e.damageSource.giveInventory('zmd_points', 50);
+        }
+    }
+}
+
+class zmd_PointsHud : zmd_HudItem {
     Array<zmd_PointDelta> pointDeltas;
 
-    override void tick() {
+    override void update() {
         while (self.pointDeltas.size() && self.pointDeltas[0].ticksLeft == 0)
             self.pointDeltas.delete(0);
         foreach (pointDelta : self.pointDeltas)
-            pointDelta.tick();
+            pointDelta.update();
     }
 
     override void draw(zmd_Hud hud, int state, double tickFrac) {
@@ -47,6 +63,7 @@ class zmd_PointsHud : zmd_HudElement {
 
 class zmd_PointDelta : zmd_HudElement {
     int value;
+    int color;
     vector2 position;
     vector2 velocity;
     int ticksLeft;
@@ -59,7 +76,7 @@ class zmd_PointDelta : zmd_HudElement {
         self.alpha = 1.0;
     }
 
-    override void tick() {
+    override void update() {
         self.position += self.velocity;
         --self.ticksLeft;
         self.alpha = self.ticksLeft / 15.0;
@@ -69,21 +86,28 @@ class zmd_PointDelta : zmd_HudElement {
 class zmd_PointIncrease : zmd_PointDelta {
     override void init(int value) {
         super.init(value);
+        if (value < 100)
+            self.color = Font.cr_gold;
+        else if (value == 100)
+            self.color = Font.cr_orange;
+        else
+            self.color = Font.cr_red;
         self.velocity = (frandom[pointIncrease](0.4, 1.4), frandom[pointIncrease](-0.4, 0.2));
     }
 
     override void draw(zmd_Hud hud, int state, double tickFrac) {
-        hud.drawString(hud.defaultFont, '+'..self.value, self.position, hud.di_screen_left_bottom, Font.cr_gold, alpha, scale: (0.5, 0.5));
+        hud.drawString(hud.defaultFont, '+'..self.value, self.position, hud.di_screen_left_bottom, self.color, alpha, scale: (0.5, 0.5));
     }
 }
 
 class zmd_PointDecrease : zmd_PointDelta {
     override void init(int value) {
         super.init(value);
+        self.color = Font.cr_darkRed;
         self.velocity = (0, 0.1);
     }
 
     override void draw(zmd_Hud hud, int state, double tickFrac) {
-        hud.drawString(hud.defaultFont, '-'..self.value, self.position, hud.di_screen_left_bottom, Font.cr_red, alpha, scale: (0.5, 0.5));
+        hud.drawString(hud.defaultFont, '-'..self.value, self.position, hud.di_screen_left_bottom, self.color, alpha, scale: (0.5, 0.5));
     }
 }

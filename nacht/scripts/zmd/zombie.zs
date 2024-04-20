@@ -8,25 +8,9 @@ class zmd_Zombie : Actor {
         thing_changeTid(0, self.tid);
     }
 
-    override void die(Actor source, Actor inflictor, int dmgflags, Name meansOfDeath) {
-        super.die(source, inflictor, dmgflags, meansOfDeath);
-        let player = zmd_Player(source);
-        if (player) {
-            if (meansOfDeath == 'zmd_Headshot')
-                player.giveInventory('zmd_Points', 100);
-            else if (meansOfDeath == 'kick')
-                player.giveInventory('zmd_Points', 120);
-            else if (meansOfDeath != 'None')
-                player.giveInventory('zmd_Points', 50);
-        }
-    }
-
     override int damageMobj(Actor inflictor, Actor source, int damage, Name meansOfDamage, int flags, double angle) {
         let headBottom = self.floorz + self.height - 10;
         let headTop = self.floorz + self.height;
-
-        if (source is 'zmd_Player' && meansOfDamage != 'None')
-            source.giveInventory('zmd_Points', 10);
 
         if (inflictor && meansOfDamage != 'kick' && inflictor.pos.z >= headBottom && inflictor.pos.z <= headTop) {
             damage *= 1.5;

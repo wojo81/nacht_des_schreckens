@@ -4,22 +4,20 @@ class zmd_Player : DoomPlayer {
 
     int healthMin;
 
-    int weaponCount;
     int maxWeaponCount;
     Array<Weapon> heldWeapons;
     Array<String> perks;
+    Array<zmd_HudItem> hudItems;
     bool justTookDamage;
 
     bool fastReload;
     bool doubleFire;
 
-    Array<zmd_HudElement> hudElements;
-    zmd_PointsHud pointsHud;
     zmd_HintHud hintHud;
-    zmd_ReviveHud reviveHud;
+    zmd_PointsHud pointsHud;
     zmd_PowerupHud powerupHud;
     zmd_PerkHud perkHud;
-    zmd_RoundHud roundHud;
+    zmd_ReviveHud reviveHud;
 
     Default {
         Player.StartItem 'Colt';
@@ -28,6 +26,7 @@ class zmd_Player : DoomPlayer {
         Player.StartItem 'zmd_Regen';
         Player.StartItem 'NTM_QuickMelee';
         Player.StartItem 'zmd_InventoryManager';
+        Player.StartItem 'zmd_PickupDropper';
 
         Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun', 'Magnum', 'Thompson';
 
@@ -38,31 +37,24 @@ class zmd_Player : DoomPlayer {
         super.beginPlay();
 
         self.healthMin = regularHealthMin;
-        self.weaponCount = 0;
         self.maxWeaponCount = 2;
         self.justTookDamage = false;
 
-
-        let ammoHud = new('zmd_AmmoHud');
-        self.pointsHud = new('zmd_PointsHud');
-        self.hintHud = new('zmd_HintHud');
-        self.powerupHud = new('zmd_PowerupHud');
-        self.reviveHud = new('zmd_ReviveHud');
-        self.perkHud = new('zmd_PerkHud');
-        self.roundHud = zmd_RoundHud.create();
-
-        self.hudElements.push(ammoHud);
-        self.hudElements.push(self.pointsHud);
-        self.hudElements.push(self.hintHud);
-        self.hudElements.push(self.powerupHud);
-        self.hudElements.push(self.reviveHud);
-        self.hudElements.push(self.perkHud);
-        self.hudElements.push(self.roundHud);
+        self.hintHud = zmd_HintHud(self.giveHud('zmd_HintHud'));
+        self.pointsHud = zmd_PointsHud(self.giveHud('zmd_PointsHud'));
+        self.powerupHud = zmd_PowerupHud(self.giveHud('zmd_PowerupHud'));
+        self.perkHud = zmd_PerkHud(self.giveHud('zmd_PerkHud'));
+        self.reviveHud = zmd_ReviveHud(self.giveHud('zmd_ReviveHud'));
+        self.giveHud('zmd_AmmoHud');
+        self.giveHud('zmd_RoundHud');
     }
 
     override int damageMobJ(Actor inflictor, Actor source, int damage, Name meansOfDeath, int flags, double angle) {
         if (inflictor != self && self.health - damage <= self.healthMin) {
             console.printf("\cf"..self.player.getUserName().."\cj went down!");
+            let worry = zmd_Worry(self.findInventory('zmd_Worry'));
+            if (worry != null)
+                worry.handler.deactivate();
             zmd_DownedPlayer.morphFrom(self);
             return 0;
         }
@@ -70,11 +62,15 @@ class zmd_Player : DoomPlayer {
         return super.damageMobJ(inflictor, source, damage, meansOfDeath, flags, angle);
     }
 
+    zmd_HudItem giveHud(class<zmd_HudItem> hud) {
+        self.a_giveInventory(hud);
+        let item = zmd_HudItem(self.findInventory(hud));
+        self.hudItems.push(item);
+        return item;
+    }
+
     bool atWeaponCapacity() {
-        if (self.weaponCount == self.maxWeaponCount)
-            return true;
-        ++self.weaponCount;
-        return false;
+        return self.heldWeapons.size() == self.maxWeaponCount;
     }
 
     bool purchase(int cost) {
@@ -87,7 +83,7 @@ class zmd_Player : DoomPlayer {
     }
 }
 
-class zmd_HintHud : zmd_HudElement {
+class zmd_HintHud : zmd_HudItem {
     const fadeDelay = 40;
     const fadeTicks = 5;
 
@@ -95,7 +91,7 @@ class zmd_HintHud : zmd_HudElement {
     int ticksLeft;
     double alpha;
 
-    override void tick() {
+    override void update() {
         if (self.ticksLeft != 0) {
             --self.ticksLeft;
             self.alpha = self.ticksLeft / double(self.fadeTicks);
@@ -118,7 +114,7 @@ class zmd_HintHud : zmd_HudElement {
     }
 }
 
-class zmd_AmmoHud : zmd_HudElement {
+class zmd_AmmoHud : zmd_HudItem {
     override void draw(zmd_Hud hud, int state, double tickFrac) {
         let ammo = hud.getCurrentAmmo();
         let weapon = zmd_Weapon(hud.cplayer.readyWeapon);

@@ -27,6 +27,8 @@ version "4.11.1"
 #include "scripts/zmd/drops/max_ammo.zs"
 #include "scripts/zmd/drops/kaboom.zs"
 #include "scripts/zmd/drops/fire_sale.zs"
+#include "scripts/zmd/worry.zs"
+#include "scripts/zmd/pickup.zs"
 
 #include "scripts/weapons/projectiles/rayflux.zs"
 #include "scripts/weapons/raygun.zs"

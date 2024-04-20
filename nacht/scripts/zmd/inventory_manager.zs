@@ -12,25 +12,28 @@ class zmd_InventoryManager : Inventory {
             let drink = zmd_Drink(item);
             if (player.fastReload)
                 drink.activateFastReload();
+        } else if (item is 'zmd_Revive') {
+            if (player) {
+                player.perks.push(item.getClassName());
+                player.perkHud.add(item);
+            }
         } else if (item is 'zmd_Perk') {
             player.perks.push(item.getClassName());
             player.perkHud.add(item);
         } else if (item is 'zmd_Weapon') {
-            let weapon = zmd_Weapon(item);
-            if (player) {
-                if (player.fastReload)
-                    weapon.activateFastReload();
-                if (player.doubleFire)
-                    weapon.activateDoubleFire();
-                player.heldWeapons.push(weapon);
-                if (player.atWeaponCapacity()) {
-                    let removedWeapon = player.player.readyWeapon;
-                    let removedWeaponClass = removedWeapon.getClassName();
-                    player.heldWeapons.delete(player.heldWeapons.find(removedWeapon));
-                    owner.takeInventory(removedWeaponClass, 1);
-                    owner.takeInventory(removedWeaponClass..'Ammo', 999);
-                }
+            if (player.atWeaponCapacity()) {
+                let removedWeapon = player.player.readyWeapon;
+                let removedWeaponClass = removedWeapon.getClassName();
+                player.heldWeapons.delete(player.heldWeapons.find(removedWeapon));
+                owner.takeInventory(removedWeaponClass, 1);
+                owner.takeInventory(removedWeapon.ammoType1, 999);
             }
+            let weapon = zmd_Weapon(item);
+            if (player.fastReload)
+                weapon.activateFastReload();
+            if (player.doubleFire)
+                weapon.activateDoubleFire();
+            player.heldWeapons.push(weapon);
         }
         return super.handlePickup(item);
     }
