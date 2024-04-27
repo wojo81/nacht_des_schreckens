@@ -1,6 +1,21 @@
 class zmd_Points : Inventory {
+    zmd_PointsHud hud;
+
     Default {
         Inventory.maxAmount 999999;
+    }
+
+    static bool takeFrom(PlayerPawn player, int cost) {
+        if (player.countInv('zmd_Points') >= cost) {
+            player.takeInventory('zmd_Points', cost);
+            zmd_PointsHud(player.findInventory('zmd_PointsHud')).addDecrease(cost);
+            return true;
+        }
+        return false;
+    }
+
+    override void beginPlay() {
+        self.hud = zmd_PointsHud(self.findInventory('zmd_PointsHud'));
     }
 
     override void setGiveAmount(Actor receiver, int amount, bool giveCheat) {
@@ -9,16 +24,14 @@ class zmd_Points : Inventory {
         else if (amount == 1)
             amount = 10000;
 
-        let player = zmd_Player(receiver);
-        if (player)
-            player.pointsHud.addIncrease(amount);
+        zmd_PointsHud(receiver.findInventory('zmd_PointsHud')).addIncrease(amount);
         super.setGiveAmount(receiver, amount, giveCheat);
     }
 }
 
 class zmd_PointsHandler : EventHandler {
     override void worldThingDamaged(WorldEvent e) {
-        if (e.damageSource is 'zmd_Player' && e.thing.bisMonster) {
+        if (e.damageSource is 'PlayerPawn' && e.thing.bisMonster && e.damageType != 'None') {
             e.damageSource.giveInventory('zmd_Points', 10);
 
             if (e.thing.health <= 0 || e.damageSource.countInv('zmd_InstakillPower') != 0) {

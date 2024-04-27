@@ -39,17 +39,14 @@ class zmd_InstakillPower : zmd_Powerup {
     Default {
         Inventory.icon 'ikic';
     }
-}
 
-class zmd_InstakillHandler : EventHandler {
-    Array<class<Actor> > unaffected;
-
-    override void worldLoaded(WorldEvent e) {
-
+    override void modifyDamage(int damage, Name damageType, out int newDamage, bool passive, Actor inflictor, Actor source, int flags) {
+        if (!passive && source != self.owner)
+            newDamage = source.health;
     }
 
-    override void worldThingDamaged(WorldEvent e) {
-        if (e.damage < e.thing.health && e.damageSource.countInv('zmd_InstakillPower') != 0 && self.unaffected.find(e.thing.getClassName()) == self.unaffected.size())
-            e.thing.die(e.damageSource, e.inflictor, e.damageFlags, e.damageType);
+    override void detachFromOwner() {
+        self.a_startSound("game/ikvanish");
+        super.detachFromOwner();
     }
 }

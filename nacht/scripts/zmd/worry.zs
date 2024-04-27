@@ -17,10 +17,14 @@ class zmd_Worry : Inventory {
     }
 
     override void doEffect() {
-        if (owner.getPlayerInput(modInput_Buttons) & self.key)
+        if (self.justTapped())
             self.ticksLeft = self.Default.ticksLeft;
-        if (self.ticksLeft-- == 0)
+        else if (self.ticksLeft-- == 0)
             self.handler.deactivate();
+    }
+
+    bool justTapped() {
+        return self.owner.getPlayerInput(modInput_oldButtons) & self.key && !(self.owner.getPlayerInput(modInput_buttons) & self.key);
     }
 }
 

@@ -36,17 +36,11 @@ class zmd_DoubleTap : zmd_Perk {
 
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
-        let player = zmd_Player(owner);
-        player.doubleFire = true;
-        foreach (weapon : player.heldWeapons)
-            zmd_Weapon(weapon).activateDoubleFire();
+        zmd_InventoryManager(self.owner.findInventory('zmd_InventoryManager')).activateDoubleFire();
     }
 
     override void detachFromOwner() {
-        let player = zmd_Player(owner);
-        player.doubleFire = false;
-        foreach (weapon : player.heldWeapons)
-            zmd_Weapon(weapon).deactivateDoubleFire();
+        zmd_InventoryManager(self.owner.findInventory('zmd_InventoryManager')).deactivateDoubleFire();
         super.detachFromOwner();
     }
 }

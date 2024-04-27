@@ -1,0 +1,6 @@
+BloodRain {
+    precipitationType = Rain
+    precipitationAmount = 13
+    precipitationRateTime = 0.02
+    precipitationSound = ambience/rain
+}

@@ -1,8 +1,16 @@
 class zmd_HudItem : Inventory {
+    Default {
+        Inventory.maxAmount 1;
+        +Inventory.undroppable
+        +Inventory.untossable
+        +Inventory.persistentPower
+    }
+
     virtual ui void draw(zmd_Hud hud, int state, double tickFrac) {}
     virtual void update() {}
 
     override void tick() {
+        super.tick();
         self.update();
     }
 }
@@ -20,25 +28,39 @@ class zmd_Hud : BaseStatusBar {
     HudFont defaultFont;
     HudFont hintFont;
 
+    zmd_InventoryManager inventoryManager;
+
+    const flashDelay = 35 * 2;
+    int ticksSinceGameOver;
+    double alpha;
+
     override void init() {
         self.defaultFont = HudFont.create(bigfont);
         self.hintFont = HudFont.create(confont);
     }
 
+    override void tick() {
+        if (self.inventoryManager.gameOver) {
+            ++self.ticksSinceGameOver;
+            self.alpha = abs((self.ticksSinceGameOver % (self.flashDelay * 2) - self.flashDelay) / double(self.flashDelay));
+        }
+    }
+
     override void draw(int state, double ticFrac) {
         super.draw(state, ticFrac);
         self.beginHud();
-        let player = zmd_Player(self.cplayer.mo);
-        if (player)
-            foreach (item : player.hudItems) {
-                item.draw(self, state, ticFrac);
-            }
-        else {
-            let player = zmd_DownedPlayer(self.cplayer.mo);
-            if (player) {
-                player.ammoHud.draw(self, state, ticFrac);
-                player.powerupHud.draw(self, state, ticFrac);
+
+        if (self.inventoryManager.gameOver) {
+            self.drawString(self.defaultFont, 'Game Over', (0, 0), self.di_screen_center | self.di_text_align_center, translation: Font.cr_red, alpha: self.alpha);
+        } else if (!self.inventoryManager.spectating) {
+            let player = self.cplayer.mo;
+            if (player is 'zmd_DownedPlayer') {
+                self.inventoryManager.ammoHud.draw(self, state, ticFrac);
+                self.inventoryManager.powerupHud.draw(self, state, ticFrac);
                 Screen.dim("red", 0.4, 0, 0, Screen.getWidth(), Screen.getHeight());
+            } else {
+                foreach (hudItem : self.inventoryManager.hudItems)
+                    hudItem.draw(self, state, ticFrac);
             }
         }
     }

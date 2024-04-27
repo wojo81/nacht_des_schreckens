@@ -10,17 +10,14 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
     override void postBeginPlay() {
         super.postBeginPlay();
 
-        let playerCount = 0;
-        for (;playerCount != players.size() && players[playerCount].mo != null; ++playerCount);
-
-        if (playerCount == 1) {
+        if (!multiplayer) {
             self.cost = 500;
             self.drink = 'zmd_ReviveDrink';
             self.isSolo = true;
         }
     }
 
-    override bool doUse(zmd_Player player) {
+    override bool doUse(PlayerPawn player) {
         let used = super.doUse(player);
         if (used && self.isSolo)
             if (++self.buyCount == 3)

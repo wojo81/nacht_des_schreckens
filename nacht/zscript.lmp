@@ -1,4 +1,4 @@
-version "4.11.1"
+version "4.11.3"
 
 #include "scripts/zmd/points.zs"
 #include "scripts/zmd/rounds.zs"
@@ -29,6 +29,8 @@ version "4.11.1"
 #include "scripts/zmd/drops/fire_sale.zs"
 #include "scripts/zmd/worry.zs"
 #include "scripts/zmd/pickup.zs"
+#include "scripts/zmd/spectate.zs"
+#include "scripts/weather/include.zs"
 
 #include "scripts/weapons/projectiles/rayflux.zs"
 #include "scripts/weapons/raygun.zs"

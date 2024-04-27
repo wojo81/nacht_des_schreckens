@@ -5,6 +5,9 @@ episode "map01" {}
 
 map map01 "Nacht des Schreckens" {
     sky1 = "sky1"
+    skyfog = 225
+    outsidefog = 301010
+    outsidefogdensity = 125
 }
 
 skill Normal {
@@ -14,12 +17,12 @@ skill Normal {
 }
 
 GameInfo {
-    PlayerClasses = "zmd_Player"
+    PlayerClasses = "DoomPlayer", "zmd_Player"
     StatusBarClass = "zmd_Hud"
     AddEventHandlers =
         "zmd_Rounds", "zmd_MysteryBoxPool", "zmd_Spawning",
         "zmd_DownedPlayerPool", "zmd_MysteryBoxHandler", "zmd_DropPool",
-        "zmd_InstakillHandler", "zmd_WorryHandler", "zmd_PointsHandler"
+        "zmd_WorryHandler", "zmd_PointsHandler", "zmd_InventoryGiver"
 }
 
 DoomEdNums {

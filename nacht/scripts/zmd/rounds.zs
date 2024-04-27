@@ -67,6 +67,13 @@ class zmd_Rounds : EventHandler {
 
         if (self.currentRound != 1)
             self.globalSound.start(self.beginRoundSound);
+
+        foreach (player : players) {
+            if (player.mo != null && player.mo.countInv('zmd_Spectate') != 0) {
+                player.mo.a_takeInventory('zmd_Spectate', 1);
+                zmd_InventoryManager(player.mo.findInventory('zmd_InventoryManager')).reset();
+            }
+        }
     }
 
     void zombieKilled() {

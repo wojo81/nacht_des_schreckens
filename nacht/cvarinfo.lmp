@@ -1,1 +1,2 @@
 user bool toggledZoom = true;
+server bool useVariedZombies = false;

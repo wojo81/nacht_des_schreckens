@@ -1,46 +1,47 @@
-class zmd_Regen : Inventory {
-    int delay;
-    int maxDelay;
-    bool startHealing;
-    int healPerTick;
+class zmd_Vitality : MaxHealth {
+    Default {
+        Inventory.amount 1;
+        Inventory.maxAmount 250;
 
-    property delay: delay;
-    property maxDelay: maxDelay;
-    property startHealing: startHealing;
-    property healPerTick: healPerTick;
+        +countItem
+        +Inventory.alwaysPickup
+    }
+}
+
+class zmd_Regen : Inventory {
+    int maxHealth;
+    int ticksTillHealing;
+    bool shouldHeal;
+    zmd_Vitality vitality;
+
+    property delay: ticksTillHealing;
+    property startingHealth: maxHealth;
 
     Default {
-        Inventory.maxamount 1;
-        +INVENTORY.UNDROPPABLE
-        +INVENTORY.UNTOSSABLE
-        +INVENTORY.PERSISTENTPOWER
+        Inventory.maxAmount 1;
+        +Inventory.undroppable
+        +Inventory.untossable
+        +Inventory.persistentPower
 
-        zmd_Regen.delay 0;
-        zmd_Regen.maxDelay 35 * 2;
-        zmd_Regen.startHealing false;
-        zmd_Regen.healPerTick 2;
+        zmd_Regen.delay 35 * 3;
+        zmd_Regen.startingHealth 100;
+    }
+
+    override void modifyDamage(int damage, Name damageType, out int newDamage, bool passive, Actor inflictor, Actor source, int flags) {
+        if (passive) {
+            self.ticksTillHealing = self.Default.ticksTillHealing;
+            self.shouldHeal = false;
+        }
     }
 
     override void doEffect() {
-        let player = zmd_Player(owner);
-        if (player) {
-            if (player.justTookDamage) {
-                player.justTookDamage = false;
-                self.delay = maxDelay;
-                self.startHealing = false;
-                return;
-            }
-
-            if (delay-- == 0) {
-                self.startHealing = true;
-            }
-
-            if (self.startHealing) {
-                owner.giveBody(healPerTick);
-                if (player.health == player.maxHealth) {
-                    self.startHealing = false;
-                }
-            }
+        if (self.shouldHeal) {
+            if (self.owner.health >= self.maxHealth)
+                self.shouldHeal = false;
+            else
+                self.owner.a_giveInventory('zmd_Vitality');
         }
+        if (self.ticksTillHealing > 0 && --self.ticksTillHealing == 0)
+            self.shouldHeal = true;
     }
 }

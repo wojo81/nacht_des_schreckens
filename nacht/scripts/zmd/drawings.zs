@@ -31,33 +31,25 @@ class zmd_Drawing : zmd_Interactable {
         self.upgradedAmmoMessage = self.costOf(upgradedAmmoCost);
     }
 
-    override void doTouch(zmd_Player player) {
+    override void doTouch(PlayerPawn player) {
         if (player.countInv(self.weaponName))
-            player.hintHud.setMessage(self.ammoMessage);
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.ammoMessage);
         else if (player.countInv(self.upgradedWeaponName))
-            player.hintHud.setMessage(self.upgradedAmmoMessage);
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.upgradedAmmoMessage);
         else
-            player.hintHud.setMessage(self.weaponMessage);
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.weaponMessage);
     }
 
-    override bool doUse(zmd_Player player) {
-        bool bought = false;
-        if (player.countInv(self.weaponName)) {
-            if (player.purchase(ammoCost))
-                bought = player.a_giveInventory(self.weaponName..'Ammo', 999);
-        } else if (player.countInv(self.upgradedWeaponName)) {
-            if (player.purchase(self.upgradedAmmoCost))
-                bought = player.a_giveInventory(self.upgradedWeaponName..'Ammo', 999);
-        } else {
-            if (player.purchase(self.weaponCost))
-                bought = player.a_giveInventory(weaponName);
-        }
-
-        if (bought) {
+    override bool doUse(PlayerPawn player) {
+        if (player.countInv(self.weaponName) && zmd_Points.takeFrom(player, ammoCost) && player.a_giveInventory(self.weaponName..'Ammo', 999))
             player.a_startSound("game/purchase");
-            return true;
-        }
-        return false;
+        else if (player.countInv(self.upgradedWeaponName) && zmd_Points.takeFrom(player, self.upgradedAmmoCost) && player.a_giveInventory(self.upgradedWeaponName..'Ammo', 999))
+            player.a_startSound("game/purchase");
+        else if (zmd_Points.takeFrom(player, self.weaponCost) && player.a_giveInventory(weaponName))
+            player.a_startSound("game/purchase");
+        else
+            return false;
+        return true;
     }
 }
 

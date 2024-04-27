@@ -1,3 +1,4 @@
 AddOptionMenu "OptionsMenu" {
     Option "Toggled Zoom", "toggledZoom", "OnOff"
+    Option "Use Varied Zombies", "useVariedZombies", "OnOff"
 }

@@ -1,62 +1,77 @@
 class zmd_Pickup : zmd_Interactable {
     class<Weapon> pickupClass;
 
-    Default {
-        xScale 0.5;
-        yScale 0.5;
+    override void postbeginPlay() {
+        if (getDefaultByType(self.pickupClass) is 'zmd_Weapon')
+            self.scale = (0.5, 0.5);
     }
 
-    static zmd_Pickup transferFrom(Actor from, Weapon fromWeapon) {
-        let to = zmd_Pickup(Actor.spawn('zmd_Pickup', from.pos, allow_replace));
-        to.pickupClass = fromWeapon.getClassName();
-        to.a_giveInventory(to.pickupClass);
-        to.sprite = fromWeapon.Default.spawnState.sprite;
-        let toWeapon = Weapon(to.findInventory(to.pickupClass));
-        to.a_takeInventory(fromWeapon.ammoType1, fromWeapon.ammoGive1);
-        to.a_giveInventory(fromWeapon.ammoType1, from.countInv(fromWeapon.ammoType1));
-        if (toWeapon is 'zmd_Weapon')
-            zmd_Weapon(toWeapon).activeAmmo = zmd_Weapon(fromWeapon).activeAmmo;
-        from.a_takeInventory(to.pickupClass, 1);
-        from.a_takeInventory(toWeapon.ammoType1, 999);
-        return to;
+    static zmd_Pickup takeFrom(Actor giver, Weapon given) {
+        let self = zmd_Pickup(Actor.spawn('zmd_Pickup', giver.pos, allow_replace));
+        let ammoType = given.ammoType1;
+        let ammoCount = given.countInv(ammoType);
+
+        self.pickupClass = given.getClassName();
+        self.a_giveInventory(self.pickupClass);
+        self.sprite = given.Default.spawnState.sprite;
+        self.setInventory(ammoType, ammoCount);
+
+        let taken = zmd_Weapon(self.findInventory(given.getClassName()));
+        if (taken != null)
+            taken.activeAmmo = zmd_Weapon(given).activeAmmo;
+        giver.setInventory(ammoType, 0);
+        giver.takeInventory(self.pickupClass, 1);
+        return self;
     }
 
-    override void doTouch(zmd_Player player) {
-        player.hintHud.setMessage('[Pickup]');
+    override void doTouch(PlayerPawn player) {
+        if (zmd_InventoryManager.couldPickup(player, self.pickupClass))
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage('[Pickup]');
     }
 
-    override bool doUse(zmd_Player player) {
-        if (player.countInv(self.pickupClass) == 0) {
-            self.transferTo(player);
+    override bool doUse(PlayerPawn player) {
+        if (zmd_InventoryManager.couldPickup(player, self.pickupClass)) {
+            self.giveTo(player);
             return true;
         }
         return false;
     }
 
-    void transferTo(Actor to) {
-        to.a_giveInventory(self.pickupClass);
-        let pickup = Weapon(self.findInventory(self.pickupClass));
-        let weapon = Weapon(to.findInventory(self.pickupClass));
-        to.a_giveInventory(self.pickupClass..'Ammo', self.countInv(self.pickupClass..'Ammo'));
-        let weapon2 = zmd_Weapon(weapon);
-        if (weapon2)
-            weapon2.activeAmmo = zmd_Weapon(pickup).activeAmmo;
+    void giveTo(Actor taker) {
+        let ammoType = getDefaultByType(self.pickupClass).ammoType1;
+        let oldAmmoCount = taker.countInv(ammoType);
+        let ammoCount = self.countInv(ammoType);
+        let given = Weapon(self.findInventory(self.pickupClass));
+
+        taker.a_giveInventory(self.pickupClass, 1);
+        taker.setInventory(ammoType, max(ammoCount, oldAmmoCount));
+
+        let taken = zmd_Weapon(taker.findInventory(self.pickupClass));
+        if (taken != null)
+            taken.activeAmmo = zmd_Weapon(given).activeAmmo;
         self.destroy();
     }
 
     States {
     Spawn:
-        #### a 1;
-        wait;
+        #### a 2100;
+        stop;
     }
 }
 
 class zmd_PickupDropper : Inventory {
     const key = bt_user2;
-    const cost = 1500;
+    const cost = 750;
 
     bool readyToDrop;
     int ticksSinceTap;
+
+    Default {
+        Inventory.maxAmount 1;
+        +Inventory.undroppable
+        +Inventory.untossable
+        +Inventory.persistentPower
+    }
 
     override void doEffect() {
         if (self.readyToDrop) {
@@ -78,11 +93,17 @@ class zmd_PickupDropper : Inventory {
     }
 
     void dropPickup() {
-        let player = zmd_Player(self.owner);
-        if (player && self.owner.player.readyWeapon != null && !(self.owner.player.readyWeapon is 'zmd_Drink') && player.purchase(self.cost)) {
-            let weaponClass = self.owner.player.readyWeapon;
-            zmd_Pickup.transferFrom(player, self.owner.player.readyWeapon);
-            player.heldWeapons.delete(player.heldWeapons.find(weaponClass));
+        let player = PlayerPawn(self.owner);
+        let weapon = self.owner.player.readyWeapon;
+        let manager = zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
+
+        if (manager.owns(weapon)) {
+            if (zmd_Points.takeFrom(player, self.cost)) {
+                manager.abandon(weapon);
+                zmd_Pickup.takeFrom(player, weapon);
+            }
+        } else if ((weapon is 'zmd_Drink' && !zmd_Drink(weapon).isEmpty && zmd_Points.takeFrom(player, self.cost)) || true) {
+            zmd_Pickup.takeFrom(player, weapon);
         }
     }
 }

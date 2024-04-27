@@ -37,4 +37,9 @@ class zmd_DoublePointsPower : zmd_Powerup {
             ++self.amount;
         return super.handlePickup(item);
     }
+
+    override void detachFromOwner() {
+        self.a_startSound("game/dpvanish");
+        super.detachFromOwner();
+    }
 }

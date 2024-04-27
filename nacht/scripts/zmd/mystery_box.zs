@@ -19,21 +19,25 @@ class zmd_MysteryBox : zmd_Interactable {
     static zmd_MysteryBox spawnIn(zmd_MysteryBoxLocation location, bool canMove) {
         let self = zmd_MysteryBox(Actor.spawn('zmd_MysteryBox', location.pos, allow_replace));
         self.handler = zmd_MysteryBoxHandler.fetch();
-        self.pool = zmd_MysteryBoxPool.fetch();
         self.angle = location.angle;
         self.canMove = canMove;
         return self;
     }
 
-    override void doTouch(zmd_Player player) {
-        if (player.countInv('zmd_FireSalePower') != 0)
-            player.hintHud.setMessage(self.costOf(self.discountCost));
-        else
-            player.hintHud.setMessage(self.costOf(self.regularCost));
+    override void beginPlay() {
+        self.changeTid(1);
+        self.pool = zmd_MysteryBoxPool.fetch();
     }
 
-    override bool doUse(zmd_Player player) {
-        if ((player.countInv('zmd_FireSalePower') != 0 && player.purchase(self.discountCost)) || player.purchase(self.regularCost)) {
+    override void doTouch(PlayerPawn player) {
+        if (player.countInv('zmd_FireSalePower') != 0)
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.costOf(self.discountCost));
+        else
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.costOf(self.regularCost));
+    }
+
+    override bool doUse(PlayerPawn player) {
+        if ((player.countInv('zmd_FireSalePower') != 0 && zmd_Points.takeFrom(player, self.discountCost)) || zmd_Points.takeFrom(player, self.regularCost)) {
             self.open(player);
             return true;
         }
@@ -56,7 +60,7 @@ class zmd_MysteryBox : zmd_Interactable {
         return resolveState(null);
     }
 
-    void open(zmd_Player receiver) {
+    void open(PlayerPawn receiver) {
         ++self.spinCount;
         self.bspecial = false;
         zmd_MysteryBoxSpin.spawnIn(self, receiver);
@@ -81,12 +85,12 @@ class zmd_MysteryBox : zmd_Interactable {
 
     States {
     Close:
-        msty b 20 bright;
+        msty b 20;
         tnt1 a 0 whenShouldFade('Fade');
         tnt1 a 0 finishClosing;
     Spawn:
     Idle:
-        msty a -1 bright;
+        msty a -1;
         loop;
     Open:
         tnt1 a 0 a_startSound("game/mystery", volume: 0.5);
@@ -94,24 +98,26 @@ class zmd_MysteryBox : zmd_Interactable {
         msty b -1 bright;
         loop;
     Fade:
-        msty a 20 bright;
+        msty a 20;
         stop;
     }
 }
 
 class zmd_MysteryBoxSpin : Actor {
-    zmd_Player receiver;
+    PlayerPawn receiver;
     zmd_MysteryBox box;
 
     Default {
-        xscale 0.5;
-        yscale 0.5;
-
-        +noGravity
+       +noGravity
         +wallSprite
     }
 
-    static zmd_MysteryBoxSpin spawnIn(zmd_MysteryBox box, zmd_Player receiver) {
+    override void postBeginPlay() {
+        if (self.receiver is 'zmd_Player')
+            self.scale = (0.5, 0.5);
+    }
+
+    static zmd_MysteryBoxSpin spawnIn(zmd_MysteryBox box, PlayerPawn receiver) {
         let self = zmd_MysteryBoxSpin(Actor.spawn('zmd_MysteryBoxSpin', box.getOffset(), allow_replace));
         self.receiver = receiver;
         self.box = box;
@@ -120,7 +126,7 @@ class zmd_MysteryBoxSpin : Actor {
     }
 
     void spin() {
-        self.sprite = self.box.pool.chooseSprite(self.sprite);
+        self.sprite = self.box.pool.chooseSpriteFor(self.receiver, self.sprite);
     }
 
     void finish() {
@@ -141,7 +147,7 @@ class zmd_MysteryBoxSpin : Actor {
 }
 
 class zmd_MysteryBoxLock : Actor {
-    zmd_Player receiver;
+    PlayerPawn receiver;
     zmd_MysteryBox box;
 
     Default {
@@ -152,7 +158,7 @@ class zmd_MysteryBoxLock : Actor {
         +floatBob
     }
 
-    static zmd_MysteryBoxLock spawnIn(zmd_MysteryBox box, zmd_Player receiver) {
+    static zmd_MysteryBoxLock spawnIn(zmd_MysteryBox box, PlayerPawn receiver) {
         let self = zmd_MysteryBoxLock(Actor.spawn('zmd_MysteryBoxLock', box.getOffset(), allow_replace));
         self.box = box;
         self.receiver = receiver;
@@ -175,7 +181,7 @@ class zmd_MysteryBoxLock : Actor {
 }
 
 class zmd_MysteryBoxPickup : zmd_Pickup {
-    zmd_Player receiver;
+    PlayerPawn receiver;
     zmd_MysteryBox box;
 
     Default {
@@ -188,7 +194,7 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
         radius 50;
     }
 
-    static zmd_MysteryBoxPickup spawnIn(zmd_MysteryBox box, class<Weapon> pickupClass, zmd_Player receiver) {
+    static zmd_MysteryBoxPickup spawnIn(zmd_MysteryBox box, class<Weapon> pickupClass, PlayerPawn receiver) {
         let self = zmd_MysteryBoxPickup(Actor.spawn('zmd_MysteryBoxPickup', box.getOffset(), allow_replace));
         self.pickupClass = pickupClass;
         self.sprite = getDefaultByType(pickupClass).spawnState.sprite;
@@ -198,16 +204,32 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
         return self;
     }
 
-    override void doTouch(zmd_Player player) {
-        if (player == self.receiver) {
+    override void doTouch(PlayerPawn player) {
+        if (player == self.receiver)
             super.doTouch(player);
-        }
     }
 
-    override bool doUse(zmd_Player player) {
-        if (player == self.receiver) {
-            player.a_giveInventory(self.pickupClass);
+    override bool doUse(PlayerPawn player) {
+        if (self.giveTo(player)) {
             self.closeBox();
+            return true;
+        }
+        return false;
+    }
+
+    bool giveTo(PlayerPawn player) {
+        if (player == self.receiver && zmd_InventoryManager.couldPickup(player, self.pickupClass)) {
+            if (player is 'zmd_Player')
+                player.a_giveInventory(self.pickupClass);
+            else {
+                player.a_giveInventory(self.pickupClass);
+
+                let ammoType = getDefaultByType(self.pickupClass).ammoType1;
+                if (ammoType != null) {
+                    let halfAmmo = getDefaultByType(ammoType).maxAmount / 2;
+                    player.giveInventory(ammoType, halfAmmo - player.countInv(ammoType));
+                }
+            }
             return true;
         }
         return false;
@@ -226,43 +248,36 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
 }
 
 class zmd_MysteryBoxPool : EventHandler {
-    Array<class<Weapon> > items;
-    Array<int> sprites;
+    Array<class<Weapon> >[4] items;
+    Array<int>[4] sprites;
 
     static zmd_MysteryBoxPool fetch() {
         return zmd_MysteryBoxPool(EventHandler.find('zmd_MysteryBoxPool'));
     }
 
-    override void worldLoaded(WorldEvent e) {
-        self.add('Raygun');
-        self.add('M1garand');
-        self.add('DoubleBarrelShotgun');
-        self.add('Ppsh');
-        self.add('Magnum');
-        self.add('Thompson');
+    void add(int playerIndex, class<Weapon> item) {
+        self.items[playerIndex].push(item);
+        self.sprites[playerIndex].push(getDefaultByType(item).spawnState.sprite);
     }
 
-    void add(class<Weapon> item) {
-        self.items.push(item);
-        self.sprites.push(getDefaultByType(item).spawnState.sprite);
+    int randomIndexFor(PlayerPawn player) {
+        return random[randomItem](0, self.items[player.playerNumber()].size() - 1);
     }
 
-    int randomIndex() {
-        return random[randomItem](0, self.items.size() - 1);
+    int chooseSpriteFor(PlayerPawn player, int lastSprite) {
+        let index = self.randomIndexFor(player);
+        let playerNumber = player.playerNumber();
+        while (self.sprites[playerNumber][index] == lastSprite)
+            index = self.randomIndexFor(player);
+        return self.sprites[playerNumber][index];
     }
 
-    int chooseSprite(int lastSprite) {
-        let index = self.randomIndex();
-        while (self.sprites[index] == lastSprite)
-            index = self.randomIndex();
-        return self.sprites[index];
-    }
-
-    class<Weapon> choosePickupFor(zmd_Player player, int lastSprite) {
-        let index = self.randomIndex();
-        while (self.sprites[index] == lastSprite || player.countInv(self.items[index]) != 0)
-            index = self.randomIndex();
-        return self.items[index];
+    class<Weapon> choosePickupFor(PlayerPawn player, int lastSprite) {
+        let index = self.randomIndexFor(player);
+        let playerNumber = player.playerNumber();
+        while (self.sprites[playerNumber][index] == lastSprite || player.countInv(self.items[playerNumber][index]) != 0)
+            index = self.randomIndexFor(player);
+        return self.items[playerNumber][index];
     }
 }
 
@@ -321,7 +336,7 @@ class zmd_MysteryBoxHandler : EventHandler {
         self.activeIndex = -1;
         int index = 0;
 
-        let actorIterator = Level.createActorIterator(1);
+        let actorIterator = Level.createActorIterator(zmd_MysteryBoxLocation.tid, 'zmd_MysteryBoxLocation');
         zmd_MysteryBoxLocation location;
 
         while (location = zmd_MysteryBoxLocation(actorIterator.next())) {
@@ -336,18 +351,25 @@ class zmd_MysteryBoxHandler : EventHandler {
             ++index;
         }
 
-        if (self.activeIndex == -1)
-            self.activeIndex = self.randomIndexWithout(self.activeIndex);
+        if (self.locations.size() != 0) {
+            if (self.activeIndex == -1)
+                self.activeIndex = self.randomIndexWithout(self.activeIndex);
 
-        foreach (location : excludedLocations)
-            self.locations.push(location);
+            foreach (location : excludedLocations)
+                self.locations.push(location);
 
-        self.spawnBox(self.activeIndex, locations.size() > 1);
+            self.spawnBox(self.activeIndex, locations.size() > 1);
+        }
     }
 }
 
 class zmd_MysteryBoxLocation : Actor {
+    const tid = 1;
     zmd_MysteryBox box;
+
+    override void beginPlay() {
+        self.changeTid(zmd_MysteryBoxLocation.tid);
+    }
 
     void spawnBox(bool canMove) {
         self.box = zmd_MysteryBox.spawnIn(self, canMove);

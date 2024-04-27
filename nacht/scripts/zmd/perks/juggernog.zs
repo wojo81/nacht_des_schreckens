@@ -30,17 +30,21 @@ class zmd_JuggernogDrink : zmd_Drink {
 }
 
 class zmd_Juggernog : zmd_Perk {
+    zmd_Regen regen;
+
     Default {
         Inventory.icon 'jnic';
     }
 
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
-        zmd_Player(self.owner).healthMin = zmd_Player.juggHealthMin;
+        self.regen = zmd_Regen(other.findInventory('zmd_Regen'));
+        self.regen.shouldHeal = true;
+        self.regen.maxHealth = getDefaultByType('zmd_Vitality').maxAmount;
     }
 
     override void detachFromOwner() {
-        zmd_Player(self.owner).healthMin = zmd_Player.regularHealthMin;
+        self.regen.maxHealth = self.regen.Default.maxHealth;
         super.detachFromOwner();
     }
 }

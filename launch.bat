@@ -2,4 +2,4 @@
 
 set gzdoom=".\..\gzdoom\gzdoom.exe"
 
-%gzdoom% -file nacht -warp 01 -config config.ini %*
+%gzdoom% -file nacht -config config.ini %*

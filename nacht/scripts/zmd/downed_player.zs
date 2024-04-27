@@ -19,12 +19,32 @@ class zmd_DownedPlayerPool : EventHandler {
         self.morphClasses.push(morphClass);
     }
 
-    class<zmd_DownedPlayer> chooseFor(zmd_Player player) {
+    class<zmd_DownedPlayer> chooseFor(PlayerPawn player) {
         for (int i = 0; i != self.morphWeapons.size(); ++i) {
             if (player.countInv(self.morphWeapons[i]) != 0)
                 return self.morphClasses[i];
         }
         return self.defaultMorph;
+    }
+}
+
+class zmd_DownedPlayerManager : Inventory {
+    Default {
+        Inventory.maxAmount 1;
+        +Inventory.undroppable
+        +Inventory.untossable
+        +Inventory.persistentPower
+    }
+
+    override void modifyDamage(int damage, Name damageType, out int newDamage, bool passive, Actor inflictor, Actor source, int flags) {
+        if (passive && damage >= self.owner.health) {
+            newDamage = 0;
+            console.printf("\cf"..self.owner.player.getUserName().."\cj went down!");
+            let worry = zmd_Worry(self.owner.findInventory('zmd_Worry'));
+            if (worry != null)
+                worry.handler.deactivate();
+            zmd_DownedPlayer.morphFrom(PlayerPawn(self.owner));
+        }
     }
 }
 
@@ -43,7 +63,7 @@ class zmd_DownedPlayer : DoomPlayer {
 
     bool beingRevived;
 
-    zmd_Player reviver;
+    PlayerPawn reviver;
 
     zmd_AmmoHud ammoHud;
     zmd_PowerupHud powerupHud;
@@ -57,58 +77,83 @@ class zmd_DownedPlayer : DoomPlayer {
         Player.viewHeight 20;
         Player.runHealth 101;
 
-        speed 0.2;
+        Player.forwardMove 0.25, 0.125;
+        Player.sideMove 0.2, 0.1;
         height 20;
     }
 
-    static void morphFrom(zmd_Player player) {
+    static void morphFrom(PlayerPawn player) {
         let downedPool = zmd_DownedPlayerPool.fetch();
-        let downTime = player.countInv('zmd_Revive') == 0?
+        let downTime = multiplayer?
             zmd_DownedPlayer.regularDownTime:
             zmd_DownedPlayer.soloDownTime;
         player.a_morph(downedPool.chooseFor(player), downTime,  mrf_loseActualWeapon | mrf_whenInvulnerable, 'zmd_DownedFlash', 'zmd_DownedFlash');
     }
 
+    override void postBeginPlay() {
+        super.postBeginPlay();
+        if (!multiplayer) {
+            if (self.countInv('zmd_Revive') == 0) {
+                self.a_giveInventory('zmd_GameOverSpectate');
+                zmd_Rounds.fetch().globalSound.start("game/gameover");
+            }
+        } else  {
+            let anyLivePlayers = false;
+            foreach (player : players) {
+                if (player.mo && !(player.mo is 'zmd_DownedPlayer' || player.mo.countInv('zmd_Spectate') != 0)) {
+                    anyLivePlayers = true;
+                    break;
+                }
+            }
+            if (!anyLivePlayers) {
+                foreach (player : players) {
+                    player.mo.a_giveInventory('zmd_GameOverSpectate');
+                    player.mo.a_takeInventory('zmd_Spectate', 1);
+                }
+                zmd_Rounds.fetch().globalSound.start("game/gameover");
+            }
+        }
+    }
+
     override void touch(Actor toucher) {
-        let player = zmd_Player(toucher);
-        if (player)
-            player.hintHud.setMessage('[Tap to Revive]');
+        if (!(toucher is 'zmd_DownedPlayer'))
+            zmd_HintHud(toucher.findInventory('zmd_HintHud')).setMessage('[Tap to Revive]');
     }
 
     override bool used(Actor user) {
-        let player = zmd_Player(user);
-        if (player) {
-            player.hintHud.clearMessage();
+        if (!(user is 'zmd_DownedPlayer')) {
+            zmd_HintHud(user.findInventory('zmd_HintHud')).clearMessage();
             if (self.beingRevived)
                 if (self.ticksTillRevive <= 0)
                     self.finishRevive();
                 else
                     self.ticksTillReset = self.totalTicksTillReset;
             else
-                self.initiateRevive(player);
+                self.initiateRevive(PlayerPawn(user));
             return true;
         }
         return false;
     }
 
     override void postMorph(Actor player, bool current) {
-        let player = zmd_Player(player);
+        self.changeTid(0);
+        thing_hate(zmd_Spawning.regularTid, zmd_Player.liveTid, 0);
         self.ammoHud = zmd_AmmoHud(self.findInventory('zmd_AmmoHud'));
         self.powerupHud = zmd_PowerupHud(self.findInventory('zmd_PowerupHud'));
     }
 
     override void postUnmorph(Actor player, bool current) {
-        if (player.countInv('zmd_Revive') == 0) {
-            player.die(player, player);
-            return;
+        let manager = zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
+        if (!manager.gameOver) {
+            player.a_setBlend("red", 0.4, 35 * 3);
+            if (player.countInv('zmd_Revive') == 0)
+                player.a_giveInventory('zmd_Spectate');
+            else {
+                self.changeTid(zmd_Player.liveTid);
+                thing_hate(zmd_Spawning.regularTid, zmd_Player.liveTid, 0);
+                manager.clearPerks();
+            }
         }
-
-        let player = zmd_Player(player);
-        foreach (perk : player.perks)
-            player.takeInventory(perk, 1);
-        player.perks.resize(0);
-        player.perkHud.clear();
-        player.a_setBlend("red", 0.4, 35 * 3);
     }
 
     override void tick() {
@@ -118,24 +163,24 @@ class zmd_DownedPlayer : DoomPlayer {
             --self.ticksTillReset;
             if (self.ticksTillReset == 0) {
                 self.beingRevived = false;
-                self.reviver.reviveHud.end();
+                zmd_InventoryManager(self.reviver.findInventory('zmd_InventoryManager')).reviveHud.end();
             }
         }
     }
 
-    void initiateRevive(zmd_Player reviver) {
+    void initiateRevive(PlayerPawn reviver) {
         self.beingRevived = true;
         self.ticksTillReset = self.totalTicksTillReset;
         if (reviver.countInv('zmd_QuickRevive'))
             self.ticksTillRevive = self.totalTicksTillQuickRevive;
         else
             self.ticksTillRevive = self.totalTicksTillRevive;
-        reviver.reviveHud.begin(self.ticksTillRevive);
+        zmd_ReviveHud(reviver.findInventory('zmd_ReviveHud')).begin(self.ticksTillRevive);
         self.reviver = reviver;
     }
 
     void finishRevive() {
-        self.reviver.reviveHud.end();
+        zmd_ReviveHud(self.reviver.findInventory('zmd_ReviveHud')).end();
         self.giveInventory('zmd_Revive', 1);
         self.unmorph(self, 0, true);
     }

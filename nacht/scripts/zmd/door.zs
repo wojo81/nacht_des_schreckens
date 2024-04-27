@@ -12,12 +12,12 @@ class zmd_Door : zmd_Interactable {
         +wallSprite;
     }
 
-    override void doTouch(zmd_Player player) {
-        player.hintHud.setMessage(self.costOf(cost));
+    override void doTouch(PlayerPawn player) {
+        zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.costOf(cost));
     }
 
-    override bool doUse(zmd_Player player) {
-        if (player.purchase(cost)) {
+    override bool doUse(PlayerPawn player) {
+        if (zmd_Points.takeFrom(player, self.cost)) {
             player.a_startSound("game/purchase");
             foreach (tid : self.args)
                 zmd_Spawning.addSpawners(tid);

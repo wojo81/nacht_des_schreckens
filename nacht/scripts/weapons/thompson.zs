@@ -33,8 +33,9 @@ class Thompson : zmd_Weapon {
         tpf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/thompson_fire");
         tnt1 a 0 shootBullets(3, 12, 1);
-        tpf0 bcde 2 ff;
+        tpf0 bc 2 ff;
         tnt1 a 0 a_refire;
+        tpf0 de 2 ff;
         goto Ready;
     Reload:
         tnt1 a 0 whenNoAmmo('Ready');
@@ -69,8 +70,9 @@ class Thompson : zmd_Weapon {
         tpi0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/thompson_fire");
         tnt1 a 0 shootBullets(1, 12, 1);
-        tpi0 bcde 2 ff;
+        tpi0 bc 2 ff;
         tnt1 a 0 a_refire;
+        tpi0 de 2 ff;
         goto Ready;
     Fire.Last:
         tpg0 a 2 ff;

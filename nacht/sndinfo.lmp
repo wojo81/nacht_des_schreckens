@@ -64,7 +64,7 @@ $RANDOM zombie/attack { zombie/attack1 zombie/attack2 zombie/attack3 zombie/atta
 
 game/nuke     sounds/interactions/NUKE
 game/doublepoints   sounds/interactions/X2
-game/x2vanish sounds/interactions/DPVANISH
+game/dpvanish sounds/interactions/DPVANISH
 game/instakill   sounds/interactions/INSTAK
 game/ikvanish sounds/interactions/IKVANISH
 game/maxammo  sounds/interactions/MAXAMMO
@@ -76,6 +76,7 @@ game/round sounds/interactions/ROUND
 game/siren sounds/interactions/SIREN
 game/purchase sounds/interactions/PURCHASE
 game/mystery sounds/interactions/MYSTERY
+game/gameover sounds/interactions/GAMEOVER.ogg
 
 weapons/raygun sounds/weapons/raygun/raygun
 weapons/rayflux sounds/weapons/raygun/rayflux
@@ -117,3 +118,5 @@ weapons/thompson_fire sounds/weapons/thompson/wpn_thompson_st_act.wav
 weapons/thompson_magout sounds/weapons/thompson/gr_thompson_mag_out.wav
 weapons/thompson_magin sounds/weapons/thompson/gr_thompson_mag_in.wav
 weapons/thompson_charge sounds/weapons/thompson/gr_thompson_charge.wav
+
+ambience/rain sounds/ambience/rain.wav

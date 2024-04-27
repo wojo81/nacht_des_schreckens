@@ -1,13 +1,4 @@
 class zmd_Zombie : Actor {
-    const tid = 115;
-
-    zmd_DropPool dropPool;
-
-    override void beginPlay() {
-        super.beginPlay();
-        thing_changeTid(0, self.tid);
-    }
-
     override int damageMobj(Actor inflictor, Actor source, int damage, Name meansOfDamage, int flags, double angle) {
         let headBottom = self.floorz + self.height - 10;
         let headTop = self.floorz + self.height;
@@ -18,12 +9,6 @@ class zmd_Zombie : Actor {
         }
 
         return super.damageMobj(inflictor, source, damage, meansOfDamage, flags, angle);
-    }
-
-    void maybeSpawnPowerup() {
-        let drop = self.dropPool.choose();
-        if (drop != null)
-            self.spawn(drop, self.pos);
     }
 
     Default {
@@ -51,8 +36,8 @@ class zmd_Zombie : Actor {
 
     States {
     Spawn:
-        NAZO A 1 A_Look;
-    NAZO AAAABBBBCCCCDDDD 1 A_Wander;
+        NAZO A 1 nodelay A_Look;
+        NAZO AAAABBBBCCCCDDDD 1 A_Wander;
         Goto See;
     See:
         NAZO AAAA 1 A_Chase;
@@ -89,7 +74,6 @@ class zmd_Zombie : Actor {
         TNT1 A 0 a_startSound("zombie/fall",0, volume: 0.4);
           NAZO N 1 A_NoBlocking;
         // 	TNT1 A 0 A_SpawnItemEx("RandomPowerup",0,0,0,0,0,0,0,SXF_ABSOLUTEANGLE,242)
-        TNT1 A 0 maybeSpawnPowerup;
         NAZO N 512;
         stop;
 
@@ -103,7 +87,6 @@ class zmd_Zombie : Actor {
         NAZO IJKLMN 2;
         TNT1 A 0 a_startSound("zombie/fall",0, volume: 0.4);
         NAZO N 1 A_NoBlocking;
-        TNT1 A 0 maybeSpawnPowerup;
         NAZO N 512;
         stop;
     }

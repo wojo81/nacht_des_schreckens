@@ -1,0 +1,9 @@
+GameInfo
+{
+	AddEventHandlers = "WeatherHandler", "WeatherSpawner"
+}
+
+DoomEdNums
+{
+	28473 = Weather
+}

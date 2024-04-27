@@ -33,8 +33,9 @@ class Ppsh : zmd_Weapon {
         ppf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/ppsh_fire1");
         tnt1 a 0 shootBullets(3, 20, 1);
-        ppf0 bc 2 ff;
+        ppf0 b 2 ff;
         tnt1 a 0 a_refire;
+        ppf0 c 2 ff;
         goto Ready;
     Reload:
         tnt1 a 0 whenNoAmmo('Ready');
@@ -71,8 +72,9 @@ class Ppsh : zmd_Weapon {
         ppi0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/ppsh_fire1");
         tnt1 a 0 shootBullets(1, 20, 1);
-        ppi0 bc 2 ff;
+        ppi0 b 2 ff;
         tnt1 a 0 a_refire;
+        ppi0 c 2 ff;
         goto Ready;
     Fire.Last:
         ppg0 a 2 ff;

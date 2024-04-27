@@ -14,13 +14,13 @@ class zmd_PerkMachine : zmd_Interactable {
         +wallSprite
     }
 
-    override void doTouch(zmd_Player player) {
+    override void doTouch(PlayerPawn player) {
         if (player.findInventory(getDefaultByType(self.drink).perk) == null)
-            player.hintHud.setMessage(self.costOf(self.cost));
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.costOf(self.cost));
     }
 
-    override bool doUse(zmd_Player player) {
-        return player.findInventory(getDefaultByType(self.drink).perk) == null && player.purchase(self.cost) && player.a_giveInventory(self.drink);
+    override bool doUse(PlayerPawn player) {
+        return player.findInventory(getDefaultByType(self.drink).perk) == null && zmd_Points.takeFrom(player, self.cost) && player.a_giveInventory(self.drink);
     }
 }
 
@@ -32,10 +32,9 @@ class zmd_Perk : Inventory {
 
 class zmd_Drink : zmd_Weapon {
     readonly class<zmd_Perk> perk;
+    bool isEmpty;
 
     property perk: perk;
-
-    String spriteBase;
 
     Default {
         Weapon.ammoType 'clip';
@@ -68,6 +67,7 @@ class zmd_Drink : zmd_Weapon {
     Sprites2:
         #### ab 2 {a_weaponReady(); fr();}
         tnt1 a 0 a_giveInventory(invoker.perk);
+        tnt1 a 0 {invoker.isEmpty = true;}
         goto Deselect;
     Select:
         tnt1 a 0 a_raise;

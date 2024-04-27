@@ -21,7 +21,7 @@ class zmd_Kaboom : zmd_Drop {
     Pickup:
         tnt1 a 0 a_startSound("game/nuke", 0, attenuation: attn_none);
         tnt1 a 0 giveAll('zmd_Points', 400);
-        tnt1 a 0 thing_destroy(zmd_Zombie.tid, true);
+        tnt1 a 0 thing_destroy(zmd_Spawning.regularTid);
         tnt1 a 0 {console.printf('Ka-boom!');}
         stop;
     }

@@ -36,17 +36,11 @@ class zmd_SpeedCola : zmd_Perk {
 
     override void attachToOwner(Actor other) {
         super.attachToOwner(other);
-        let player = zmd_Player(owner);
-        player.fastReload = true;
-        foreach (weapon : player.heldWeapons)
-            zmd_Weapon(weapon).activateFastReload();
+        zmd_InventoryManager(self.owner.findInventory('zmd_InventoryManager')).activateFastReload();
     }
 
     override void detachFromOwner() {
-        let player = zmd_Player(owner);
-        player.fastReload = false;
-        foreach (weapon : player.heldWeapons)
-            zmd_Weapon(weapon).deactivateFastReload();
+        zmd_InventoryManager(self.owner.findInventory('zmd_InventoryManager')).deactivateFastReload();
         super.detachFromOwner();
     }
 }

@@ -13,10 +13,8 @@ class zmd_Drop : CustomInventory {
         self.scale /= 1.5;
     }
 
-    action void giveAll(class<Inventory> item, int amount = 1) {
-        foreach (player : players)
-            if (player.mo != null)
-                player.mo.giveInventory(item, amount);
+    action void giveAll(Name item, int amount = 1) {
+        ScriptUtil.giveInventory(null, item, amount);
     }
 }
 
@@ -29,16 +27,9 @@ class zmd_Powerup : Powerup {
         return self.altHudIcon;
     }
 
-    override bool tryPickup(in out Actor toucher) {
-        let player = zmd_Player(toucher);
-        if (player)
-            player.powerupHud.add(self, self.effectTics);
-        else {
-            let player = zmd_DownedPlayer(toucher);
-            if (player)
-                player.powerupHud.add(self, self.effectTics);
-        }
-        return super.tryPickup(toucher);
+    override void attachToOwner(Actor other) {
+        super.attachToOwner(other);
+        zmd_PowerupHud(other.findInventory('zmd_PowerupHud')).add(self, self.effectTics);
     }
 }
 
@@ -59,8 +50,16 @@ class zmd_DropPool : EventHandler {
         self.add('zmd_DoublePoints');
         self.add('zmd_MaxAmmo');
         self.add('zmd_Kaboom');
-        // self.add('zmd_FireSale');
+        self.add('zmd_FireSale');
         self.fill();
+    }
+
+    override void worldThingDied(WorldEvent e) {
+        if (e.thing.bisMonster && e.thing.curSector.damageAmount == 0) {
+            let drop = self.choose();
+            if (drop != null)
+                Actor.spawn(drop, e.thing.pos, allow_replace);
+        }
     }
 
     void add(class<zmd_Drop> drop) {

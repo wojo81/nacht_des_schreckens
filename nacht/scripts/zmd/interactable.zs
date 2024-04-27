@@ -4,20 +4,15 @@ class zmd_Interactable : Actor abstract {
     }
 
     override void touch(Actor toucher) {
-        let player = zmd_Player(toucher);
-        if (player)
+        let player = PlayerPawn(toucher);
+        if (player != null && !(player is 'zmd_DownedPlayer'))
             doTouch(player);
     }
 
     override bool used(Actor user) {
-        if (self.bspecial) {
-            let player = zmd_Player(user);
-            if (player) {
-                let wasUsed = doUse(player);
-                if (wasUsed)
-                    player.hintHud.clearMessage();
-            }
-        }
+        let player = PlayerPawn(user);
+        if (player != null && !(player is 'zmd_DownedPlayer') && self.bspecial && doUse(player))
+            zmd_HintHud(user.findInventory('zmd_HintHud')).clearMessage();
         return false;
     }
 
@@ -25,6 +20,6 @@ class zmd_Interactable : Actor abstract {
         return "[Cost: "..cost.."]";
     }
 
-    abstract void doTouch(zmd_Player player);
-    abstract bool doUse(zmd_Player player);
+    abstract void doTouch(PlayerPawn player);
+    abstract bool doUse(PlayerPawn player);
 }

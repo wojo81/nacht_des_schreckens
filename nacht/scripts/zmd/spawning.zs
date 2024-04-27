@@ -1,15 +1,33 @@
 class zmd_Spawner : Actor {
-    void spawnIn(int health, zmd_DropPool dropPool) {
-        let zombie = Actor.spawn('zmd_Zombie', self.pos, allow_replace);
+    zmd_Spawning spawning;
+
+    void spawnIn(zmd_Spawning spawning, int health) {
+        self.spawning = spawning;
+        let zombie = Actor.spawn(self.spawning.useVariedZombies? 'zmd_VariedZombie': 'zmd_Zombie', self.pos, allow_replace);
         zombie.health = health;
-        zmd_Zombie(zombie).dropPool = dropPool;
+        zombie.changeTid(zmd_Spawning.regularTid);
+        thing_hate(zmd_Spawning.regularTid, zmd_Player.liveTid, 0);
+    }
+}
+
+class zmd_VariedZombie : RandomSpawner {
+    Default {
+        DropItem 'ShotgunGuy';
+        DropItem 'DoomImp';
+        DropItem 'Demon';
+        DropItem 'ChaingunGuy';
+        DropItem 'ZombieMan';
+        DropItem 'Revenant';
     }
 }
 
 class zmd_Spawning : EventHandler {
+    const regularTid = 115;
     const initialSpawnersTid = 5;
     const minDelay = 30;
     const maxDelay = 70;
+
+    bool useVariedZombies;
 
     zmd_Rounds rounds;
     zmd_DropPool dropPool;
@@ -44,8 +62,8 @@ class zmd_Spawning : EventHandler {
 
     override void worldTick() {
         if (!self.paused && self.rounds.readyToSpawn()) {
-            if (self.ticksTillSpawn-- == 0) {
-                self.spawners[random[randomSpawning](0, self.spawners.size() - 1)].spawnIn(self.rounds.zombieHealth, self.dropPool);
+            if (self.ticksTillSpawn-- == 0 && self.spawners.size() != 0) {
+                self.spawners[random[randomSpawning](0, self.spawners.size() - 1)].spawnIn(self, self.rounds.zombieHealth);
                 ++self.rounds.liveZombies;
                 --self.rounds.unspawnedZombies;
                 self.countdownSpawn();
@@ -55,6 +73,12 @@ class zmd_Spawning : EventHandler {
 
     override void worldLoaded(WorldEvent e) {
         zmd_Spawning.addSpawners(self.initialSpawnersTid);
+        self.useVariedZombies = CVar.getCVar('useVariedZombies').getBool();
+    }
+
+    override void worldThingSpawned(WorldEvent e) {
+        if (e.thing is 'Weapon' && Weapon(e.thing).owner == null)
+            e.thing.destroy();
     }
 
     void countdownSpawn() {
