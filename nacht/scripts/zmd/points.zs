@@ -3,6 +3,7 @@ class zmd_Points : Inventory {
 
     Default {
         Inventory.maxAmount 999999;
+        +Inventory.undroppable;
     }
 
     static bool takeFrom(PlayerPawn player, int cost) {
@@ -14,8 +15,9 @@ class zmd_Points : Inventory {
         return false;
     }
 
-    override void beginPlay() {
-        self.hud = zmd_PointsHud(self.findInventory('zmd_PointsHud'));
+    override void attachToOwner(Actor owner) {
+        super.attachToOwner(owner);
+        self.hud = zmd_PointsHud(owner.findInventory('zmd_PointsHud'));
     }
 
     override void setGiveAmount(Actor receiver, int amount, bool giveCheat) {

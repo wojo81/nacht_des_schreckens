@@ -28,7 +28,7 @@ GameInfo {
 DoomEdNums {
     1003 = "zmd_Spawner"
     1004 = "zmd_MysteryBox"
-    1005 = "MinigunDrawing"
+    1005 = "zmd_Barrel"
     1006 = "zmd_GlobalSound"
     1007 = "zmd_Door"
     1008 = "zmd_MysteryBoxLocation"
@@ -36,4 +36,11 @@ DoomEdNums {
     1010 = "zmd_JuggernogMachine"
     1011 = "zmd_SpeedColaMachine"
     1012 = "zmd_DoubleTapMachine"
+    1013 = "zmd_Boxes"
+    1014 = "zmd_SwayTarget"
+    1015 = "zmd_Zombie"
+
+    1050 = "Kar98Drawing"
+    1051 = "CarbineDrawing"
+    1052 = "ThompsonDrawing"
 }

@@ -4,6 +4,7 @@ class zmd_Spawner : Actor {
     void spawnIn(zmd_Spawning spawning, int health) {
         self.spawning = spawning;
         let zombie = Actor.spawn(self.spawning.useVariedZombies? 'zmd_VariedZombie': 'zmd_Zombie', self.pos, allow_replace);
+        zombie.bdropoff = true;
         zombie.health = health;
         zombie.changeTid(zmd_Spawning.regularTid);
         thing_hate(zmd_Spawning.regularTid, zmd_Player.liveTid, 0);
@@ -74,11 +75,6 @@ class zmd_Spawning : EventHandler {
     override void worldLoaded(WorldEvent e) {
         zmd_Spawning.addSpawners(self.initialSpawnersTid);
         self.useVariedZombies = CVar.getCVar('useVariedZombies').getBool();
-    }
-
-    override void worldThingSpawned(WorldEvent e) {
-        if (e.thing is 'Weapon' && Weapon(e.thing).owner == null)
-            e.thing.destroy();
     }
 
     void countdownSpawn() {

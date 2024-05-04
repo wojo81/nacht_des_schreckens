@@ -12,7 +12,7 @@ class zmd_Player : DoomPlayer {
         Player.StartItem 'ColtAmmo', 32;
         Player.StartItem 'NTM_QuickMelee';
 
-        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun', 'Magnum', 'Thompson';
+        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun', 'Magnum', 'Thompson', 'Kar98', 'Carbine';
 
         Player.forwardMove 0.75, 0.75;
         Player.sideMove 0.5, 0.25;
@@ -55,7 +55,7 @@ class zmd_AmmoHud : zmd_HudItem {
         let ammo = hud.getCurrentAmmo();
         let weapon = hud.cplayer.readyWeapon;
         let zweapon = zmd_Weapon(weapon);
-        if (ammo) {
+        if (ammo != null) {
             if (zweapon && zweapon.Default.activeAmmo > 0)
                 hud.drawString(hud.defaultFont, zweapon.activeAmmo..'/'..ammo.amount, (hud.right_margin, hud.bottom_margin), hud.di_screen_right_bottom | hud.di_text_align_right, Font.cr_green);
             else

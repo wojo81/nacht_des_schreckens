@@ -30,9 +30,9 @@ This mod is meant to bring the features and spirit of classic 'Call of Duty Zomb
 
 ### Crew
 
-- **Tyler Wojciechowski**: Lead Developer
-
 - **Alexis Dutcher**: Lead Artist
+
+- **Tyler Wojciechowski**: Lead Developer
 
 ## Configuration
 

@@ -12,6 +12,9 @@ class zmd_Weapon : Weapon {
     property keepPartialReload: keepPartialReload;
 
     Default {
+        xscale 0.5;
+        yscale 0.5;
+
         Weapon.bobStyle 'InverseSmooth';
         Weapon.ammoUse 1;
 
@@ -81,11 +84,11 @@ class zmd_Weapon : Weapon {
     action void shootBullets(double spread, int damage, int bullets) {
         if (bullets == 1)
             bullets = -1;
-        a_fireBullets(spread, spread, bullets, damage << (invoker.fireFrameRate != invoker.Default.fireFrameRate), flags: fbf_noRandom);
+        a_fireBullets(spread, spread, bullets, damage, flags: fbf_noRandom);
         invoker.activeAmmo -= invoker.ammoUse1;
     }
 
-    action void shootProjectile(String projectile) {
+    action void shootProjectile(class<Rocket> projectile) {
         a_fireProjectile(projectile, useAmmo: false);
         invoker.activeAmmo -= invoker.Default.ammoUse1;
     }

@@ -33,3 +33,11 @@ class zmd_Door : zmd_Interactable {
         loop;
     }
 }
+
+class zmd_Boxes : zmd_Door {
+    States {
+    Spawn:
+        boxs a 1;
+        loop;
+    }
+}

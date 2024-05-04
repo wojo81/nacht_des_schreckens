@@ -196,11 +196,12 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
 
     static zmd_MysteryBoxPickup spawnIn(zmd_MysteryBox box, class<Weapon> pickupClass, PlayerPawn receiver) {
         let self = zmd_MysteryBoxPickup(Actor.spawn('zmd_MysteryBoxPickup', box.getOffset(), allow_replace));
-        self.pickupClass = pickupClass;
-        self.sprite = getDefaultByType(pickupClass).spawnState.sprite;
+        self.item = pickupClass;
         self.receiver = receiver;
         self.box = box;
         self.angle = box.angle;
+        self.sprite = getDefaultByType(self.item).spawnState.sprite;
+        self.scale = getDefaultByType(self.item).scale;
         return self;
     }
 
@@ -210,26 +211,8 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
     }
 
     override bool doUse(PlayerPawn player) {
-        if (self.giveTo(player)) {
+        if (player == self.receiver && super.doUse(player)) {
             self.closeBox();
-            return true;
-        }
-        return false;
-    }
-
-    bool giveTo(PlayerPawn player) {
-        if (player == self.receiver && zmd_InventoryManager.couldPickup(player, self.pickupClass)) {
-            if (player is 'zmd_Player')
-                player.a_giveInventory(self.pickupClass);
-            else {
-                player.a_giveInventory(self.pickupClass);
-
-                let ammoType = getDefaultByType(self.pickupClass).ammoType1;
-                if (ammoType != null) {
-                    let halfAmmo = getDefaultByType(ammoType).maxAmount / 2;
-                    player.giveInventory(ammoType, halfAmmo - player.countInv(ammoType));
-                }
-            }
             return true;
         }
         return false;

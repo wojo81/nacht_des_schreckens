@@ -27,9 +27,9 @@ class zmd_Powerup : Powerup {
         return self.altHudIcon;
     }
 
-    override void attachToOwner(Actor other) {
-        super.attachToOwner(other);
-        zmd_PowerupHud(other.findInventory('zmd_PowerupHud')).add(self, self.effectTics);
+    override void attachToOwner(Actor owner) {
+        super.attachToOwner(owner);
+        zmd_PowerupHud(owner.findInventory('zmd_PowerupHud')).add(self, self.effectTics);
     }
 }
 

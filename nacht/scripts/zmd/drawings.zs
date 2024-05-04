@@ -1,8 +1,7 @@
 class zmd_Drawing : zmd_Interactable {
     const upgradedAmmoCost = 4500;
 
-    String weaponName;
-    String upgradedWeaponName;
+    class<Weapon> weapon, upgradedWeapon;
 
     int weaponCost;
     int ammoCost;
@@ -11,9 +10,8 @@ class zmd_Drawing : zmd_Interactable {
     String ammoMessage;
     String upgradedAmmoMessage;
 
-    property weaponName: weaponName;
-    property weaponCost: weaponCost;
-    property ammoCost: weaponCost;
+    property weapon: weapon;
+    property cost: weaponCost;
 
     Default {
         +wallSprite;
@@ -23,7 +21,7 @@ class zmd_Drawing : zmd_Interactable {
     override void beginPlay() {
         super.beginPlay();
 
-        // self.upgradedWeaponName = 'Upgraded'..self.weaponName;
+        self.upgradedWeapon = 'Upgraded'..getDefaultByType(self.weapon).getClassName();
         self.ammoCost = self.weaponCost / 2;
 
         self.weaponMessage = self.costOf(weaponCost);
@@ -32,22 +30,25 @@ class zmd_Drawing : zmd_Interactable {
     }
 
     override void doTouch(PlayerPawn player) {
-        if (player.countInv(self.weaponName))
+        if (player.countInv(self.weapon) != 0)
             zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.ammoMessage);
-        else if (player.countInv(self.upgradedWeaponName))
+        else if (player.countInv(self.upgradedWeapon))
             zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.upgradedAmmoMessage);
         else
             zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.weaponMessage);
     }
 
     override bool doUse(PlayerPawn player) {
-        if (player.countInv(self.weaponName) && zmd_Points.takeFrom(player, ammoCost) && player.a_giveInventory(self.weaponName..'Ammo', 999))
+        if (player.countInv(self.weapon) != 0) {
+            if (zmd_Points.takeFrom(player, ammoCost) && player.giveInventory(getDefaultByType(self.weapon).ammoType1, 999))
+                player.a_startSound("game/purchase");
+        } else if (player.countInv(self.upgradedWeapon) != 0) {
+            if (zmd_Points.takeFrom(player, self.upgradedAmmoCost) && player.giveInventory(getDefaultByType(self.upgradedWeapon).ammoType1, 999))
+                player.a_startSound("game/purchase");
+        } else if (zmd_Points.takeFrom(player, self.weaponCost) && player.giveInventory(self.weapon, 1)) {
+            player.a_selectWeapon(self.weapon);
             player.a_startSound("game/purchase");
-        else if (player.countInv(self.upgradedWeaponName) && zmd_Points.takeFrom(player, self.upgradedAmmoCost) && player.a_giveInventory(self.upgradedWeaponName..'Ammo', 999))
-            player.a_startSound("game/purchase");
-        else if (zmd_Points.takeFrom(player, self.weaponCost) && player.a_giveInventory(weaponName))
-            player.a_startSound("game/purchase");
-        else
+        } else
             return false;
         return true;
     }
@@ -55,13 +56,52 @@ class zmd_Drawing : zmd_Interactable {
 
 class MinigunDrawing : zmd_Drawing {
     Default {
-        zmd_Drawing.weaponName "M1Garand";
-        zmd_Drawing.weaponCost 1200;
+        zmd_Drawing.weapon 'M1Garand';
+        zmd_Drawing.cost 1200;
     }
 
     States {
     Spawn:
-        mink a 1 bright;
+        mink a -1 bright;
+        loop;
+    }
+}
+
+class Kar98Drawing : zmd_Drawing {
+    Default {
+        zmd_Drawing.weapon 'Kar98';
+        zmd_Drawing.cost 500;
+    }
+
+    States {
+    Spawn:
+        k98d a -1 bright;
+        loop;
+    }
+}
+
+class CarbineDrawing : zmd_Drawing {
+    Default {
+        zmd_Drawing.weapon 'Carbine';
+        zmd_Drawing.cost 500;
+    }
+
+    States {
+    Spawn:
+        m1cd a -1 bright;
+        loop;
+    }
+}
+
+class ThompsonDrawing : zmd_Drawing {
+    Default {
+        zmd_Drawing.weapon 'Thompson';
+        zmd_Drawing.cost 1000;
+    }
+
+    States {
+    Spawn:
+        tmpd a -1 bright;
         loop;
     }
 }

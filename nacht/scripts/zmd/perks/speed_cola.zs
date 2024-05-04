@@ -6,7 +6,7 @@ class zmd_SpeedColaMachine : zmd_PerkMachine {
 
     States {
     Spawn:
-        qkrv a 1;
+        spca a 1;
         loop;
     }
 }
@@ -14,18 +14,23 @@ class zmd_SpeedColaMachine : zmd_PerkMachine {
 class zmd_SpeedColaDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_SpeedCola';
+        zmd_Drink.bottle 'zmd_SpeedColaBottle';
     }
 
     States {
-    Sprites0:
+    Sprites:
         ds0c a 0;
-        goto super::Sprites0;
-    Sprites1:
         ds1c a 0;
-        goto super::Sprites1;
-    Sprites2:
         ds2c a 0;
-        goto super::Sprites2;
+    Spawn:
+        sca0 a -1;
+        loop;
+    }
+}
+
+class zmd_SpeedColaBottle : zmd_Bottle {
+    Default {
+        zmd_Bottle.sprite 'sca0';
     }
 }
 

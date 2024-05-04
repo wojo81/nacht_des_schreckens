@@ -6,7 +6,7 @@ class zmd_JuggernogMachine : zmd_PerkMachine {
 
     States {
     Spawn:
-        qkrv a 1;
+        jgng a 1;
         loop;
     }
 }
@@ -14,18 +14,23 @@ class zmd_JuggernogMachine : zmd_PerkMachine {
 class zmd_JuggernogDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_Juggernog';
+        zmd_Drink.bottle 'zmd_JuggernogBottle';
     }
 
     States {
-    Sprites0:
+    Sprites:
         dj0n a 0;
-        goto super::Sprites0;
-    Sprites1:
         dj1n a 0;
-        goto super::Sprites1;
-    Sprites2:
         dj2n a 0;
-        goto super::Sprites2;
+    Spawn:
+        jga0 a -1;
+        loop;
+    }
+}
+
+class zmd_JuggernogBottle : zmd_Bottle {
+    Default {
+        zmd_Bottle.sprite 'jga0';
     }
 }
 

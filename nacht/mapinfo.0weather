@@ -1,6 +1,6 @@
 GameInfo
 {
-	AddEventHandlers = "WeatherHandler", "WeatherSpawner"
+	AddEventHandlers = "WeatherHandler"
 }
 
 DoomEdNums

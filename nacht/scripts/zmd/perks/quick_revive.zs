@@ -21,7 +21,7 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
         let used = super.doUse(player);
         if (used && self.isSolo)
             if (++self.buyCount == 3)
-                self.setStateLabel('Disappear');
+                self.setStateLabel('Vanish');
         return used;
     }
 
@@ -29,7 +29,7 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
     Spawn:
         qkrv a 1;
         loop;
-    Disappear:
+    Vanish:
         stop;
     }
 }
@@ -37,18 +37,23 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
 class zmd_QuickReviveDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_QuickRevive';
+        zmd_Drink.bottle 'zmd_QuickReviveBottle';
     }
 
     States {
-    Sprites0:
+    Sprites:
         dq0r a 0;
-        goto super::Sprites0;
-    Sprites1:
         dq1r a 0;
-        goto super::Sprites1;
-    Sprites2:
         dq2r a 0;
-        goto super::Sprites2;
+    Spawn:
+        qra0 a -1;
+        loop;
+    }
+}
+
+class zmd_QuickReviveBottle : zmd_Bottle {
+    Default {
+        zmd_Bottle.sprite 'qra0';
     }
 }
 

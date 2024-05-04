@@ -1,36 +1,23 @@
 class zmd_Pickup : zmd_Interactable {
-    class<Weapon> pickupClass;
-
-    override void postbeginPlay() {
-        if (getDefaultByType(self.pickupClass) is 'zmd_Weapon')
-            self.scale = (0.5, 0.5);
-    }
+    class<Weapon> item;
 
     static zmd_Pickup takeFrom(Actor giver, Weapon given) {
         let self = zmd_Pickup(Actor.spawn('zmd_Pickup', giver.pos, allow_replace));
-        let ammoType = given.ammoType1;
-        let ammoCount = given.countInv(ammoType);
-
-        self.pickupClass = given.getClassName();
-        self.a_giveInventory(self.pickupClass);
+        self.addInventory(given);
+        self.addInventory(giver.findInventory(given.Default.ammoType1));
+        self.item = given.getClass();
         self.sprite = given.Default.spawnState.sprite;
-        self.setInventory(ammoType, ammoCount);
-
-        let taken = zmd_Weapon(self.findInventory(given.getClassName()));
-        if (taken != null)
-            taken.activeAmmo = zmd_Weapon(given).activeAmmo;
-        giver.setInventory(ammoType, 0);
-        giver.takeInventory(self.pickupClass, 1);
+        self.scale = given.Default.scale;
         return self;
     }
 
     override void doTouch(PlayerPawn player) {
-        if (zmd_InventoryManager.couldPickup(player, self.pickupClass))
+        if (zmd_InventoryManager.couldPickup(player, self.item))
             zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage('[Pickup]');
     }
 
     override bool doUse(PlayerPawn player) {
-        if (zmd_InventoryManager.couldPickup(player, self.pickupClass)) {
+        if (zmd_InventoryManager.couldPickup(player, self.item)) {
             self.giveTo(player);
             return true;
         }
@@ -38,17 +25,16 @@ class zmd_Pickup : zmd_Interactable {
     }
 
     void giveTo(Actor taker) {
-        let ammoType = getDefaultByType(self.pickupClass).ammoType1;
-        let oldAmmoCount = taker.countInv(ammoType);
-        let ammoCount = self.countInv(ammoType);
-        let given = Weapon(self.findInventory(self.pickupClass));
-
-        taker.a_giveInventory(self.pickupClass, 1);
-        taker.setInventory(ammoType, max(ammoCount, oldAmmoCount));
-
-        let taken = zmd_Weapon(taker.findInventory(self.pickupClass));
-        if (taken != null)
-            taken.activeAmmo = zmd_Weapon(given).activeAmmo;
+        let taken = Weapon(self.findInventory(self.item));
+        if (taken != null) {
+            zmd_InventoryManager(taker.findInventory('zmd_InventoryManager')).handlePickup(taken);
+            taker.addInventory(taken);
+            taker.addInventory(self.findInventory(taken.Default.ammoType1));
+        } else {
+            taker.giveInventory(self.item, 1);
+        }
+        taker.a_selectWeapon(self.item);
+        self.item = null;
         self.destroy();
     }
 
@@ -95,6 +81,10 @@ class zmd_PickupDropper : Inventory {
     void dropPickup() {
         let player = PlayerPawn(self.owner);
         let weapon = self.owner.player.readyWeapon;
+
+        if (weapon == null)
+            return;
+
         let manager = zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
 
         if (manager.owns(weapon)) {
@@ -102,7 +92,9 @@ class zmd_PickupDropper : Inventory {
                 manager.abandon(weapon);
                 zmd_Pickup.takeFrom(player, weapon);
             }
-        } else if ((weapon is 'zmd_Drink' && !zmd_Drink(weapon).isEmpty && zmd_Points.takeFrom(player, self.cost)) || true) {
+        } else if ((weapon is 'zmd_Drink' && !zmd_Drink(weapon).isEmpty && zmd_Points.takeFrom(player, self.cost))) {
+            zmd_Pickup.takeFrom(player, weapon);
+        } else {
             zmd_Pickup.takeFrom(player, weapon);
         }
     }

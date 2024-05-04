@@ -71,6 +71,10 @@ game/maxammo  sounds/interactions/MAXAMMO
 game/powerup_grab sounds/interactions/POWERGRAB
 game/fire_sale sounds/interactions/fire_sale.wav
 
+game/swallow1 sounds/interactions/swallow1.wav
+game/swallow2 sounds/interactions/swallow2.wav
+game/bottle_break sounds/interactions/bottle_break.wav
+game/intro_cinematic sounds/interactions/intro_cinematic.wav
 game/intro sounds/interactions/BEGIN
 game/round sounds/interactions/ROUND
 game/siren sounds/interactions/SIREN
@@ -118,5 +122,20 @@ weapons/thompson_fire sounds/weapons/thompson/wpn_thompson_st_act.wav
 weapons/thompson_magout sounds/weapons/thompson/gr_thompson_mag_out.wav
 weapons/thompson_magin sounds/weapons/thompson/gr_thompson_mag_in.wav
 weapons/thompson_charge sounds/weapons/thompson/gr_thompson_charge.wav
+
+weapons/kar98_fire1        sounds/weapons/kar98/wpn_kar98_st_f.wav
+weapons/kar98_fire2        sounds/weapons/kar98/wpn_kar98_st_act.wav
+weapons/kar98_fire3        sounds/weapons/kar98/wpn_kar98_st_r.wav
+weapons/kar98_bolt_up      sounds/weapons/kar98/gr_kar98_bolt_up.wav
+weapons/kar98_bolt_back    sounds/weapons/kar98/gr_kar98_bolt_back.wav
+weapons/kar98_bolt_forward sounds/weapons/kar98/gr_kar98_bolt_forward.wav
+weapons/kar98_clip_eject   sounds/weapons/kar98/gr_kar98_clip_eject.wav
+weapons/kar98_clip_land    sounds/weapons/kar98/gr_kar98_clip_land.wav
+
+weapons/carbine_fire       sounds/weapons/carbine/wpn_m1carbine_st_act.wav
+weapons/carbine_charge     sounds/weapons/carbine/gr_m1carbine_charge.wav
+weapons/carbine_futz       sounds/weapons/carbine/gr_m1carbine_futz.wav
+weapons/carbine_mag_in     sounds/weapons/carbine/gr_m1carbine_mag_in.wav
+weapons/carbine_mag_out    sounds/weapons/carbine/gr_m1carbine_mag_out.wav
 
 ambience/rain sounds/ambience/rain.wav

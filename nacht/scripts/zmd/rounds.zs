@@ -26,15 +26,14 @@ class zmd_Rounds : EventHandler {
         self.spawning = zmd_Spawning.init(self);
         zmd_WorryHandler.bind_with(self);
         self.globalSound = zmd_GlobalSound.create();
-        self.globalSound.start(self.introSound);
-        self.nextRound();
+        self.isTransitioning = true;
     }
 
     override void worldThingDied(WorldEvent e) {
-        if (e.thing && e.thing.bIsMonster) {
+        if (!self.isTransitioning && e.thing && e.thing.bIsMonster) {
             self.zombieKilled();
             if (self.roundOver()) {
-                self.globalSound.start(self.endRoundSound, pitch: 0.75);
+                self.globalSound.start(self.endRoundSound, pitch: 0.5);
                 self.isTransitioning = true;
                 zmd_RoundDelay.create(self);
             }
@@ -65,7 +64,9 @@ class zmd_Rounds : EventHandler {
         self.isTransitioning = false;
         self.dropPool.handleRoundChange();
 
-        if (self.currentRound != 1)
+        if (self.currentRound == 1)
+            self.globalSound.start(self.introSound);
+        else
             self.globalSound.start(self.beginRoundSound);
 
         foreach (player : players) {

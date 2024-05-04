@@ -25,6 +25,7 @@ class zmd_Hud : BaseStatusBar {
     const bottom_margin = -margin - 12;
     const right_margin = -margin - 3;
 
+    HudFont screamFont;
     HudFont defaultFont;
     HudFont hintFont;
 
@@ -35,14 +36,14 @@ class zmd_Hud : BaseStatusBar {
     double alpha;
 
     override void init() {
-        self.defaultFont = HudFont.create(bigfont);
+        self.screamFont = HudFont.create(bigfont, spacing: 2);
+        self.defaultFont = HudFont.create(bigfont, spacing: 1);
         self.hintFont = HudFont.create(confont);
     }
 
     override void tick() {
-        if (self.inventoryManager.gameOver) {
-            ++self.ticksSinceGameOver;
-            self.alpha = abs((self.ticksSinceGameOver % (self.flashDelay * 2) - self.flashDelay) / double(self.flashDelay));
+        if (self.inventoryManager != null && self.inventoryManager.gameOver) {
+            self.alpha = abs((self.ticksSinceGameOver++ % (self.flashDelay * 2) - self.flashDelay) / double(self.flashDelay));
         }
     }
 
@@ -50,8 +51,10 @@ class zmd_Hud : BaseStatusBar {
         super.draw(state, ticFrac);
         self.beginHud();
 
-        if (self.inventoryManager.gameOver) {
-            self.drawString(self.defaultFont, 'Game Over', (0, 0), self.di_screen_center | self.di_text_align_center, translation: Font.cr_red, alpha: self.alpha);
+        if (self.inventoryManager == null) {
+            zmd_Intro(self.cplayer.mo.findInventory('zmd_Intro')).draw(self, state, ticFrac);
+        } else if (self.inventoryManager.gameOver) {
+            self.drawString(self.screamFont, 'Game Over', (0, 0), self.di_screen_center | self.di_text_align_center, translation: Font.cr_red, alpha: self.alpha);
         } else if (!self.inventoryManager.spectating) {
             let player = self.cplayer.mo;
             if (player is 'zmd_DownedPlayer') {

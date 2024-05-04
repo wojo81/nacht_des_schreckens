@@ -6,4 +6,8 @@ class zmd_GlobalSound : Actor {
     void start(sound whatToPlay, int slot = chan_body, int flags = chanf_default, double volume = 1, double pitch = 0, double startTime = 0) {
         self.a_startSound(whatToPlay, slot, flags, volume, attn_none, pitch, startTime);
     }
+
+    void cut(int slot) {
+        self.a_stopSound(slot);
+    }
 }
