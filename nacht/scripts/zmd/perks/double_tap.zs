@@ -14,7 +14,7 @@ class zmd_DoubleTapMachine : zmd_PerkMachine {
 class zmd_DoubleTapDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_DoubleTap';
-        zmd_Drink.bottle 'zmd_DoubleTapBottle';
+        tag 'Double Tap';
     }
 
     States {
@@ -28,20 +28,15 @@ class zmd_DoubleTapDrink : zmd_Drink {
     }
 }
 
-class zmd_DoubleTapBottle : zmd_Bottle {
-    Default {
-        zmd_Bottle.sprite 'dta0';
-    }
-}
-
 class zmd_DoubleTap : zmd_Perk {
     Default {
         Inventory.icon 'dtic';
     }
 
     override void modifyDamage(int damage, Name damageType, out int newDamage, bool passive, Actor inflictor, Actor source, int flags) {
-        if (!passive && source != self.owner)
+        if (inflictor != null && !inflictor.bmissile && !passive && source != self.owner) {
             newDamage = damage * 2;
+        }
     }
 
     override void attachToOwner(Actor other) {

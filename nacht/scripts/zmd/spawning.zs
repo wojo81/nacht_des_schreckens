@@ -77,6 +77,21 @@ class zmd_Spawning : EventHandler {
         self.useVariedZombies = CVar.getCVar('useVariedZombies').getBool();
     }
 
+    override void worldThingSpawned(WorldEvent e) {
+        let item = Inventory(e.thing);
+        if (item == null || item.owner != null) {
+            return;
+        }
+
+        if (item is 'Weapon') {
+            zmd_Pickup.take(Weapon(item), item.pos);
+            item.destroy();
+        } else if (item is 'CustomInventory' && !(item is 'zmd_Drop') && item.pos != (0, 0, 0)) {
+            zmd_CustomPickup.take(CustomInventory(item));
+            item.destroy();
+        }
+    }
+
     void countdownSpawn() {
         self.ticksTillSpawn = random[randomSpawning](self.minDelay, self.maxDelay);
     }

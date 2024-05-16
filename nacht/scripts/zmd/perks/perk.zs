@@ -6,7 +6,7 @@ class zmd_PerkMachine : zmd_Interactable {
     property drink: drink;
 
     Default {
-        radius 30;
+        radius 20;
         height 80;
 
         +solid
@@ -20,7 +20,8 @@ class zmd_PerkMachine : zmd_Interactable {
     }
 
     override bool doUse(PlayerPawn player) {
-        if (player.countInv(self.drink) == 0 && player.findInventory(getDefaultByType(self.drink).perk) == null && zmd_Points.takeFrom(player, self.cost) && player.a_giveInventory(self.drink)) {
+        if (player.countInv(self.drink) == 0 && player.findInventory(getDefaultByType(self.drink).perk) == null && zmd_Points.takeFrom(player, self.cost)) {
+            player.giveInventory(self.drink);
             self.a_startSound("game/purchase");
             player.a_selectWeapon(self.drink);
             return true;
@@ -37,12 +38,10 @@ class zmd_Perk : Inventory {
 
 class zmd_Drink : zmd_Weapon {
     readonly class<zmd_Perk> perk;
-    readonly class<zmd_Bottle> bottle;
     int sprites[3];
-    bool isEmpty;
+    bool consumed;
 
     property perk: perk;
-    property bottle: bottle;
 
     Default {
         Weapon.ammoType 'zmd_DrinkAmmo';
@@ -66,39 +65,47 @@ class zmd_Drink : zmd_Weapon {
         fr();
     }
 
-    action void givePerk() {
-        if (!invoker.isEmpty) {
+    action void consume() {
+        if (!invoker.consumed) {
             self.a_startSound("game/swallow2");
             self.giveInventory(invoker.perk, 1);
-            invoker.isEmpty = true;
+            invoker.consumed = true;
         }
     }
 
-    action void finish() {
+    action void discard() {
         self.takeInventory(invoker.ammoType1, 1);
         self.takeInventory(invoker.getClass(), 1);
+    }
+
+    action void throw() {
+        Actor bottle, _;
+        [bottle, _] = shootProjectile('zmd_Bottle');
+        if (bottle != null) {
+            bottle.sprite = invoker.Default.spawnState.sprite;
+        }
     }
 
     States {
     Ready:
         tnt1 a 0 loadSprites(0);
         #### abcdefghijklmnopqrstuvwxyz 2 rfr;
-        tnt1 a 0 loadSprites(1);
+        #### a 0 loadSprites(1);
         #### abcdefghi 2 rfr;
-        #### a 0 givePerk;
+        #### a 0 consume;
         #### jklmnopqrstuvwxyz 2 rfr;
-        tnt1 a 0 loadSprites(2);
+        #### a 0 loadSprites(2);
         #### ab 2 rfr;
-        tnt1 a 0 {invoker.a_startSound("game/bottle_break");}
+        tnt1 a 0 a_startSound("game/bottle_break");
         goto Deselect;
     Select:
         tnt1 a 0 a_raise;
         wait;
     Deselect:
-        tnt1 a 0 finish;
+        tnt1 a 0 discard;
         stop;
     Fire:
-        tnt1 a 0 shootProjectile(invoker.bottle);
+        tnt1 a 0 throw;
         goto Deselect;
     }
 }
@@ -110,10 +117,6 @@ class zmd_DrinkAmmo : Ammo {
 }
 
 class zmd_Bottle : Rocket {
-    Name spriteName;
-
-    property sprite: spriteName;
-
     Default {
         scale 0.5;
         health 1;
@@ -131,10 +134,6 @@ class zmd_Bottle : Rocket {
         -nogravity
     }
 
-    override void beginPlay() {
-        self.sprite = Actor.getSpriteIndex(self.spriteName);
-    }
-
     action void spin() {
         invoker.pitch += 25;
     }
@@ -144,7 +143,6 @@ class zmd_Bottle : Rocket {
         #### a 1 spin;
         loop;
     Death:
-        tnt1 a 0;
         stop;
     }
 }

@@ -14,7 +14,7 @@ class zmd_JuggernogMachine : zmd_PerkMachine {
 class zmd_JuggernogDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_Juggernog';
-        zmd_Drink.bottle 'zmd_JuggernogBottle';
+        tag 'Juggernog';
     }
 
     States {
@@ -25,12 +25,6 @@ class zmd_JuggernogDrink : zmd_Drink {
     Spawn:
         jga0 a -1;
         loop;
-    }
-}
-
-class zmd_JuggernogBottle : zmd_Bottle {
-    Default {
-        zmd_Bottle.sprite 'jga0';
     }
 }
 

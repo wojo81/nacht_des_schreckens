@@ -94,7 +94,7 @@ class zmd_DownedPlayer : DoomPlayer {
         super.postBeginPlay();
         if (!multiplayer) {
             if (self.countInv('zmd_Revive') == 0) {
-                self.a_giveInventory('zmd_GameOverSpectate');
+                self.giveInventory('zmd_GameOverSpectate', 1);
                 zmd_Rounds.fetch().globalSound.start("game/gameover");
             }
         } else  {
@@ -107,8 +107,8 @@ class zmd_DownedPlayer : DoomPlayer {
             }
             if (!anyLivePlayers) {
                 foreach (player : players) {
-                    player.mo.a_giveInventory('zmd_GameOverSpectate');
-                    player.mo.a_takeInventory('zmd_Spectate', 1);
+                    player.mo.giveInventory('zmd_GameOverSpectate', 1);
+                    player.mo.takeInventory('zmd_Spectate', 1);
                 }
                 zmd_Rounds.fetch().globalSound.start("game/gameover");
             }

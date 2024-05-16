@@ -4,7 +4,7 @@ class zmd_Door : zmd_Interactable {
     property cost: cost;
 
     Default {
-        radius 30;
+        radius 20;
         height 150;
         zmd_Door.cost 1000;
 

@@ -1,5 +1,4 @@
 class zmd_QuickReviveMachine : zmd_PerkMachine {
-    bool isSolo;
     int buyCount;
 
     Default {
@@ -13,15 +12,14 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
         if (!multiplayer) {
             self.cost = 500;
             self.drink = 'zmd_ReviveDrink';
-            self.isSolo = true;
         }
     }
 
     override bool doUse(PlayerPawn player) {
         let used = super.doUse(player);
-        if (used && self.isSolo)
-            if (++self.buyCount == 3)
-                self.setStateLabel('Vanish');
+        if (used && !multiplayer && ++self.buyCount == 3) {
+            self.setStateLabel('Vanish');
+        }
         return used;
     }
 
@@ -37,7 +35,7 @@ class zmd_QuickReviveMachine : zmd_PerkMachine {
 class zmd_QuickReviveDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_QuickRevive';
-        zmd_Drink.bottle 'zmd_QuickReviveBottle';
+        tag 'Quick Revive';
     }
 
     States {
@@ -48,12 +46,6 @@ class zmd_QuickReviveDrink : zmd_Drink {
     Spawn:
         qra0 a -1;
         loop;
-    }
-}
-
-class zmd_QuickReviveBottle : zmd_Bottle {
-    Default {
-        zmd_Bottle.sprite 'qra0';
     }
 }
 

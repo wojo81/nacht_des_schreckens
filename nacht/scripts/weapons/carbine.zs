@@ -114,7 +114,7 @@ class Carbine : zmd_Weapon {
     Zoom.In.Empty:
         mck0 abcdefgh 2;
     Zoom.Idle.Empty:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out.Empty');
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
         mcm0 a 1 readyWeapon;
         loop;
     Zoom.Out.Empty:

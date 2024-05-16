@@ -26,9 +26,9 @@ class zmd_InventoryManager : Inventory {
         +Inventory.persistentPower
     }
 
-    static bool couldPickup(PlayerPawn player, class<Weapon> weapon) {
+    static bool couldPickup(PlayerPawn player, class<Inventory> item) {
         let inventoryManager = zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
-        return (!inventoryManager.atCapacity() || inventoryManager.owns(player.player.readyWeapon)) && player.countInv(weapon) == 0;
+        return (!inventoryManager.atCapacity() || inventoryManager.owns(player.player.readyWeapon)) && player.countInv(item) == 0;
     }
 
     override void postBeginPlay() {
@@ -85,7 +85,9 @@ class zmd_InventoryManager : Inventory {
     }
 
     override bool handlePickup(Inventory item) {
-        if (item is 'zmd_Drink') {
+        if (item is self.fist) {
+            self.owner.addInventory(item);
+        } else if (item is 'zmd_Drink') {
             let drink = zmd_Drink(item);
             if (self.fastReload)
                 drink.activateFastReload();

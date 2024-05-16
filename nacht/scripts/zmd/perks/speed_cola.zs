@@ -14,7 +14,7 @@ class zmd_SpeedColaMachine : zmd_PerkMachine {
 class zmd_SpeedColaDrink : zmd_Drink {
     Default {
         zmd_Drink.perk 'zmd_SpeedCola';
-        zmd_Drink.bottle 'zmd_SpeedColaBottle';
+        tag 'Speed Cola';
     }
 
     States {
@@ -25,12 +25,6 @@ class zmd_SpeedColaDrink : zmd_Drink {
     Spawn:
         sca0 a -1;
         loop;
-    }
-}
-
-class zmd_SpeedColaBottle : zmd_Bottle {
-    Default {
-        zmd_Bottle.sprite 'sca0';
     }
 }
 

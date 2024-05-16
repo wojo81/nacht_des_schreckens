@@ -26,8 +26,7 @@ class zmd_Intro : zmd_HudItem {
         else if (self.ticksSinceStart == self.blackScreenDelay) {
             self.changeTextOffset();
             self.alpha = 0.0;
-        }
-        else {
+        } else {
             if (self.ticksSinceStart % 3 == 0)
                 self.changeTextOffset();
             self.alpha = (self.ticksSinceStart - self.blackScreenDelay) / double(self.textDelay);
@@ -126,22 +125,14 @@ class zmd_SwayTarget : Actor {
 
 class zmd_Spectate : Inventory {
     static void setOriginToSpawn(Actor player) {
-        zmd_Spectate.setOrigin(player, Level.createActorIterator(100 + player.playerNumber()).next().pos);
+        player.setOrigin(Level.createActorIterator(100 + player.playerNumber()).next().pos, false);
     }
 
-    static void setOrigin(Actor player, Vector3 newPos) {
-        LinkContext ctx;
-        player.unlinkFromWorld(ctx);
-        player.setXYZ(newPos);
-        player.linkToWorld(ctx);
-        player.findFloorCeiling(ffcf_onlySpawnPos);
-    }
-
-    override void attachToOwner(Actor other) {
-        super.attachToOwner(other);
-        zmd_InventoryManager(other.findInventory('zmd_InventoryManager')).spectating = true;
-        self.setOrigin(self.owner, (-2150, 2500, 0));
-        self.owner.setCamera(self.choosePlayer());
+    override void attachToOwner(Actor owner) {
+        super.attachToOwner(owner);
+        zmd_InventoryManager(owner.findInventory('zmd_InventoryManager')).spectating = true;
+        owner.setOrigin((-2150, 2500, 0), false);
+        owner.setCamera(self.choosePlayer());
     }
 
     override void detachFromOwner() {
@@ -155,19 +146,21 @@ class zmd_Spectate : Inventory {
     }
 
     Actor choosePlayer() {
-        foreach (player : players)
-            if (player.mo != null && player.mo.playerNumber() != self.owner.playerNumber())
+        foreach (player : players) {
+            if (player.mo != null && player.mo.playerNumber() != self.owner.playerNumber()) {
                 return player.mo;
+            }
+        }
         return null;
     }
 }
 
 class zmd_GameOverSpectate : Inventory {
-    override void attachToOwner(Actor other) {
-        super.attachToOwner(other);
-        zmd_InventoryManager(other.findInventory('zmd_InventoryManager')).gameOver = true;
-        zmd_Spectate.setOrigin(self.owner, (-2150, 2500, 0));
-        self.owner.setCamera(Level.createActorIterator(11).next());
+    override void attachToOwner(Actor owner) {
+        super.attachToOwner(owner);
+        zmd_InventoryManager(owner.findInventory('zmd_InventoryManager')).gameOver = true;
+        owner.setOrigin((-2150, 2500, 0), false);
         thing_activate(11);
+        owner.setCamera(Level.createActorIterator(11).next());
     }
 }

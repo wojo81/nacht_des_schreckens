@@ -115,7 +115,7 @@ class M1Garand : zmd_Weapon {
     Zoom.In.Empty:
         m1k0 abcdef 2;
     Zoom.Idle.Empty:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out.Empty');
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
         m1m0 a 1 readyWeapon;
         loop;
     Zoom.Out.Empty:

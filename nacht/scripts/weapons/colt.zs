@@ -107,7 +107,7 @@ class Colt : zmd_Weapon {
     Zoom.In.Empty:
         clk0 abcdef 2;
     Zoom.Idle.Empty:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out.Empty');
+        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
         clm0 a 1 readyWeapon;
         loop;
     Zoom.Out.Empty:

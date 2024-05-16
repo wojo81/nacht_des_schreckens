@@ -9,8 +9,8 @@ class zmd_MysteryBox : zmd_Interactable {
     int spinCount;
 
     Default {
-        radius 50;
-        height 200;
+        radius 40;
+        height 70;
 
         +wallSprite
         +solid;
@@ -106,15 +106,11 @@ class zmd_MysteryBox : zmd_Interactable {
 class zmd_MysteryBoxSpin : Actor {
     PlayerPawn receiver;
     zmd_MysteryBox box;
+    int lastIndex;
 
     Default {
        +noGravity
         +wallSprite
-    }
-
-    override void postBeginPlay() {
-        if (self.receiver is 'zmd_Player')
-            self.scale = (0.5, 0.5);
     }
 
     static zmd_MysteryBoxSpin spawnIn(zmd_MysteryBox box, PlayerPawn receiver) {
@@ -122,26 +118,31 @@ class zmd_MysteryBoxSpin : Actor {
         self.receiver = receiver;
         self.box = box;
         self.angle = box.angle;
+        self.lastIndex = -1;
         return self;
     }
 
     void spin() {
-        self.sprite = self.box.pool.chooseSpriteFor(self.receiver, self.sprite);
+        [self.sprite, self.frame, self.scale, self.lastIndex] = self.box.pool.chooseInfoFor(self.receiver, self.lastIndex);
     }
 
     void finish() {
         if (self.box.shouldMove())
             zmd_MysteryBoxLock.spawnIn(self.box, self.receiver);
         else {
-            let item = self.box.pool.choosePickupFor(self.receiver, self.sprite);
+            let item = self.box.pool.choosePickupFor(self.receiver, self.lastIndex);
             zmd_MysteryBoxPickup.spawnIn(self.box, item, self.receiver);
         }
     }
 
     States {
     Spawn:
-        #### aaaaaa 20 nodelay bright spin;
-        #### a 0 finish;
+        #### ###### 5 nodelay bright spin;
+        #### #### 8 bright spin;
+        #### ### 11 bright spin;
+        #### ## 15 bright spin;
+        #### # 19 bright spin;
+        tnt1 a 0 finish;
         stop;
     }
 }
@@ -183,6 +184,7 @@ class zmd_MysteryBoxLock : Actor {
 class zmd_MysteryBoxPickup : zmd_Pickup {
     PlayerPawn receiver;
     zmd_MysteryBox box;
+    Actor particles;
 
     Default {
         floatBobStrength 0.1;
@@ -200,8 +202,8 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
         self.receiver = receiver;
         self.box = box;
         self.angle = box.angle;
-        self.sprite = getDefaultByType(self.item).spawnState.sprite;
-        self.scale = getDefaultByType(self.item).scale;
+        [self.sprite, self.frame, self.scale] = zmd_Pickup.getInfo(getDefaultByType(pickupClass));
+        self.particles = Actor.spawn('BlackParticleFountain', self.pos - (0, 0, self.pos.z));
         return self;
     }
 
@@ -220,6 +222,7 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
 
     void closeBox() {
         self.box.close();
+        self.particles.destroy();
         self.destroy();
     }
 
@@ -232,7 +235,6 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
 
 class zmd_MysteryBoxPool : EventHandler {
     Array<class<Weapon> >[4] items;
-    Array<int>[4] sprites;
 
     static zmd_MysteryBoxPool fetch() {
         return zmd_MysteryBoxPool(EventHandler.find('zmd_MysteryBoxPool'));
@@ -240,26 +242,29 @@ class zmd_MysteryBoxPool : EventHandler {
 
     void add(int playerIndex, class<Weapon> item) {
         self.items[playerIndex].push(item);
-        self.sprites[playerIndex].push(getDefaultByType(item).spawnState.sprite);
     }
 
     int randomIndexFor(PlayerPawn player) {
         return random[randomItem](0, self.items[player.playerNumber()].size() - 1);
     }
 
-    int chooseSpriteFor(PlayerPawn player, int lastSprite) {
+    int, int, Vector2, int chooseInfoFor(PlayerPawn player, int lastIndex) {
         let index = self.randomIndexFor(player);
         let playerNumber = player.playerNumber();
-        while (self.sprites[playerNumber][index] == lastSprite)
+        while (index == lastIndex) {
             index = self.randomIndexFor(player);
-        return self.sprites[playerNumber][index];
+        }
+        int sprite, frame; Vector2 scale;
+        [sprite, frame, scale] = zmd_Pickup.getInfo(getDefaultByType(self.items[playerNumber][index]));
+        return sprite, frame, scale, index;
     }
 
-    class<Weapon> choosePickupFor(PlayerPawn player, int lastSprite) {
+    class<Weapon> choosePickupFor(PlayerPawn player, int lastIndex) {
         let index = self.randomIndexFor(player);
         let playerNumber = player.playerNumber();
-        while (self.sprites[playerNumber][index] == lastSprite || player.countInv(self.items[playerNumber][index]) != 0)
+        while (index == lastIndex || player.countInv(self.items[playerNumber][index]) != 0) {
             index = self.randomIndexFor(player);
+        }
         return self.items[playerNumber][index];
     }
 }

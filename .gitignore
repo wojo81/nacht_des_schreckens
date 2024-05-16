@@ -1,3 +1,4 @@
 .gitignore
 map01.dbs
 map01.wad.*
+run_windows/package.bat

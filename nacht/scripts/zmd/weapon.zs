@@ -88,9 +88,11 @@ class zmd_Weapon : Weapon {
         invoker.activeAmmo -= invoker.ammoUse1;
     }
 
-    action void shootProjectile(class<Rocket> projectile) {
-        a_fireProjectile(projectile, useAmmo: false);
+    action Actor, Actor shootProjectile(class<Rocket> projectile) {
         invoker.activeAmmo -= invoker.Default.ammoUse1;
+        Actor x, y;
+        [x, y] = a_fireProjectile(projectile, useAmmo: false);
+        return x, y;
     }
 
     action State when(bool condition, StateLabel label) {
