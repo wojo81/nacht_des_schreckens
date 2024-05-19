@@ -20,8 +20,8 @@ class zmd_PerkMachine : zmd_Interactable {
     }
 
     override bool doUse(PlayerPawn player) {
-        if (player.countInv(self.drink) == 0 && player.findInventory(getDefaultByType(self.drink).perk) == null && zmd_Points.takeFrom(player, self.cost)) {
-            player.giveInventory(self.drink);
+        if (player.findInventory(self.drink) == null && player.findInventory(getDefaultByType(self.drink).perk) == null && zmd_Points.takeFrom(player, self.cost)) {
+            player.giveInventory(self.drink, 1);
             self.a_startSound("game/purchase");
             player.a_selectWeapon(self.drink);
             return true;
