@@ -5,14 +5,14 @@ class zmd_Interactable : Actor abstract {
 
     override void touch(Actor toucher) {
         let player = PlayerPawn(toucher);
-        if (player != null && !(player is 'zmd_DownedPlayer'))
+        if (player != null && player.findInventory('zmd_LastStand') == null)
             doTouch(player);
     }
 
     override bool used(Actor user) {
         let player = PlayerPawn(user);
-        if (player != null && !(player is 'zmd_DownedPlayer') && self.bspecial && doUse(player))
-            zmd_HintHud(user.findInventory('zmd_HintHud')).clearMessage();
+        if (player != null && player.findInventory('zmd_LastStand') == null && self.bspecial && doUse(player))
+            zmd_HintHud(player.findInventory('zmd_HintHud')).clearMessage();
         return false;
     }
 

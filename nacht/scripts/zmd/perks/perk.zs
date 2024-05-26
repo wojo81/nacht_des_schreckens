@@ -56,6 +56,16 @@ class zmd_Drink : zmd_Weapon {
         self.sprites[2] = state.nextState.nextState.sprite;
     }
 
+    override void attachToOwner(Actor owner) {
+        super.attachToOwner(owner);
+        zmd_InventoryManager.fetchFrom(owner).switchWeapon = false;
+    }
+
+    override void detachFromOwner() {
+        zmd_InventoryManager.fetchFrom(owner).switchWeapon = true;
+        super.detachFromOwner();
+    }
+
     action void loadSprites(int index) {
         self.player.findPSprite(psp_weapon).sprite = invoker.sprites[index];
     }

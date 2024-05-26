@@ -57,7 +57,7 @@ class zmd_Hud : BaseStatusBar {
             self.drawString(self.screamFont, 'Game Over', (0, 0), self.di_screen_center | self.di_text_align_center, translation: Font.cr_red, alpha: self.alpha);
         } else if (!self.inventoryManager.spectating) {
             let player = self.cplayer.mo;
-            if (player is 'zmd_DownedPlayer') {
+            if (player.findInventory('zmd_LastStand') != null) {
                 self.inventoryManager.ammoHud.draw(self, state, ticFrac);
                 self.inventoryManager.powerupHud.draw(self, state, ticFrac);
                 Screen.dim("red", 0.4, 0, 0, Screen.getWidth(), Screen.getHeight());

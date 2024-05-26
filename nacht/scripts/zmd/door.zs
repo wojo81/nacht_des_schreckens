@@ -26,6 +26,39 @@ class zmd_Door : zmd_Interactable {
         }
         return false;
     }
+}
+
+class zmd_HelpDoorBack : Actor {
+    Default {
+        +wallSprite
+    }
+
+    States {
+    Spawn:
+        door b 1;
+        loop;
+    }
+}
+
+class zmd_HelpDoor : zmd_Door {
+    Actor back;
+
+    Default {
+        radius 16;
+    }
+
+    override void postBeginPlay() {
+        let offset = -Actor.angleToVector(6);
+        self.back = Actor.spawn('zmd_HelpDoorBack', self.pos + (offset.x, offset.y, 0));
+    }
+
+    override bool doUse(PlayerPawn player) {
+        if (super.doUse(player)) {
+            self.back.destroy();
+            return true;
+        }
+        return false;
+    }
 
     States {
     Spawn:

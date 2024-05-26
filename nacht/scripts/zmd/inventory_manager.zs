@@ -1,11 +1,10 @@
 class zmd_InventoryManager : Inventory {
-    bool spectating;
-    bool gameOver;
+    bool spectating, gameOver, skipHandlePickup, switchWeapon;
 
     Array<zmd_HudItem> hudItems;
     Array<class<zmd_Perk> > perks;
     Array<Weapon> weapons;
-    class<Weapon> fist;
+    class<Weapon> fist, startingWeapon;
     Array<class<Inventory> > startingItems;
     int maxWeaponCount;
 
@@ -26,6 +25,10 @@ class zmd_InventoryManager : Inventory {
         +Inventory.persistentPower
     }
 
+    static zmd_InventoryManager fetchFrom(Actor player) {
+        return zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
+    }
+
     static bool couldPickup(PlayerPawn player, class<Inventory> item) {
         let inventoryManager = zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
         return (!inventoryManager.atCapacity() || inventoryManager.owns(player.player.readyWeapon)) && player.countInv(item) == 0;
@@ -38,10 +41,10 @@ class zmd_InventoryManager : Inventory {
         Thinker thinker;
         while (thinker = iterator.next()) {
             let item = Inventory(thinker);
-            if (item != null && item.owner == owner && !(item is 'Ammo')) {
+            if (item != null && item.owner == self.owner && !(item is 'Ammo')) {
                 self.startingItems.push(item.getClass());
                 let weapon = Weapon(thinker);
-                if (weapon != null && weapon.owner == owner && weapon.ammoType1 == null)
+                if (weapon != null && weapon.owner == self.owner && weapon.ammoType1 == null)
                     self.fist = weapon.getClass();
             }
         }
@@ -54,14 +57,15 @@ class zmd_InventoryManager : Inventory {
         self.ammoHud = zmd_AmmoHud(self.addHud('zmd_AmmoHud'));
         self.addHud('zmd_RoundHud');
 
-        self.weapons.push(owner.player.readyWeapon);
-
+        self.startingWeapon = self.owner.player.readyWeapon.getClass();
+        self.weapons.push(self.owner.player.readyWeapon);
         self.maxWeaponCount = 2;
+        self.switchWeapon = true;
 
         let mysteryBoxPool = zmd_MysteryBoxPool.fetch();
-        let playerNumber = owner.playerNumber();
+        let playerNumber = self.owner.playerNumber();
 
-        if (owner is 'zmd_Player') {
+        if (self.owner is 'zmd_Player') {
             mysteryBoxPool.add(playerNumber, 'Raygun');
             mysteryBoxPool.add(playerNumber, 'M1Garand');
             mysteryBoxPool.add(playerNumber, 'DoubleBarrelShotgun');
@@ -72,7 +76,7 @@ class zmd_InventoryManager : Inventory {
             mysteryBoxPool.add(playerNumber, 'Kar98');
             mysteryBoxPool.add(playerNumber, 'Carbine');
         } else {
-            let slots = owner.player.weapons;
+            let slots = self.owner.player.weapons;
             for (int x = 0; x <= 7; ++x) {
                 for (int y = 0; y != slots.slotSize(x); ++y) {
                     let weapon = slots.getWeapon(x, y);
@@ -85,6 +89,10 @@ class zmd_InventoryManager : Inventory {
     }
 
     override bool handlePickup(Inventory item) {
+        if (self.skipHandlePickup) {
+            return super.handlePickup(item);
+        }
+
         if (item is self.fist) {
             self.owner.addInventory(item);
         } else if (item is 'zmd_Drink') {
@@ -94,30 +102,60 @@ class zmd_InventoryManager : Inventory {
         } else if (item is 'zmd_Perk') {
             self.perks.push(item.getClassName());
             zmd_PerkHud(self.owner.findInventory('zmd_PerkHud')).add(item);
-        } else if (item is 'Weapon') {
+        } else if (item is 'Weapon' && self.owner.findInventory('zmd_LastStand') == null) {
             let weapon = Weapon(item);
-            bool slotted; (slotted) = self.owner.player.weapons.locateWeapon(weapon.getClass());
-            if (slotted && item.canPickup(self.owner)) {
-                if (self.atCapacity()) {
-                    let cweapon = self.owner.player.readyWeapon;
-                    if (cweapon == null)
-                        cweapon = self.owner.player.pendingWeapon;
-                    self.abandon(cweapon);
-                    if (cweapon is 'zmd_Weapon')
-                        owner.setInventory(cweapon.Default.ammoType1, 0);
-                    owner.removeInventory(cweapon);
-                }
-                let zweapon = zmd_Weapon(weapon);
-                if (zweapon != null) {
-                    if (self.fastReload)
-                        zweapon.activateFastReload();
-                    if (self.doubleFire)
-                        zweapon.activateDoubleFire();
-                }
-                self.weapons.push(weapon);
+            if (self.atCapacity()) {
+                let cweapon = self.owner.player.readyWeapon;
+                if (cweapon == null)
+                    cweapon = self.owner.player.pendingWeapon;
+                self.abandon(cweapon);
+                if (cweapon is 'zmd_Weapon')
+                    owner.setInventory(cweapon.Default.ammoType1, 0);
+                owner.removeInventory(cweapon);
             }
+            let zweapon = zmd_Weapon(weapon);
+            if (zweapon != null) {
+                if (self.fastReload)
+                    zweapon.activateFastReload();
+                if (self.doubleFire)
+                    zweapon.activateDoubleFire();
+            }
+            self.weapons.push(weapon);
         }
         return super.handlePickup(item);
+    }
+
+    override void modifyDamage(int damage, Name damageType, out int newDamage, bool receivedDamage, Actor inflictor, Actor source, int flags) {
+        if (receivedDamage && damage >= self.owner.health) {
+            newDamage = 0;
+            self.handleDown();
+        }
+    }
+
+    void handleDown() {
+        self.giveTemp(zmd_LastStandWeaponPool.chooseFor(self.owner));
+        let worry = zmd_Worry(self.owner.findInventory('zmd_Worry'));
+        if (worry != null) {
+            worry.handler.deactivate();
+        }
+        if (self.owner.findInventory('zmd_Revive')) {
+            self.owner.giveInventory('zmd_LastStand', 1);
+            return;
+        }
+        foreach (player : players) {
+            let player = player.mo;
+            if (player != null && player != self.owner && player.findInventory('zmd_Revive') == null && player.findInventory('zmd_LastStand') == null && player.findInventory('zmd_Spectate') == null) {
+                self.owner.giveInventory('zmd_LastStand', 1);
+                return;
+            }
+        }
+        foreach (player : players) {
+            if (player.mo != null) {
+                player.mo.setInventory('zmd_Spectate', 0);
+                player.mo.giveInventory('zmd_GameOverSpectate', 1);
+            }
+        }
+        zmd_Rounds.fetch().globalSound.start("game/gameover");
     }
 
     void reset() {
@@ -126,6 +164,49 @@ class zmd_InventoryManager : Inventory {
             self.owner.giveInventory(item, 1);
             if (self.owner.countInv('zmd_Points') < 1500)
                 self.owner.setInventory('zmd_Points', 1500);
+        }
+    }
+
+    void giveTemp(class<Weapon> weapon) {
+        if (self.owner.findInventory(weapon) == null) {
+            self.skipHandlePickup = true;
+            self.owner.giveInventory(weapon, 1);
+            self.skipHandlePickup = false;
+        }
+        self.owner.a_selectWeapon(weapon);
+    }
+
+    void removeTemp() {
+        if (!self.owns(self.owner.player.readyWeapon)) {
+            self.owner.player.readyWeapon.destroy();
+        }
+    }
+
+    void nextWeapon() {
+        if (self.weapons.size() > 1 && self.owner.findInventory('zmd_LastStand') == null) {
+            let index = self.weapons.find(self.owner.player.readyWeapon) + 1;
+            if (index == self.weapons.size()) {
+                index = 0;
+            }
+            self.owner.a_selectWeapon(self.weapons[index].getClass());
+        }
+    }
+
+    void previousWeapon() {
+        if (self.weapons.size() > 1 && self.owner.findInventory('zmd_LastStand') == null) {
+            let index = self.weapons.find(self.owner.player.readyWeapon);
+            if (index == 0) {
+                index = self.weapons.size() - 1;
+            } else {
+                --index;
+            }
+            self.owner.a_selectWeapon(self.weapons[index].getClass());
+        }
+    }
+
+    void selectWeapon(int index) {
+        if (self.weapons.size() > 1 && self.owner.findInventory('zmd_LastStand') == null && index < self.weapons.size()) {
+            self.owner.a_selectWeapon(self.weapons[index].getClass());
         }
     }
 
@@ -206,7 +287,6 @@ class zmd_InventoryGiver : EventHandler {
     static void giveTo(PlayerPawn player) {
         player.changeTid(zmd_Player.liveTid);
         player.giveInventory('zmd_InventoryManager', 1);
-        player.giveInventory('zmd_DownedPlayerManager', 1);
         player.setInventory('zmd_Points', 500);
         player.giveInventory('zmd_Regen', 1);
         player.giveInventory('zmd_PickupDropper', 1);
