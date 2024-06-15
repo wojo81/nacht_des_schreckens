@@ -1,3 +1,11 @@
+license:
+
+    this is open source to any person, as long as they follow any license associated with any sub-license files listed:
+
+        license_weather
+
+        please email me if you feel that you any other licenses should apply: [email](tylerwojo81@gmail.com)
+
 # Nacht des Schreckens
 
 ![demo of the map](demo.png)
