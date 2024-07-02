@@ -4,13 +4,13 @@ license:
 
         license_weather
 
-        please email me if you feel that you any other licenses should apply: [email](tylerwojo81@gmail.com)
+        please email me if you feel that any other licenses should apply: tylerwojo81@gmail.com
 
 # Nacht des Schreckens
 
 ![demo of the map](demo.png)
 
-Consider this a custom zombies map for 'Call of Duty: World at War' but in the vein of a Doom 2 mod using the GZDoom source port. Like other Doom 2 mods, this requires a valid 'Doom2.wad' file via a legal copy of Doom 2. This map pulls or modifies many assets from 'World at War'. After the final release of the demo, further updates will have to be retrieved elsewhere and a valid copy of 'Call of Duty: World at War' will also be required to use this mod.
+Consider this a custom zombies map for 'Call of Duty: World at War' but in the vein of a Doom 2 mod using the GZDoom source port. This map pulls or modifies many assets from 'World at War'. Most likely, after the final release of the demo, further updates will have to be retrieved elsewhere and a valid copy of 'Call of Duty: World at War' will also be required to use this mod.
 
 This mod is meant to bring the features and spirit of classic 'Call of Duty Zombies' maps into Doom 2 through a reimagining of their very first map. While this has been done before, I hope to bring this type of mod into a category of its own.
 
@@ -42,11 +42,51 @@ This mod is meant to bring the features and spirit of classic 'Call of Duty Zomb
 
 - **Tyler Wojciechowski**: Lead Developer
 
-## Configuration
+## Installation & Configuration
 
-To run using the 'launch.bat' file, make sure the folder containing 'gzdoom.exe' is named 'gzdoom' and is next to the folder containing this project.
+Download the zip file from the 'Code' dropdown menu and unzip in directory of your choosing
+
+Download and unzip GZDoom next to this projects's folder: https://zdoom.org/downloads
+
+Rename folder to just 'gzdoom'
+
+Extract the 'doom2.wad' file from a legal copy of Doom 2 OR extract the 'freedoom2.wad' file from the freedoom project: https://freedoom.github.io/download.html
+
+Place the extracted file into the 'gzdoom' folder.
+
+To run using the 'launch.bat', 'host.bat', or 'join.bat' files, make sure the folder containing 'gzdoom.exe' is named 'gzdoom' and is next to the folder containing this project.
 
 To avoid weapon sprite cropping, make sure the aspect ratio is set to 4:3 in-game (weapon sprites will be widened later to support wider ratios).
+
+To play using the original rogues gallery of enemies, set the 'Use Varied Zombies' option to true in the full options menu.
+
+## Default Controls
+
+                Keyboard     |   Xbox Controller
+Fire:           Left Click   |   Right Trigger 
+Use:            E Key        |   A Button
+Reload:         R Key        |   X Button
+Zoom:           Right Click  |   Left Trigger
+Kick:           F            |   Right Stick
+Swap Weapon:    Mouse Wheel  |   Y Button
+Quick Swap:     1-9 Keys     |   D-Pad (Clockwise starting from left)
+Drop Weapon:    C Key x2     |   Right Bumper x2
+
+## Multiplayer
+
+To host or join a multiplayer match, run the respective script.
+
+To host, the number of players will have to manually be set in the script.
+
+To join, the host's ip address will have to manually be set in the script.
+
+## Cross Mod Support
+
+While there is initial support for use with other mods, there is still a long ways to go. 
+
+## Android / Delta Touch
+
+This mod is able to run on Android through Delta Touch, but manual set up of the controls is needed.
 
 ## Next Milestone
 

@@ -136,7 +136,7 @@ class zmd_PickupDropper : Inventory {
         if (weapon == null)
             return;
 
-        let manager = zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
+        let manager = zmd_InventoryManager.fetchFrom(player);
 
         if (manager.owns(weapon)) {
             if (zmd_Points.takeFrom(player, self.cost)) {
