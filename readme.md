@@ -20,6 +20,8 @@ This mod is meant to bring the features and spirit of classic 'Call of Duty Zomb
 
 - **id Software's Doom 2**: https://store.steampowered.com/app/10090/Call_of_Duty_World_at_War/
 
+- **Freedoom**: https://freedoom.github.io/index.html
+
 - **Treyarch's Call of Duty: World at War**: https://store.steampowered.com/app/10090/Call_of_Duty_World_at_War/
 </br></br>
 ### Other Mods/Libraries Used
@@ -50,7 +52,7 @@ Download and unzip GZDoom next to this projects's folder: https://zdoom.org/down
 
 Rename folder to just 'gzdoom'
 
-Extract the 'doom2.wad' file from a legal copy of Doom 2 OR extract the 'freedoom2.wad' file from the freedoom project: https://freedoom.github.io/download.html
+Extract the 'doom2.wad' file from a legal copy of Doom 2 OR extract the 'freedoom2.wad' file from the Freedoom project: https://freedoom.github.io/download.html
 
 Place the extracted file into the 'gzdoom' folder.
 
@@ -62,15 +64,17 @@ To play using the original rogues gallery of enemies, set the 'Use Varied Zombie
 
 ## Default Controls
 
-                Keyboard     |   Xbox Controller
-Fire:           Left Click   |   Right Trigger 
-Use:            E Key        |   A Button
-Reload:         R Key        |   X Button
-Zoom:           Right Click  |   Left Trigger
-Kick:           F            |   Right Stick
-Swap Weapon:    Mouse Wheel  |   Y Button
-Quick Swap:     1-9 Keys     |   D-Pad (Clockwise starting from left)
-Drop Weapon:    C Key x2     |   Right Bumper x2
+|Action|Keyboard|Xbox Controller|
+|:---:|:---:|:---:|
+|Movement|WASD Keys|Left Stick|
+|Fire|Left Click|Right Trigger|
+|Use|E Key|A Button|
+|Reload|R Key|X Button|
+|Zoom|Right Click|Left Trigger|
+|Kick|F Key|Right Stick|
+|Swap Weapon|Mouse Wheel|Y Button|
+|Quick Swap|1-9 Keys|D-Pad (Clockwise starting from left)|
+|Drop Weapon|C Key x2|Right Bumper x2|
 
 ## Multiplayer
 
