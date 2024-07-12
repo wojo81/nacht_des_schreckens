@@ -62,7 +62,10 @@ class zmd_Drink : zmd_Weapon {
     }
 
     override void detachFromOwner() {
-        zmd_InventoryManager.fetchFrom(owner).switchWeapon = true;
+        let inventoryManager = zmd_InventoryManager.fetchFrom(self.owner);
+        if (inventoryManager != null) {
+            inventoryManager.switchWeapon = true;
+        }
         super.detachFromOwner();
     }
 
