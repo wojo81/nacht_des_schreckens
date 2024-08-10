@@ -45,7 +45,7 @@ class zmd_Weapon : Weapon {
     }
 
     action State toggleZoom() {
-        return invoker.zoomed? resolveState('Zoom.Out'): resolveState('Zoom.In');
+        return invoker.zoomed? resolveState('ZoomOut'): resolveState('ZoomIn');
     }
 
     action void zoomIn() {
@@ -125,6 +125,10 @@ class zmd_Weapon : Weapon {
 
     action State whenNoAmmo(StateLabel label) {
         return invoker.when(self.countInv(invoker.ammoType1) == 0, label);
+    }
+
+    action State whenFullAmmo(StateLabel label) {
+        return invoker.when(invoker.activeAmmo == invoker.Default.activeAmmo, label);
     }
 
     action void fr() {
