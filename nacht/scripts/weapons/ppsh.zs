@@ -79,11 +79,13 @@ class Ppsh : zmd_Weapon {
         goto Ready;
     LastFire:
         ppg0 a 2 ff;
+        tnt1 a 0 a_startSound("weapons/ppsh_fire1");
         tnt1 a 0 shootBullets(3, 20, 1);
         ppg0 bc 2 ff;
         goto Ready;
     LastZoomFire:
         ppj0 a 2 ff;
+        tnt1 a 0 a_startSound("weapons/ppsh_fire1");
         tnt1 a 0 shootBullets(1, 20, 1);
         ppj0 bc 2 ff;
         goto Ready;

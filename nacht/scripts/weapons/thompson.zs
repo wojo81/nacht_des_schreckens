@@ -83,6 +83,7 @@ class Thompson : zmd_Weapon {
         goto Ready;
     LastZoomFire:
         tpj0 a 2 ff;
+        tnt1 a 0 a_startSound("weapons/thompson_fire");
         tnt1 a 0 shootBullets(1, 12, 1);
         tpj0 bcde 2 ff;
         goto Ready;

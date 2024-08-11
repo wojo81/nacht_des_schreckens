@@ -84,8 +84,11 @@ class M1Garand : zmd_Weapon {
         goto Ready;
     LastZoomFire:
         m1j0 a 2 ff;
+        tnt1 a 0 a_startSound("weapons/m1g_fire");
         tnt1 a 0 shootBullets(0.5, 25, 1);
-        m1j0 bcdef 2 ff;
+        m1j0 bcd 2 ff;
+        tnt1 a 0 a_startSound("weapons/m1g_ping");
+        m1j0 ef 2 ff;
         goto Ready;
     PartialReload:
         m1e0 abcdefghi 2 fr;

@@ -87,6 +87,7 @@ class Kar98 : zmd_Weapon {
         krg0 bcdef 2 ff;
         goto Ready;
     LastZoomFire:
+        tnt1 a 0 a_startSound("weapons/kar98_fire1");
         krk0 a 2 ff;
         tnt1 a 0 shootBullets(0.25, 15, 1);
         krk0 bcdef 2 ff;
