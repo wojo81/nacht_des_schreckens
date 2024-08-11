@@ -13,35 +13,36 @@ class Carbine : zmd_Weapon {
         mca0 a -1;
         loop;
     Select:
-        tnt1 a 0 whenNoActiveAmmo('Raise.Empty');
+        tnt1 a 0 whenNoActiveAmmo('EmptyRaise');
     Raise:
         mcc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 whenZoomed('Zoom.Ready');
-        tnt1 a 0 whenNoActiveAmmo('Idle.Empty');
+        tnt1 a 0 whenZoomed('ZoomReady');
+        tnt1 a 0 whenNoActiveAmmo('EmptyIdle');
     Idle:
         mcc0 a 1 readyWeapon;
         loop;
     Deselect:
         tnt1 a 0 zoomOut;
-        tnt1 a 0 whenNoActiveAmmo('Lower.Empty');
+        tnt1 a 0 whenNoActiveAmmo('EmptyLower');
     Lower:
         mcc0 a 1 a_lower;
         loop;
     Fire:
         tnt1 a 0 whenNoActiveAmmo('Ready');
-        tnt1 a 0 whenZoomed('Zoom.Fire');
-        tnt1 a 0 whenLastActiveAmmo('Fire.Last');
+        tnt1 a 0 whenZoomed('ZoomFire');
+        tnt1 a 0 whenLastActiveAmmo('LastFire');
         mcf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/carbine_fire");
         tnt1 a 0 shootBullets(3, 20, 1);
         mcf0 bcd 2 ff;
         goto Ready;
     Reload:
+        tnt1 a 0 whenFullAmmo('Ready');
         tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        tnt1 a 0 whenAnyActiveAmmo('Reload.Partial');
+        tnt1 a 0 whenAnyActiveAmmo('PartialReload');
         mcd0 abcdefghi 3 fr;
         tnt1 a 0 a_startSound("weapons/carbine_mag_out");
         mcd0 jklmnopqrstuvwxy 3 fr;
@@ -57,41 +58,40 @@ class Carbine : zmd_Weapon {
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
-    Zoom.In:
+    ZoomIn:
         tnt1 a 0 zoomIn;
-        tnt1 a 0 whenNoActiveAmmo('Zoom.In.Empty');
+        tnt1 a 0 whenNoActiveAmmo('EmptyZoomIn');
         mcb0 abcdefgh 2;
-    Zoom.Ready:
-        tnt1 a 0 whenNoActiveAmmo('Zoom.Idle.Empty');
-    Zoom.Idle:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    ZoomReady:
+        tnt1 a 0 whenNoActiveAmmo('EmptyZoomIdle');
+    ZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         mch0 a 2 readyWeapon;
         loop;
-    Zoom.Out:
+    ZoomOut:
         tnt1 a 0 zoomOut;
-        tnt1 a 0 whenNoActiveAmmo('Zoom.Out.Empty');
+        tnt1 a 0 whenNoActiveAmmo('EmptyZoomOut');
         mcb0 hgfedcba 2;
         goto Ready;
-    Zoom.Fire:
-        tnt1 a 0 whenLastActiveAmmo('Zoom.Fire.Last');
+    ZoomFire:
+        tnt1 a 0 whenLastActiveAmmo('LastZoomFire');
         mci0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/carbine_fire");
         tnt1 a 0 shootBullets(0.5, 20, 1);
         mci0 bcd 2 ff;
         goto Ready;
-    Fire.Last:
+    LastFire:
         mcg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/carbine_fire");
         tnt1 a 0 shootBullets(3, 20, 1);
         mcg0 bcd 2 ff;
         goto Ready;
-    Zoom.Fire.Last:
+    LastZoomFire:
         mcj0 a 2 ff;
-        tnt1 a 0 a_startSound("weapons/carbine_fire");
         tnt1 a 0 shootBullets(0.5, 20, 1);
         mcj0 bcd 2 ff;
         goto Ready;
-    Reload.Partial:
+    PartialReload:
         mce0 abcdefghi 2 fr;
         tnt1 a 0 a_startSound("weapons/carbine_mag_out");
         mce0 jklmnopqrstuvwxy 2 fr;
@@ -102,22 +102,22 @@ class Carbine : zmd_Weapon {
         mce1 ghijklmnopqrstuv 2 fr;
         tnt1 a 0 reload;
         goto Ready;
-    Raise.Empty:
+    EmptyRaise:
         mcl0 a 1 a_raise;
         loop;
-    Idle.Empty:
+    EmptyIdle:
         mcl0 a 1 readyWeapon;
         loop;
-    Lower.Empty:
+    EmptyLower:
         mcl0 a 1 a_lower;
         loop;
-    Zoom.In.Empty:
+    EmptyZoomIn:
         mck0 abcdefgh 2;
-    Zoom.Idle.Empty:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    EmptyZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('EmptyZoomOut');
         mcm0 a 1 readyWeapon;
         loop;
-    Zoom.Out.Empty:
+    EmptyZoomOut:
         mck0 hgfedcba 2;
         goto Ready;
     }

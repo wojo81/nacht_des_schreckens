@@ -17,7 +17,7 @@ class DoubleBarrelShotgun : zmd_Weapon {
         dbc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenZoomed('ZoomReady');
     Idle:
         dbc0 a 1 readyWeapon;
         loop;
@@ -28,16 +28,17 @@ class DoubleBarrelShotgun : zmd_Weapon {
         loop;
     Fire:
         tnt1 a 0 whenNoActiveAmmo('Ready');
-        tnt1 a 0 whenZoomed('Zoom.Fire');
+        tnt1 a 0 whenZoomed('ZoomFire');
         tnt1 a 0 a_startSound("weapons/shotgun_fire");
         dbf0 a 2 ff;
         tnt1 a 0 shootBullets(5, 15, 4);
         dbf0 bcdef 2 ff;
         goto Ready;
     Reload:
+        tnt1 a 0 whenFullAmmo('Ready');
         tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        tnt1 a 0 whenAnyActiveAmmo('Reload.Partial');
+        tnt1 a 0 whenAnyActiveAmmo('PartialReload');
         dbd0 abcdefghij 3 fr;
         tnt1 a 0 a_startSound("weapons/shotgun_pull");
         dbd0 klmnopqrstuvwxyz 3 fr;
@@ -49,25 +50,25 @@ class DoubleBarrelShotgun : zmd_Weapon {
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
-    Zoom.In:
+    ZoomIn:
         tnt1 a 0 zoomIn;
         dbb0 abcdefgh 2;
-    Zoom.Ready:
-    Zoom.Idle:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    ZoomReady:
+    ZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         dbg0 a 2 readyWeapon;
         loop;
-    Zoom.Out:
+    ZoomOut:
         tnt1 a 0 zoomOut;
         dbb0 hgfedcba 2;
         goto Ready;
-    Zoom.Fire:
+    ZoomFire:
         tnt1 a 0 a_startSound("weapons/shotgun_fire");
         dbh0 a 2 ff;
         tnt1 a 0 shootBullets(3, 15, 4);
         dbh0 bcdef 2 ff;
         goto Ready;
-    Reload.Partial:
+    PartialReload:
         dbe0 abcdefgh 2 fr;
         tnt1 a 0 a_startSound("weapons/shotgun_pull");
         dbe0 ijklmnopqrstuvwxyz 2 fr;

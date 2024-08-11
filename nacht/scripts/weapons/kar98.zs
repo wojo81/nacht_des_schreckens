@@ -17,7 +17,7 @@ class Kar98 : zmd_Weapon {
         krc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenZoomed('ZoomReady');
     Idle:
         krc0 a 1 readyWeapon;
         loop;
@@ -28,8 +28,8 @@ class Kar98 : zmd_Weapon {
         loop;
     Fire:
         tnt1 a 0 whenNoActiveAmmo('Ready');
-        tnt1 a 0 whenZoomed('Zoom.Fire');
-        tnt1 a 0 whenLastActiveAmmo('Fire.Last');
+        tnt1 a 0 whenZoomed('ZoomFire');
+        tnt1 a 0 whenLastActiveAmmo('LastFire');
         tnt1 a 0 a_startSound("weapons/kar98_fire1");
         kre0 a 2 ff;
         tnt1 a 0 shootBullets(1, 15, 1);
@@ -42,6 +42,7 @@ class Kar98 : zmd_Weapon {
         kre0 mnopqrstuv 2 ff;
         goto Ready;
     Reload:
+        tnt1 a 0 whenFullAmmo('Ready');
         tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
         krd0 abc 3 fr;
@@ -54,20 +55,20 @@ class Kar98 : zmd_Weapon {
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
-    Zoom.In:
+    ZoomIn:
         tnt1 a 0 zoomIn;
         krb0 abcde 2;
-    Zoom.Ready:
-    Zoom.Idle:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    ZoomReady:
+    ZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         krh0 a 2 readyWeapon;
         loop;
-    Zoom.Out:
+    ZoomOut:
         tnt1 a 0 zoomOut;
         krb0 edcba 2;
         goto Ready;
-    Zoom.Fire:
-        tnt1 a 0 whenLastActiveAmmo('Zoom.Fire.Last');
+    ZoomFire:
+        tnt1 a 0 whenLastActiveAmmo('LastZoomFire');
         tnt1 a 0 a_startSound("weapons/kar98_fire1");
         kri0 a 2 ff;
         tnt1 a 0 shootBullets(0.25, 15, 1);
@@ -79,14 +80,13 @@ class Kar98 : zmd_Weapon {
         tnt1 a 0 a_startSound("weapons/kar98_bolt_forward");
         kri0 mnopqrstuv 2 ff;
         goto Ready;
-    Fire.Last:
+    LastFire:
         tnt1 a 0 a_startSound("weapons/kar98_fire1");
         krg0 a 2 ff;
         tnt1 a 0 shootBullets(1, 15, 1);
         krg0 bcdef 2 ff;
         goto Ready;
-    Zoom.Fire.Last:
-        tnt1 a 0 a_startSound("weapons/kar98_fire1");
+    LastZoomFire:
         krk0 a 2 ff;
         tnt1 a 0 shootBullets(0.25, 15, 1);
         krk0 bcdef 2 ff;

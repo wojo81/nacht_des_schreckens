@@ -17,7 +17,7 @@ class Magnum : zmd_Weapon {
         swc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenZoomed('ZoomReady');
     Idle:
         swc0 a 1 readyWeapon;
         loop;
@@ -28,13 +28,14 @@ class Magnum : zmd_Weapon {
         loop;
     Fire:
         tnt1 a 0 whenNoActiveAmmo('Ready');
-        tnt1 a 0 whenZoomed('Zoom.Fire');
+        tnt1 a 0 whenZoomed('ZoomFire');
         swf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/magnum_fire");
         tnt1 a 0 shootBullets(3, 10, 1);
         swf0 bcde 2 ff;
         goto Ready;
     Reload:
+        tnt1 a 0 whenFullAmmo('Ready');
         tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
         swd0 abcdefghi 3 fr;
@@ -51,19 +52,19 @@ class Magnum : zmd_Weapon {
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
-    Zoom.In:
+    ZoomIn:
         tnt1 a 0 zoomIn;
         swb0 abcdefg 2;
-    Zoom.Ready:
-    Zoom.Idle:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    ZoomReady:
+    ZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         swg0 a 2 readyWeapon;
         loop;
-    Zoom.Out:
+    ZoomOut:
         tnt1 a 0 zoomOut;
         swb0 gfedcba 2;
         goto Ready;
-    Zoom.Fire:
+    ZoomFire:
         swi0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/magnum_fire");
         tnt1 a 0 shootBullets(0.25, 10, 1);

@@ -17,7 +17,7 @@ class Thompson : zmd_Weapon {
         tpc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenZoomed('ZoomReady');
     Idle:
         tpc0 a 1 readyWeapon;
         loop;
@@ -28,8 +28,8 @@ class Thompson : zmd_Weapon {
         loop;
     Fire:
         tnt1 a 0 whenNoActiveAmmo('Ready');
-        tnt1 a 0 whenZoomed('Zoom.Fire');
-        tnt1 a 0 whenLastActiveAmmo('Fire.Last');
+        tnt1 a 0 whenZoomed('ZoomFire');
+        tnt1 a 0 whenLastActiveAmmo('LastFire');
         tpf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/thompson_fire");
         tnt1 a 0 shootBullets(3, 12, 1);
@@ -38,9 +38,10 @@ class Thompson : zmd_Weapon {
         tpf0 de 2 ff;
         goto Ready;
     Reload:
+        tnt1 a 0 whenFullAmmo('Ready');
         tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        tnt1 a 0 whenAnyActiveAmmo('Reload.Partial');
+        tnt1 a 0 whenAnyActiveAmmo('PartialReload');
         tpd0 abcd 3 fr;
         tnt1 a 0 a_startSound("weapons/thompson_magout");
         tpd0 efghijklm 3 fr;
@@ -53,20 +54,20 @@ class Thompson : zmd_Weapon {
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
-    Zoom.In:
+    ZoomIn:
         tnt1 a 0 zoomIn;
         tpb0 abcd 2;
-    Zoom.Ready:
-    Zoom.Idle:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    ZoomReady:
+    ZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         tph0 a 2 readyWeapon;
         loop;
-    Zoom.Out:
+    ZoomOut:
         tnt1 a 0 zoomOut;
         tpb0 dcba 2;
         goto Ready;
-    Zoom.Fire:
-        tnt1 a 0 whenLastActiveAmmo('Zoom.Fire.Last');
+    ZoomFire:
+        tnt1 a 0 whenLastActiveAmmo('LastZoomFire');
         tpi0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/thompson_fire");
         tnt1 a 0 shootBullets(1, 12, 1);
@@ -74,19 +75,18 @@ class Thompson : zmd_Weapon {
         tnt1 a 0 a_refire;
         tpi0 de 2 ff;
         goto Ready;
-    Fire.Last:
+    LastFire:
         tpg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/thompson_fire");
         tnt1 a 0 shootBullets(3, 12, 1);
         tpg0 bcde 2 ff;
         goto Ready;
-    Zoom.Fire.Last:
+    LastZoomFire:
         tpj0 a 2 ff;
-        tnt1 a 0 a_startSound("weapons/thompson_fire");
         tnt1 a 0 shootBullets(1, 12, 1);
         tpj0 bcde 2 ff;
         goto Ready;
-    Reload.Partial:
+    PartialReload:
         tpe0 abcde 2 fr;
         tnt1 a 0 a_startSound("weapons/thompson_magout");
         tpe0 fghijklmnopqrstu 2 fr;

@@ -17,7 +17,7 @@ class Ppsh : zmd_Weapon {
         ppc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenZoomed('ZoomReady');
     Idle:
         ppc0 a 1 readyWeapon;
         loop;
@@ -28,8 +28,8 @@ class Ppsh : zmd_Weapon {
         loop;
     Fire:
         tnt1 a 0 whenNoActiveAmmo('Ready');
-        tnt1 a 0 whenZoomed('Zoom.Fire');
-        tnt1 a 0 whenLastActiveAmmo('Fire.Last');
+        tnt1 a 0 whenZoomed('ZoomFire');
+        tnt1 a 0 whenLastActiveAmmo('LastFire');
         ppf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/ppsh_fire1");
         tnt1 a 0 shootBullets(3, 20, 1);
@@ -38,9 +38,10 @@ class Ppsh : zmd_Weapon {
         ppf0 c 2 ff;
         goto Ready;
     Reload:
+        tnt1 a 0 whenFullAmmo('Ready');
         tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
-        tnt1 a 0 whenAnyActiveAmmo('Reload.Partial');
+        tnt1 a 0 whenAnyActiveAmmo('PartialReload');
         ppd0 abcd 3 fr;
         tnt1 a 0 a_startSound("weapons/ppsh_magout");
         ppd0 efghijkl 3 fr;
@@ -55,20 +56,20 @@ class Ppsh : zmd_Weapon {
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
-    Zoom.In:
+    ZoomIn:
         tnt1 a 0 zoomIn;
         ppb0 abcde 2;
-    Zoom.Ready:
-    Zoom.Idle:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    ZoomReady:
+    ZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         pph0 a 2 readyWeapon;
         loop;
-    Zoom.Out:
+    ZoomOut:
         tnt1 a 0 zoomOut;
         ppb0 edcba 2;
         goto Ready;
-    Zoom.Fire:
-        tnt1 a 0 whenLastActiveAmmo('Zoom.Fire.Last');
+    ZoomFire:
+        tnt1 a 0 whenLastActiveAmmo('LastZoomFire');
         ppi0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/ppsh_fire1");
         tnt1 a 0 shootBullets(1, 20, 1);
@@ -76,22 +77,18 @@ class Ppsh : zmd_Weapon {
         tnt1 a 0 a_refire;
         ppi0 c 2 ff;
         goto Ready;
-    Fire.Last:
+    LastFire:
         ppg0 a 2 ff;
         tnt1 a 0 shootBullets(3, 20, 1);
         ppg0 bc 2 ff;
         goto Ready;
-    Zoom.Fire.Last:
+    LastZoomFire:
         ppj0 a 2 ff;
         tnt1 a 0 shootBullets(1, 20, 1);
         ppj0 bc 2 ff;
         goto Ready;
-    Reload.Partial:
-        ppe0 abcde 2 fr;
-        tnt1 a 0 a_startSound("weapons/ppsh_magout");
-        ppe0 fghijklmnopqrst 2 fr;
-        tnt1 a 0 a_startSound("weapons/ppsh_magin");
-        ppe0 uvwxyz 2 fr;
+    PartialReload:
+        ppe0 abcdefghijklmnopqrstuvwxyz 2 fr;
         ppe1 abcd 2 fr;
         tnt1 a 0 reload;
         goto Ready;

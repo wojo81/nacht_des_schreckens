@@ -17,7 +17,7 @@ class Raygun : zmd_Weapon {
         rgc0 a 1 a_raise;
         loop;
     Ready:
-        tnt1 a 0 whenZoomed('Zoom.Ready');
+        tnt1 a 0 whenZoomed('ZoomReady');
     Idle:
         rgc0 a 1 readyWeapon;
         loop;
@@ -28,14 +28,16 @@ class Raygun : zmd_Weapon {
         loop;
     Fire:
         tnt1 a 0 whenNoActiveAmmo('Ready');
-        tnt1 a 0 whenZoomed('Zoom.Fire');
+        tnt1 a 0 whenZoomed('ZoomFire');
         rge0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
         tnt1 a 0 shootProjectile('Rayflux');
-        rge0 bcdefg 2 ff;
+        rge0 b 2 ff;
         tnt1 a 0 a_refire;
+        rge0 cdefg 2 ff;
         goto Ready;
     Reload:
+        tnt1 a 0 whenFullAmmo('Ready');
         tnt1 a 0 whenNoAmmo('Ready');
         tnt1 a 0 zoomOut;
         rgd0 abcdefghijklmn 3 fr;
@@ -51,24 +53,25 @@ class Raygun : zmd_Weapon {
         goto Ready;
     Zoom:
         tnt1 a 0 toggleZoom;
-    Zoom.In:
+    ZoomIn:
         tnt1 a 0 zoomIn;
         rgb0 abcde 2;
-    Zoom.Ready:
-    Zoom.Idle:
-        tnt1 a 0 whenShouldZoomOut('Zoom.Out');
+    ZoomReady:
+    ZoomIdle:
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         rgf0 a 2 readyWeapon;
         loop;
-    Zoom.Out:
+    ZoomOut:
         tnt1 a 0 zoomOut;
         rgb0 edcba 2;
         goto Ready;
-    Zoom.Fire:
+    ZoomFire:
         rgg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
         tnt1 a 0 shootProjectile('Rayflux');
-        rgg0 bcdefg 2 ff;
+        rgg0 b 2 ff;
         tnt1 a 0 a_refire;
+        rgg0 cdefg 2 ff;
         goto Ready;
     }
 }
