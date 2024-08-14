@@ -1,3 +1,9 @@
+class M1GarandAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 128;
+    }
+}
+
 class M1Garand : zmd_Weapon {
     Default {
         Weapon.ammoGive 56;
@@ -122,11 +128,5 @@ class M1Garand : zmd_Weapon {
     EmptyZoomOut:
         m1k0 fedcba 2;
         goto Ready;
-    }
-}
-
-class M1GarandAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 128;
     }
 }

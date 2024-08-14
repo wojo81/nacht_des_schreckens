@@ -43,7 +43,12 @@ class zmd_Juggernog : zmd_Perk {
     }
 
     override void detachFromOwner() {
-        self.regen.maxHealth = self.regen.Default.maxHealth;
+        self.regen.maxHealth = self.owner.Default.health;
+        self.owner.setInventory('zmd_Vitality', self.owner.Default.health);
+        if (self.owner.health > self.owner.Default.health) {
+            console.printf('test');
+            self.owner.a_damageSelf(self.owner.health - self.owner.Default.health);
+        }
         super.detachFromOwner();
     }
 }

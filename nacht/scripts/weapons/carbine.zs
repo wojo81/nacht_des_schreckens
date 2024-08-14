@@ -1,3 +1,9 @@
+class CarbineAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 120;
+    }
+}
+
 class Carbine : zmd_Weapon {
     Default {
         Weapon.ammoGive 60;
@@ -123,8 +129,3 @@ class Carbine : zmd_Weapon {
     }
 }
 
-class CarbineAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 120;
-    }
-}

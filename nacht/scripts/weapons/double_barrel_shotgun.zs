@@ -1,3 +1,9 @@
+class DoubleBarrelShotgunAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 60;
+    }
+}
+
 class DoubleBarrelShotgun : zmd_Weapon {
     Default {
         Weapon.ammoGive 28;
@@ -77,11 +83,5 @@ class DoubleBarrelShotgun : zmd_Weapon {
         dbe1 pqrstuv 2 fr;
         tnt1 a 0 reload;
         goto Ready;
-    }
-}
-
-class DoubleBarrelShotgunAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 60;
     }
 }

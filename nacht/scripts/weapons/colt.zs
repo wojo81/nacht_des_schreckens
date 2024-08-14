@@ -1,3 +1,9 @@
+class ColtAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 72;
+    }
+}
+
 class Colt : zmd_Weapon {
     Default {
         Weapon.ammoGive 32;
@@ -114,11 +120,5 @@ class Colt : zmd_Weapon {
     EmptyZoomOut:
         clk0 fedcba 2;
         goto Ready;
-    }
-}
-
-class ColtAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 72;
     }
 }

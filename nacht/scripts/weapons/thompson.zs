@@ -1,3 +1,9 @@
+class ThompsonAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 200;
+    }
+}
+
 class Thompson : zmd_Weapon {
     Default {
         Weapon.ammoGive 80;
@@ -96,11 +102,5 @@ class Thompson : zmd_Weapon {
         tpe1 abcd 2 fr;
         tnt1 a 0 reload;
         goto Ready;
-    }
-}
-
-class ThompsonAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 200;
     }
 }

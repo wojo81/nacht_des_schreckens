@@ -15,7 +15,6 @@ class zmd_Regen : Inventory {
     zmd_Vitality vitality;
 
     property delay: ticksTillHealing;
-    property startingHealth: maxHealth;
 
     Default {
         Inventory.maxAmount 1;
@@ -24,7 +23,6 @@ class zmd_Regen : Inventory {
         +Inventory.persistentPower
 
         zmd_Regen.delay 35 * 3;
-        zmd_Regen.startingHealth 100;
     }
 
     override void modifyDamage(int damage, Name damageType, out int newDamage, bool passive, Actor inflictor, Actor source, int flags) {

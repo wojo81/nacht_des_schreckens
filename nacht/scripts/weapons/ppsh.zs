@@ -1,3 +1,9 @@
+class PpshAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 355;
+    }
+}
+
 class Ppsh : zmd_Weapon {
     Default {
         Weapon.ammoGive 142;
@@ -94,11 +100,5 @@ class Ppsh : zmd_Weapon {
         ppe1 abcd 2 fr;
         tnt1 a 0 reload;
         goto Ready;
-    }
-}
-
-class PpshAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 355;
     }
 }

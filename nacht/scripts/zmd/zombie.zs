@@ -64,15 +64,15 @@ class zmd_Zombie : Actor {
         NAZO A 15;
         goto See;
     Death:
-          NAZO I 0 a_startSound("zombie/crack",0);
-          NAZO I 1 A_Scream;
+        NAZO I 0 a_startSound("zombie/crack",0);
+        NAZO I 1 A_Scream;
         // 	NAZO I 0 A_SpawnItemEx("Gore_Knife",12,random(-2,2),random(12,14),random(0,1),0,0,SXF_CLIENTSIDE);
         // 	TNT1 A 0 A_GiveToTarget("kills",1)
         // 	TNT1 A 0 A_GiveToTarget("killcount",1)
-          NAZO IJKLMN 2;
+        NAZO IJKLMN 2;
         // 	TNT1 AA 0 A_SpawnItemEx("Gore_Knife",random(1,4),random(-1,1),random(0,6),random(-1,1),random(-1,1),random(1,2),SXF_CLIENTSIDE);
         TNT1 A 0 a_startSound("zombie/fall",0, volume: 0.4);
-          NAZO N 1 A_NoBlocking;
+        NAZO N 1 A_NoBlocking;
         // 	TNT1 A 0 A_SpawnItemEx("RandomPowerup",0,0,0,0,0,0,0,SXF_ABSOLUTEANGLE,242)
         NAZO N 512;
         stop;

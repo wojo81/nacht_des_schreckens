@@ -1,3 +1,9 @@
+class RaygunAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 200;
+    }
+}
+
 class Raygun : zmd_Weapon {
     Default {
         Weapon.ammoGive 60;
@@ -73,11 +79,5 @@ class Raygun : zmd_Weapon {
         tnt1 a 0 a_refire;
         rgg0 cdefg 2 ff;
         goto Ready;
-    }
-}
-
-class RaygunAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 200;
     }
 }

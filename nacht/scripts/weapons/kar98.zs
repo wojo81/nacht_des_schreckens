@@ -1,3 +1,9 @@
+class Kar98Ammo : Ammo {
+    Default {
+        Inventory.maxAmount 60;
+    }
+}
+
 class Kar98 : zmd_Weapon {
     Default {
         Weapon.ammoGive 30;
@@ -92,11 +98,5 @@ class Kar98 : zmd_Weapon {
         tnt1 a 0 shootBullets(0.25, 15, 1);
         krk0 bcdef 2 ff;
         goto Ready;
-    }
-}
-
-class Kar98Ammo : Ammo {
-    Default {
-        Inventory.maxAmount 60;
     }
 }

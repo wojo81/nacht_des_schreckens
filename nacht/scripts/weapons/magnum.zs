@@ -1,3 +1,9 @@
+class MagnumAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 66;
+    }
+}
+
 class Magnum : zmd_Weapon {
     Default {
         Weapon.ammoGive 30;
@@ -70,11 +76,5 @@ class Magnum : zmd_Weapon {
         tnt1 a 0 shootBullets(0.25, 10, 1);
         swi0 bcde 2 ff;
         goto Ready;
-    }
-}
-
-class MagnumAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 66;
     }
 }

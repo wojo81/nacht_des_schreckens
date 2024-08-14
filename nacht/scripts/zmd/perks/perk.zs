@@ -36,6 +36,12 @@ class zmd_Perk : Inventory {
     }
 }
 
+class zmd_DrinkAmmo : Ammo {
+    Default {
+        Inventory.maxAmount 1;
+    }
+}
+
 class zmd_Drink : zmd_Weapon {
     readonly class<zmd_Perk> perk;
     int sprites[3];
@@ -120,12 +126,6 @@ class zmd_Drink : zmd_Weapon {
     Fire:
         tnt1 a 0 throw;
         goto Deselect;
-    }
-}
-
-class zmd_DrinkAmmo : Ammo {
-    Default {
-        Inventory.maxAmount 1;
     }
 }
 
