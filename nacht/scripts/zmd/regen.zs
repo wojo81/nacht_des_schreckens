@@ -25,6 +25,11 @@ class zmd_Regen : Inventory {
         zmd_Regen.delay 35 * 3;
     }
 
+    override void attachToOwner(Actor owner) {
+        super.attachToOwner(owner);
+        self.maxHealth = owner.Default.health;
+    }
+
     override void modifyDamage(int damage, Name damageType, out int newDamage, bool passive, Actor inflictor, Actor source, int flags) {
         if (passive) {
             self.ticksTillHealing = self.Default.ticksTillHealing;
@@ -34,12 +39,14 @@ class zmd_Regen : Inventory {
 
     override void doEffect() {
         if (self.shouldHeal) {
-            if (self.owner.health >= self.maxHealth)
+            if (self.owner.health >= self.maxHealth) {
                 self.shouldHeal = false;
-            else
-                self.owner.a_giveInventory('zmd_Vitality');
+            } else {
+                self.owner.giveInventory('zmd_vitality', 1);
+            }
         }
-        if (self.ticksTillHealing > 0 && --self.ticksTillHealing == 0)
+        if (self.ticksTillHealing > 0 && --self.ticksTillHealing == 0) {
             self.shouldHeal = true;
+        }
     }
 }

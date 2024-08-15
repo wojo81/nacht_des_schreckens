@@ -13,7 +13,7 @@ class zmd_Drop : CustomInventory {
         self.scale /= 1.5;
     }
 
-    action void giveAll(Name item, int amount = 1) {
+    action void giveAll(name item, int amount = 1) {
         ScriptUtil.giveInventory(null, item, amount);
     }
 }
