@@ -38,9 +38,8 @@ class Raygun : zmd_Weapon {
         rge0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
         tnt1 a 0 shootProjectile('Rayflux');
-        rge0 b 2 ff;
+        rge0 bcdefg 2 ff;
         tnt1 a 0 a_refire;
-        rge0 cdefg 2 ff;
         goto Ready;
     Reload:
         tnt1 a 0 whenFullAmmo('Ready');
@@ -75,9 +74,8 @@ class Raygun : zmd_Weapon {
         rgg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
         tnt1 a 0 shootProjectile('Rayflux');
-        rgg0 b 2 ff;
+        rgg0 bcdefg 2 ff;
         tnt1 a 0 a_refire;
-        rgg0 cdefg 2 ff;
         goto Ready;
     }
 }
