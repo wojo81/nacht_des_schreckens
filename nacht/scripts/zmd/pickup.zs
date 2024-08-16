@@ -97,11 +97,9 @@ class zmd_NullPickup : Inventory {
 }
 
 class zmd_PickupDropper : Inventory {
-    const key = bt_user2;
     const cost = 750;
 
-    bool readyToDrop;
-    int ticksSinceTap;
+    int ticksSincePress;
 
     Default {
         Inventory.maxAmount 1;
@@ -111,22 +109,14 @@ class zmd_PickupDropper : Inventory {
     }
 
     override void doEffect() {
-        if (self.readyToDrop) {
-            ++self.ticksSinceTap;
-            if (self.justTapped()) {
-                self.dropPickup();
-                self.readyToDrop = false;
-            }
-        } else if (self.justTapped()) {
-            self.readyToDrop = true;
-        } else if (self.ticksSinceTap > 35) {
-            self.readyToDrop = false;
-            self.ticksSinceTap = 0;
-        }
+        ++self.ticksSincePress;
     }
 
-    bool justTapped() {
-        return self.owner.getPlayerInput(modInput_oldButtons) & self.key && !(self.owner.getPlayerInput(modInput_buttons) & self.key);
+    void handlePress() {
+        if (self.ticksSincePress > 0 && self.ticksSincePress <= 35) {
+            self.dropPickup();
+        }
+        self.ticksSincePress = 0;
     }
 
     void dropPickup() {
@@ -149,6 +139,32 @@ class zmd_PickupDropper : Inventory {
             }
         } else {
             zmd_Pickup.takeFrom(player, weapon);
+        }
+    }
+}
+
+class zmd_PickupDropHandler : EventHandler {
+    static ui bool isKeyForCommand(int key, String command) {
+        Array<int> keys;
+        bindings.getAllKeysForCommand(keys, command);
+        return keys.find(key) != keys.size();
+    }
+
+    override bool inputProcess(InputEvent event) {
+        if (event.type != InputEvent.Type_KeyDown) {
+            return false;
+        }
+
+        if (isKeyForCommand(event.keyScan, 'weapDrop')) {
+            EventHandler.sendNetworkEvent('zmd_dropWeapon');
+            return true;
+        }
+        return false;
+    }
+
+    override void networkProcess(ConsoleEvent e) {
+        if (e.name == 'zmd_dropWeapon') {
+            zmd_PickupDropper(players[e.player].mo.findInventory('zmd_PickupDropper')).handlePress();
         }
     }
 }

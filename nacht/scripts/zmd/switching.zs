@@ -6,8 +6,9 @@ class zmd_Switching : EventHandler {
     }
 
     override bool inputProcess(InputEvent event) {
-        if (event.type != InputEvent.Type_KeyDown)
+        if (event.type != InputEvent.Type_KeyDown) {
             return false;
+        }
 
         let key = event.keyScan;
         for (let i = 0; i <= 11; ++i) {
@@ -17,17 +18,17 @@ class zmd_Switching : EventHandler {
             }
         }
         if (isKeyForCommand(key, 'weapNext')) {
-            EventHandler.sendNetworkEvent('switchWeapon', 0);
+            EventHandler.sendNetworkEvent('zmd_switchWeapon', 0);
             return true;
         } else if (isKeyForCommand(key, 'weapPrev')) {
-            EventHandler.sendNetworkEvent('switchWeapon', -1);
+            EventHandler.sendNetworkEvent('zmd_switchWeapon', -1);
             return true;
         }
         return false;
     }
 
     override void networkProcess(ConsoleEvent e) {
-        if (e.name == 'switchWeapon') {
+        if (e.name == 'zmd_switchWeapon') {
             let manager = zmd_InventoryManager.fetchFrom(players[e.player].mo);
             if (manager != null && manager.switchWeapon) {
                 switch (e.args[0]) {
