@@ -44,6 +44,10 @@ This mod is meant to bring the features and spirit of classic 'Call of Duty Zomb
 
 - **Tyler Wojciechowski**: Lead Developer
 
+- **Jaquon Harvey**: Music composer
+
+-**Jared De Laurentis**: Game Designer
+
 ## Installation & Configuration
 
 Download the zip file from the 'Code' dropdown menu and unzip in directory of your choosing
@@ -86,7 +90,7 @@ To join, the host's ip address will have to manually be set in the script.
 
 ## Cross Mod Support
 
-While there is initial support for use with other mods, there is still a long ways to go. 
+While there is initial support for use with other mods, there is still a long ways to go.
 
 ## Android / Delta Touch
 
