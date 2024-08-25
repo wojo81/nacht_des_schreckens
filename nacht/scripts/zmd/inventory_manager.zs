@@ -75,6 +75,7 @@ class zmd_InventoryManager : Inventory {
             mysteryBoxPool.add(playerNumber, 'Thompson');
             mysteryBoxPool.add(playerNumber, 'Kar98');
             mysteryBoxPool.add(playerNumber, 'Carbine');
+            mysteryBoxPool.add(playerNumber, 'M1Garand2');
         } else {
             let slots = self.owner.player.weapons;
             for (int x = 0; x <= 7; ++x) {

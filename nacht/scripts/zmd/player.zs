@@ -12,10 +12,10 @@ class zmd_Player : DoomPlayer {
         Player.StartItem 'ColtAmmo', 32;
         Player.StartItem 'NTM_QuickMelee';
 
-        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun', 'Magnum', 'Thompson', 'Kar98', 'Carbine';
+        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun', 'Magnum', 'Thompson', 'Kar98', 'Carbine', 'M1Garand2';
 
-        Player.forwardMove 0.75, 0.75;
-        Player.sideMove 0.5, 0.25;
+        Player.forwardMove 0.5, 0.4;
+        Player.sideMove 0.25, 0.2;
     }
 }
 

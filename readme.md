@@ -46,7 +46,7 @@ This mod is meant to bring the features and spirit of classic 'Call of Duty Zomb
 
 - **Jaquon Harvey**: Music composer
 
--**Jared De Laurentis**: Game Designer
+- **Jared De Laurentis**: Game Designer
 
 ## Installation & Configuration
 
