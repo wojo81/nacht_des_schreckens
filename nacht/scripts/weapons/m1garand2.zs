@@ -1,5 +1,3 @@
-// 6 20 17 1 0 17 2 21 17 15 17 21 5 4 17 13 24
-
 class M1Garand2Ammo : Ammo {
     Default {
         Inventory.maxAmount 128;
