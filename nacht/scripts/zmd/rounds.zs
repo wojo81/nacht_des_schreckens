@@ -15,7 +15,6 @@ class zmd_Rounds : EventHandler {
     zmd_Spawning spawning;
     zmd_DropPool dropPool;
     zmd_WorryHandler worryHandler;
-    zmd_GlobalSound globalSound;
 
     static zmd_Rounds fetch() {
         return zmd_Rounds(EventHandler.find('zmd_Rounds'));
@@ -25,7 +24,6 @@ class zmd_Rounds : EventHandler {
         self.dropPool = zmd_DropPool.fetch();
         self.spawning = zmd_Spawning.init(self);
         zmd_WorryHandler.bind_with(self);
-        self.globalSound = zmd_GlobalSound.create();
         self.isTransitioning = true;
     }
 
@@ -33,7 +31,7 @@ class zmd_Rounds : EventHandler {
         if (!self.isTransitioning && e.thing && e.thing.bIsMonster) {
             self.zombieKilled();
             if (self.roundOver()) {
-                self.globalSound.start(self.endRoundSound, pitch: 0.5);
+                s_startSound(self.endRoundSound, chan_auto, pitch: 0.5);
                 self.isTransitioning = true;
                 zmd_RoundDelay.create(self);
             }
@@ -65,9 +63,9 @@ class zmd_Rounds : EventHandler {
         self.dropPool.handleRoundChange();
 
         if (self.currentRound == 1)
-            self.globalSound.start(self.introSound);
+            s_startSound(self.introSound, chan_auto);
         else
-            self.globalSound.start(self.beginRoundSound);
+            s_startSound(self.beginRoundSound, chan_auto);
 
         foreach (player : players) {
             if (player.mo != null && player.mo.countInv('zmd_Spectate') != 0) {

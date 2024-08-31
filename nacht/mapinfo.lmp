@@ -30,7 +30,6 @@ DoomEdNums {
     1003 = "zmd_Spawner"
     1004 = "zmd_MysteryBox"
     1005 = "zmd_Barrel"
-    1006 = "zmd_GlobalSound"
     1007 = "zmd_HelpDoor"
     1008 = "zmd_MysteryBoxLocation"
     1009 = "zmd_QuickReviveMachine"

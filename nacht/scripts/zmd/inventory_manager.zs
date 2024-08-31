@@ -146,6 +146,7 @@ class zmd_InventoryManager : Inventory {
     }
 
     override void tick() {
+        super.tick();
         ++self.ticsSinceSwitch;
     }
 
@@ -172,7 +173,7 @@ class zmd_InventoryManager : Inventory {
                 player.mo.giveInventory('zmd_GameOverSpectate', 1);
             }
         }
-        zmd_Rounds.fetch().globalSound.start("game/gameover");
+        s_startSound("game/gameover", chan_auto);
     }
 
     void reset() {
@@ -323,7 +324,7 @@ class zmd_InventoryGiver : EventHandler {
     }
 
     override void worldLoaded(WorldEvent e) {
-        zmd_Rounds.fetch().globalSound.start("game/intro_cinematic", chan_5);
+        s_startSound("game/intro_cinematic", chan_5);
         foreach (player : players)
             if (player.mo != null)
                 player.mo.giveInventory('zmd_Intro', 1);

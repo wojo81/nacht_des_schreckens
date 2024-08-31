@@ -58,7 +58,7 @@ class zmd_Intro : zmd_HudItem {
 
         Level.createActorIterator(115).next().destroy();
         thing_destroy(25);
-        zmd_Rounds.fetch().globalSound.cut(chan_5);
+        a_stopSound(chan_5);
         foreach (player : players) {
             if (player.mo != null) {
                 zmd_Spectate.setOriginToSpawn(player.mo);
