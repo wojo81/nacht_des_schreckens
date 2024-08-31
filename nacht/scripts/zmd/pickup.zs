@@ -29,13 +29,17 @@ class zmd_Pickup : zmd_Interactable {
     }
 
     override void doTouch(PlayerPawn player) {
-        if (zmd_InventoryManager.couldPickup(player, self.item)) {
-            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage("[Pickup "..getDefaultByType(self.item).getTag().."]");
+        let weapon = player.player.readyWeapon.getClass();
+        let manager = zmd_InventoryManager.fetchFrom(player);
+        if (player.findInventory(self.item) == null && weapon != manager.fist || manager.weapons.size() < manager.maxWeaponCount) {
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage('[Pickup '..getDefaultByType(self.item).getTag()..']');
         }
     }
 
     override bool doUse(PlayerPawn player) {
-        if (zmd_InventoryManager.couldPickup(player, self.item)) {
+        let weapon = player.player.readyWeapon.getClass();
+        let manager = zmd_InventoryManager.fetchFrom(player);
+        if (player.findInventory(self.item) == null && weapon != manager.fist || manager.weapons.size() < manager.maxWeaponCount) {
             self.giveTo(player);
             return true;
         }

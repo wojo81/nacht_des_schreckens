@@ -28,8 +28,9 @@ class zmd_Switching : EventHandler {
     }
 
     override void networkProcess(ConsoleEvent e) {
-        if (e.name == 'zmd_switchWeapon') {
-            let manager = zmd_InventoryManager.fetchFrom(players[e.player].mo);
+        let manager = zmd_InventoryManager.fetchFrom(players[e.player].mo);
+        if (e.name == 'zmd_switchWeapon' && manager.ticsSinceSwitch > manager.Default.ticsSinceSwitch) {
+            manager.ticsSinceSwitch = 0;
             if (manager != null && manager.switchWeapon) {
                 switch (e.args[0]) {
                 case 0:

@@ -1,5 +1,5 @@
 class zmd_NameTagger : EventHandler {
-    override void RenderOverlay(RenderEvent e) {
+    override void renderOverlay(RenderEvent e) {
         for (let i = 0; i < maxplayers; ++i) {
             if (!playeringame[i] || i == consolePlayer) continue;
 
