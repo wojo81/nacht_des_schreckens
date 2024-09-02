@@ -56,9 +56,13 @@ class zmd_Intro : zmd_HudItem {
         Actor.spawn('Weather');
         Weather.setPrecipitationType('BloodRain');
 
-        Level.createActorIterator(115).next().destroy();
-        thing_destroy(25);
-        a_stopSound(chan_5);
+        let zombie_tid = 115;
+        let intro_camera_tid = 13;
+        let sway_target_tid = 25;
+
+        Level.createActorIterator(zombie_tid).next().destroy();
+        Level.createActorIterator(intro_camera_tid).next().a_stopSound(chan_5);
+        thing_destroy(sway_target_tid);
         foreach (player : players) {
             if (player.mo != null) {
                 zmd_Spectate.setOriginToSpawn(player.mo);

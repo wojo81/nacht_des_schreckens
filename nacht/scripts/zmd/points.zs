@@ -104,10 +104,12 @@ class zmd_PointIncrease : zmd_PointDelta {
         super.init(value);
         if (value < 50)
             self.color = Font.cr_gold;
-        else if (value == 50)
+        else if (value < 100)
             self.color = Font.cr_orange;
-        else
+        else if (value < 120)
             self.color = Font.cr_red;
+        else
+            self.color = Font.cr_purple;
         self.velocity = (frandom[pointIncrease](0.4, 1.4), frandom[pointIncrease](-0.4, 0.2));
     }
 

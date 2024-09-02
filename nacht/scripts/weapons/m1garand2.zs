@@ -42,7 +42,7 @@ class M1Garand2 : zmd_Weapon {
         m2f0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_fire");
         tnt1 a 0 shootBullets(3, 75, 1);
-        m2f0 bcd 2 ff;
+        m2f0 bcdef 2 ff;
         goto Ready;
     Reload:
         tnt1 a 0 whenFullAmmo('Ready');
@@ -53,6 +53,7 @@ class M1Garand2 : zmd_Weapon {
         tnt1 a 0 a_startSound("weapons/m1g_clipin");
         m2d0 lmnop 3 fr;
         tnt1 a 0 a_startSound("weapons/m1g_close");
+        m2d0 qrstuvwx 3 fr;
         tnt1 a 0 reload;
         goto Ready;
     Zoom:
@@ -60,7 +61,7 @@ class M1Garand2 : zmd_Weapon {
     ZoomIn:
         tnt1 a 0 zoomIn;
         tnt1 a 0 whenNoActiveAmmo('EmptyZoomIn');
-        m2b0 abcd 2;
+        m2b0 abcdef 2;
     ZoomReady:
         tnt1 a 0 whenNoActiveAmmo('EmptyZoomIdle');
     ZoomIdle:
@@ -70,14 +71,14 @@ class M1Garand2 : zmd_Weapon {
     ZoomOut:
         tnt1 a 0 zoomOut;
         tnt1 a 0 whenNoActiveAmmo('EmptyZoomOut');
-        m2b0 dcba 2;
+        m2b0 fedcba 2;
         goto Ready;
     ZoomFire:
         tnt1 a 0 whenLastActiveAmmo('LastZoomFire');
         m2i0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_fire");
         tnt1 a 0 shootBullets(0.5, 75, 1);
-        m2i0 bcd 2 ff;
+        m2i0 bcdef 2 ff;
         goto Ready;
     LastFire:
         m2g0 a 2 ff;
@@ -85,6 +86,7 @@ class M1Garand2 : zmd_Weapon {
         tnt1 a 0 shootBullets(3, 75, 1);
         m2g0 bcd 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_ping");
+        m2g0 e 2 ff;
         goto Ready;
     LastZoomFire:
         m2j0 a 2 ff;
@@ -92,6 +94,7 @@ class M1Garand2 : zmd_Weapon {
         tnt1 a 0 shootBullets(0.5, 75, 1);
         m2j0 bcd 2 ff;
         tnt1 a 0 a_startSound("weapons/m1g_ping");
+        m2j0 ef 2 ff;
         goto Ready;
     PartialReload:
         m2e0 abcdefghi 2 fr;
@@ -101,8 +104,10 @@ class M1Garand2 : zmd_Weapon {
         m2e0 lmnopqrstuvwxyz 2 fr;
         m2e1 abcdefg 2 fr;
         tnt1 a 0 a_startSound("weapons/m1g_clipin");
-        m2e1 hij 2 fr;
+        m2e1 hijkl 2 fr;
         tnt1 a 0 a_startSound("weapons/m1g_close");
+        m2e1 mnopqrstuvwxyz 2 fr;
+        m2e2 a 2 fr;
         tnt1 a 0 reload;
         goto Ready;
     EmptyRaise:
@@ -115,13 +120,13 @@ class M1Garand2 : zmd_Weapon {
         m2l0 a 1 a_lower;
         loop;
     EmptyZoomIn:
-        m2k0 abcd 2;
+        m2k0 abcdef 2;
     EmptyZoomIdle:
         tnt1 a 0 whenShouldZoomOut('ZoomOut');
         m2m0 a 1 readyWeapon;
         loop;
     EmptyZoomOut:
-        m2k0 dcba 2;
+        m2k0 fedcba 2;
         goto Ready;
     }
 }

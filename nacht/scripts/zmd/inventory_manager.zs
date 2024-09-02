@@ -80,7 +80,7 @@ class zmd_InventoryManager : Inventory {
 
         if (self.owner is 'zmd_Player') {
             mysteryBoxPool.add(playerNumber, 'Raygun');
-            mysteryBoxPool.add(playerNumber, 'M1Garand');
+            //mysteryBoxPool.add(playerNumber, 'M1Garand');
             mysteryBoxPool.add(playerNumber, 'DoubleBarrelShotgun');
             mysteryBoxPool.add(playerNumber, 'Raygun');
             mysteryBoxPool.add(playerNumber, 'Ppsh');
@@ -88,7 +88,7 @@ class zmd_InventoryManager : Inventory {
             mysteryBoxPool.add(playerNumber, 'Thompson');
             mysteryBoxPool.add(playerNumber, 'Kar98');
             mysteryBoxPool.add(playerNumber, 'Carbine');
-            // mysteryBoxPool.add(playerNumber, 'M1Garand2');
+            mysteryBoxPool.add(playerNumber, 'M1Garand2');
         } else {
             let slots = self.owner.player.weapons;
             for (int x = 0; x <= 7; ++x) {
@@ -324,7 +324,8 @@ class zmd_InventoryGiver : EventHandler {
     }
 
     override void worldLoaded(WorldEvent e) {
-        s_startSound("game/intro_cinematic", chan_5);
+        let intro_camera_tid = 13;
+        Level.createActorIterator(intro_camera_tid).next().a_startSound("game/intro_cinematic", chan_5, attenuation: attn_none);
         foreach (player : players)
             if (player.mo != null)
                 player.mo.giveInventory('zmd_Intro', 1);
