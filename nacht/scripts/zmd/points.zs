@@ -37,7 +37,9 @@ class zmd_PointsHandler : EventHandler {
             e.damageSource.giveInventory('zmd_Points', 10);
 
             if (e.thing.health <= 0 || e.damageSource.countInv('zmd_InstakillPower') != 0) {
-                if (e.damageType == 'kick')
+                if (e.damageType == 'bottle')
+                    e.damageSource.giveInventory('zmd_Points', 150);
+                else if (e.damageType == 'kick')
                     e.damageSource.giveInventory('zmd_Points', 120);
                 else if (e.damageType == 'zmd_headshot')
                     e.damageSource.giveInventory('zmd_points', 100);
