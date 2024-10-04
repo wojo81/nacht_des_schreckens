@@ -24,7 +24,7 @@ class zmd_Points : Inventory {
         if (!giveCheat)
             amount <<= receiver.countInv('zmd_DoublePointsPower');
         else if (amount == 1)
-            amount = 10000;
+            amount = 50000;
 
         zmd_PointsHud(receiver.findInventory('zmd_PointsHud')).addIncrease(amount);
         super.setGiveAmount(receiver, amount, giveCheat);
@@ -42,7 +42,7 @@ class zmd_PointsHandler : EventHandler {
                 else if (e.damageType == 'kick')
                     e.damageSource.giveInventory('zmd_Points', 120);
                 else if (e.damageType == 'zmd_headshot')
-                    e.damageSource.giveInventory('zmd_points', 100);
+                    e.damageSource.giveInventory('zmd_points', 90);
                 else
                     e.damageSource.giveInventory('zmd_points', 50);
             }
@@ -106,7 +106,7 @@ class zmd_PointIncrease : zmd_PointDelta {
         super.init(value);
         if (value < 50)
             self.color = Font.cr_gold;
-        else if (value < 100)
+        else if (value < 90)
             self.color = Font.cr_orange;
         else if (value < 120)
             self.color = Font.cr_red;

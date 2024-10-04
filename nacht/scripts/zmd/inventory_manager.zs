@@ -152,9 +152,9 @@ class zmd_InventoryManager : Inventory {
 
     void handleDown() {
         self.giveTemp(zmd_LastStandWeaponPool.chooseFor(self.owner));
-        let worry = zmd_Worry(self.owner.findInventory('zmd_Worry'));
-        if (worry != null) {
-            worry.handler.deactivate();
+        let repulsion = zmd_Repulsion(self.owner.findInventory('zmd_Repulsion'));
+        if (repulsion != null) {
+            repulsion.handler.deactivate();
         }
         if (self.owner.findInventory('zmd_Revive')) {
             self.owner.giveInventory('zmd_LastStand', 1);

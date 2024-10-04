@@ -12,17 +12,16 @@ class zmd_Regen : Inventory {
     int maxHealth;
     int ticksTillHealing;
     bool shouldHeal;
-    zmd_Vitality vitality;
 
     property delay: ticksTillHealing;
 
     Default {
         Inventory.maxAmount 1;
+        zmd_Regen.delay 35 * 3;
+
         +Inventory.undroppable
         +Inventory.untossable
         +Inventory.persistentPower
-
-        zmd_Regen.delay 35 * 3;
     }
 
     override void attachToOwner(Actor owner) {

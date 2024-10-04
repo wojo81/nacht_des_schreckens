@@ -188,12 +188,11 @@ class zmd_MysteryBoxPickup : zmd_Pickup {
 
     Default {
         floatBobStrength 0.1;
+        radius 50;
 
         +noGravity
         +wallSprite
         +floatBob
-
-        radius 50;
     }
 
     static zmd_MysteryBoxPickup spawnIn(zmd_MysteryBox box, class<Weapon> pickupClass, PlayerPawn receiver) {

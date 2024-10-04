@@ -39,7 +39,7 @@ class zmd_DoublePointsPower : zmd_Powerup {
     }
 
     override void detachFromOwner() {
-        self.a_startSound("game/dpvanish");
+        self.owner.a_startSound("game/dpvanish", chanf_local);
         super.detachFromOwner();
     }
 }

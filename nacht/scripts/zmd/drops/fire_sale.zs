@@ -40,5 +40,7 @@ class zmd_FireSalePower : zmd_Powerup {
     override void detachFromOwner() {
         if (self.owner.playerNumber() == 0)
             zmd_MysteryBoxHandler.fetch().removeAllBoxes();
+        self.owner.a_startSound("game/dpvanish", chanf_local);
+        super.detachFromOwner();
     }
 }

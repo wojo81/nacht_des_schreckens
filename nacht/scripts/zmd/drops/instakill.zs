@@ -46,7 +46,7 @@ class zmd_InstakillPower : zmd_Powerup {
     }
 
     override void detachFromOwner() {
-        self.a_startSound("game/ikvanish");
+        self.owner.a_startSound("game/ikvanish", chanf_local);
         super.detachFromOwner();
     }
 }

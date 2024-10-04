@@ -21,6 +21,7 @@ class zmd_Drop : CustomInventory {
 class zmd_Powerup : Powerup {
     Default {
         Powerup.duration 30 * 35;
+        // +Inventory.additiveTime
     }
 
     override TextureId getPowerupIcon() {

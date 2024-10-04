@@ -14,7 +14,7 @@ class zmd_Rounds : EventHandler {
 
     zmd_Spawning spawning;
     zmd_DropPool dropPool;
-    zmd_WorryHandler worryHandler;
+    zmd_RepulsionHandler repulsionHandler;
 
     static zmd_Rounds fetch() {
         return zmd_Rounds(EventHandler.find('zmd_Rounds'));
@@ -23,7 +23,7 @@ class zmd_Rounds : EventHandler {
     override void worldLoaded(WorldEvent e) {
         self.dropPool = zmd_DropPool.fetch();
         self.spawning = zmd_Spawning.init(self);
-        zmd_WorryHandler.bind_with(self);
+        zmd_RepulsionHandler.bindWith(self);
         self.isTransitioning = true;
     }
 
@@ -88,8 +88,8 @@ class zmd_Rounds : EventHandler {
         return !self.isTransitioning && self.liveZombies != self.maxHordeCount && self.unspawnedZombies != 0;
     }
 
-    void startWorrying() {
-        self.worryHandler.activate();
+    void tryRepulse() {
+        self.repulsionHandler.activate();
     }
 }
 
@@ -108,7 +108,7 @@ class zmd_RoundDelay : Thinker {
 
     override void tick() {
         if (self.ticksLeft-- == 0) {
-            self.rounds.startWorrying();
+            self.rounds.tryRepulse();
             self.destroy();
         }
     }
