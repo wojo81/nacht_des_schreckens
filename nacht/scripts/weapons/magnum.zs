@@ -71,10 +71,10 @@ class Magnum : zmd_Weapon {
         swb0 gfedcba 2;
         goto Ready;
     ZoomFire:
-        swi0 a 2 ff;
+        swh0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/magnum_fire");
         tnt1 a 0 shootBullets(0.25, 10, 1);
-        swi0 bcde 2 ff;
+        swh0 bcde 2 ff;
         goto Ready;
     }
 }

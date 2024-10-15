@@ -97,17 +97,17 @@ class zmd_RoundDelay : Thinker {
     const delay = 35 * 10;
 
     zmd_Rounds rounds;
-    int ticksLeft;
+    int tickCount;
 
     static zmd_RoundDelay create(zmd_Rounds rounds) {
         let self = new('zmd_RoundDelay');
         self.rounds = rounds;
-        self.ticksLeft = delay;
+        self.tickCount = delay;
         return self;
     }
 
     override void tick() {
-        if (self.ticksLeft-- == 0) {
+        if (self.tickCount-- == 0) {
             self.rounds.tryRepulse();
             self.destroy();
         }

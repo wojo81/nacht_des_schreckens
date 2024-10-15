@@ -94,6 +94,7 @@ class Carbine : zmd_Weapon {
         goto Ready;
     LastZoomFire:
         mcj0 a 2 ff;
+        tnt1 a 0 a_startSound("weapons/carbine_fire");
         tnt1 a 0 shootBullets(0.5, 20, 1);
         mcj0 bcd 2 ff;
         goto Ready;
@@ -120,7 +121,7 @@ class Carbine : zmd_Weapon {
     EmptyZoomIn:
         mck0 abcdefgh 2;
     EmptyZoomIdle:
-        tnt1 a 0 whenShouldZoomOut('EmptyZoomOut');
+        tnt1 a 0 whenShouldZoomOut('ZoomOut');
         mcm0 a 1 readyWeapon;
         loop;
     EmptyZoomOut:
@@ -128,4 +129,3 @@ class Carbine : zmd_Weapon {
         goto Ready;
     }
 }
-

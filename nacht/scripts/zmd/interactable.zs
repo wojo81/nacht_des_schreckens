@@ -17,7 +17,7 @@ class zmd_Interactable : Actor abstract {
     }
 
     static String costOf(int cost) {
-        return "[Cost: "..cost.."]";
+        return '[Cost: '..cost..']';
     }
 
     abstract void doTouch(PlayerPawn player);
