@@ -29,19 +29,17 @@ class zmd_Pickup : zmd_Interactable {
     }
 
     override void doTouch(PlayerPawn player) {
-        if (player.player.readyWeapon != null) {
-            let weapon = player.player.readyWeapon.getClass();
-            let manager = zmd_InventoryManager.fetchFrom(player);
-            if (player.findInventory(self.item) == null && weapon != manager.fist || manager.weapons.size() < manager.maxWeaponCount) {
-                zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage('[Pickup '..getDefaultByType(self.item).getTag()..']');
-            }
+        let weapon = player.player.readyWeapon;
+        let manager = zmd_InventoryManager.fetchFrom(player);
+        if (player.findInventory(self.item) == null && (weapon == null || weapon.getClass() != manager.fist) || manager.weapons.size() < manager.maxWeaponCount) {
+            zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage('[Pickup '..getDefaultByType(self.item).getTag()..']');
         }
     }
 
     override bool doUse(PlayerPawn player) {
-        let weapon = player.player.readyWeapon.getClass();
+        let weapon = player.player.readyWeapon;
         let manager = zmd_InventoryManager.fetchFrom(player);
-        if (player.findInventory(self.item) == null && weapon != manager.fist || manager.weapons.size() < manager.maxWeaponCount) {
+        if (player.findInventory(self.item) == null && (weapon == null || weapon.getClass() != manager.fist) || manager.weapons.size() < manager.maxWeaponCount) {
             self.giveTo(player);
             return true;
         }
