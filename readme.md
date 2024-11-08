@@ -79,6 +79,7 @@ To play using the original rogues gallery of enemies, set the 'Use Varied Zombie
 |Swap Weapon|Mouse Wheel|Y Button|
 |Quick Swap|1-9 Keys|D-Pad (Clockwise starting from left)|
 |Drop Weapon|C Key x2|Right Bumper x2|
+|Repulse/Skip Intro|Q Key|Left Bumbper|
 
 ## Multiplayer
 
