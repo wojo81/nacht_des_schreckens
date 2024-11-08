@@ -37,7 +37,7 @@ class DoubleBarrelShotgun : zmd_Weapon {
         tnt1 a 0 whenZoomed('ZoomFire');
         tnt1 a 0 a_startSound("weapons/shotgun_fire");
         dbf0 a 2 ff;
-        tnt1 a 0 shootBullets(5, 15, 4);
+        tnt1 a 0 shootBullets(5, 30, 4);
         dbf0 bcdef 2 ff;
         goto Ready;
     Reload:
@@ -71,7 +71,7 @@ class DoubleBarrelShotgun : zmd_Weapon {
     ZoomFire:
         tnt1 a 0 a_startSound("weapons/shotgun_fire");
         dbh0 a 2 ff;
-        tnt1 a 0 shootBullets(3, 15, 4);
+        tnt1 a 0 shootBullets(3, 30, 4);
         dbh0 bcdef 2 ff;
         goto Ready;
     PartialReload:

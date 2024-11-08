@@ -41,7 +41,7 @@ class Carbine : zmd_Weapon {
         tnt1 a 0 whenLastActiveAmmo('LastFire');
         mcf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/carbine_fire");
-        tnt1 a 0 shootBullets(3, 20, 1);
+        tnt1 a 0 shootBullets(3, 15, 1);
         mcf0 bcd 2 ff;
         goto Ready;
     Reload:
@@ -83,19 +83,19 @@ class Carbine : zmd_Weapon {
         tnt1 a 0 whenLastActiveAmmo('LastZoomFire');
         mci0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/carbine_fire");
-        tnt1 a 0 shootBullets(0.5, 20, 1);
+        tnt1 a 0 shootBullets(0.5, 15, 1);
         mci0 bcd 2 ff;
         goto Ready;
     LastFire:
         mcg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/carbine_fire");
-        tnt1 a 0 shootBullets(3, 20, 1);
+        tnt1 a 0 shootBullets(3, 15, 1);
         mcg0 bcd 2 ff;
         goto Ready;
     LastZoomFire:
         mcj0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/carbine_fire");
-        tnt1 a 0 shootBullets(0.5, 20, 1);
+        tnt1 a 0 shootBullets(0.5, 15, 1);
         mcj0 bcd 2 ff;
         goto Ready;
     PartialReload:

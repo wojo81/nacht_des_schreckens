@@ -51,7 +51,7 @@ class zmd_DropPool : EventHandler {
         self.add('zmd_DoublePoints');
         self.add('zmd_MaxAmmo');
         self.add('zmd_Kaboom');
-        self.add('zmd_FireSale');
+        // self.add('zmd_FireSale');
         self.fill();
     }
 

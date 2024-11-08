@@ -38,7 +38,7 @@ class Kar98 : zmd_Weapon {
         tnt1 a 0 whenLastActiveAmmo('LastFire');
         tnt1 a 0 a_startSound("weapons/kar98_fire1");
         kre0 a 2 ff;
-        tnt1 a 0 shootBullets(1, 15, 1);
+        tnt1 a 0 shootBullets(1, 20, 1);
         kre0 bcdefgh 2 ff;
         tnt1 a 0 a_startSound("weapons/kar98_bolt_up");
         kre0 ij 2 ff;
@@ -77,7 +77,7 @@ class Kar98 : zmd_Weapon {
         tnt1 a 0 whenLastActiveAmmo('LastZoomFire');
         tnt1 a 0 a_startSound("weapons/kar98_fire1");
         kri0 a 2 ff;
-        tnt1 a 0 shootBullets(0.25, 15, 1);
+        tnt1 a 0 shootBullets(0.25, 20, 1);
         kri0 bcdefgh 2 ff;
         tnt1 a 0 a_startSound("weapons/kar98_bolt_up");
         kri0 ij 2 ff;
@@ -89,13 +89,13 @@ class Kar98 : zmd_Weapon {
     LastFire:
         tnt1 a 0 a_startSound("weapons/kar98_fire1");
         krg0 a 2 ff;
-        tnt1 a 0 shootBullets(1, 15, 1);
+        tnt1 a 0 shootBullets(1, 20, 1);
         krg0 bcdef 2 ff;
         goto Ready;
     LastZoomFire:
         tnt1 a 0 a_startSound("weapons/kar98_fire1");
         krk0 a 2 ff;
-        tnt1 a 0 shootBullets(0.25, 15, 1);
+        tnt1 a 0 shootBullets(0.25, 20, 1);
         krk0 bcdef 2 ff;
         goto Ready;
     }

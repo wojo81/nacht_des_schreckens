@@ -37,7 +37,7 @@ class Magnum : zmd_Weapon {
         tnt1 a 0 whenZoomed('ZoomFire');
         swf0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/magnum_fire");
-        tnt1 a 0 shootBullets(3, 10, 1);
+        tnt1 a 0 shootBullets(3, 15, 1);
         swf0 bcde 2 ff;
         goto Ready;
     Reload:
@@ -73,7 +73,7 @@ class Magnum : zmd_Weapon {
     ZoomFire:
         swh0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/magnum_fire");
-        tnt1 a 0 shootBullets(0.25, 10, 1);
+        tnt1 a 0 shootBullets(0.25, 15, 1);
         swh0 bcde 2 ff;
         goto Ready;
     }
