@@ -11,7 +11,7 @@ class Raygun : zmd_Weapon {
         zmd_Weapon.activeAmmo 20;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;
-        zmd_Weapon.keepPartialReload false;
+        zmd_Weapon.keepPartialReload true;
     }
 
     States {
