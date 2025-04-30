@@ -1,1 +1,5 @@
-flatpak run org.zdoom.GZDoom -file ../nacht -config ../config.ini $@
+#!/bin/bash
+
+gzdoom="../../gzdoom/gzdoom.exe"
+
+wine $gzdoom -file ../nacht -config ../config.ini $@
