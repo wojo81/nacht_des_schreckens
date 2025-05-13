@@ -40,7 +40,6 @@ class zmd_Regen : Inventory {
     }
 
     override void doEffect() {
-        console.printf(''..self.owner.health);
         if (self.shouldHeal) {
             if (self.owner.health >= self.maxHealth) {
                 self.shouldHeal = false;
