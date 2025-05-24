@@ -23,7 +23,7 @@ GameInfo {
         "zmd_Rounds", "zmd_MysteryBoxPool", "zmd_Spawning",
         "zmd_MysteryBoxHandler", "zmd_DropPool", "zmd_Switching",
         "zmd_RepulsionHandler", "zmd_PointsHandler", "zmd_InventoryGiver",
-        "zmd_LastStandWeaponPool", "zmd_PickupDropHandler", "zmd_NameTagger"
+        "zmd_LastStandWeaponPool", "zmd_PickupDropHandler"
 }
 
 DoomEdNums {
