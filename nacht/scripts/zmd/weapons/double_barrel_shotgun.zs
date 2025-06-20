@@ -1,13 +1,13 @@
-class DoubleBarrelShotgunAmmo : Ammo {
+class zmd_DoubleBarrelShotgunAmmo : Ammo {
     Default {
         Inventory.maxAmount 60;
     }
 }
 
-class DoubleBarrelShotgun : zmd_Weapon {
+class zmd_DoubleBarrelShotgun : zmd_Weapon {
     Default {
         Weapon.ammoGive 28;
-        Weapon.ammoType 'DoubleBarrelShotgunAmmo';
+        Weapon.ammoType 'zmd_DoubleBarrelShotgunAmmo';
         zmd_Weapon.activeAmmo 2;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

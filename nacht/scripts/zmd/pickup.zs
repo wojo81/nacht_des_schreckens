@@ -72,20 +72,6 @@ class zmd_Pickup : zmd_Interactable {
     }
 }
 
-class zmd_CustomPickup : zmd_Pickup {
-    static zmd_CustomPickup take(CustomInventory given) {
-        let self = zmd_CustomPickup(Actor.spawn('zmd_CustomPickup', given.pos, allow_replace));
-        self.item = given.getClass();
-        [self.sprite, self.frame, self.scale] = zmd_Pickup.getInfo(given);
-        return self;
-    }
-
-    override void giveTo(Actor taker) {
-        taker.giveInventory(self.item, 1);
-        self.destroy();
-    }
-}
-
 class zmd_NullPickup : Inventory {
     static int, int, Vector2 getInfo() {
         let self = getDefaultbyType('zmd_NullPickup');
@@ -141,7 +127,7 @@ class zmd_PickupDropper : Inventory {
             if (zmd_Points.takeFrom(player, self.cost)) {
                 zmd_Pickup.takeFrom(player, weapon);
             }
-        } else {
+        } else if (!(weapon is manager.fist)) {
             zmd_Pickup.takeFrom(player, weapon);
         }
     }

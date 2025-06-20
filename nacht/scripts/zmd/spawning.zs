@@ -79,17 +79,10 @@ class zmd_Spawning : EventHandler {
 
     override void worldThingSpawned(WorldEvent e) {
         let item = Inventory(e.thing);
-        if (item == null || item.owner != null) {
+        if (item == null || item.owner != null || item is 'zmd_Drop') {
             return;
         }
-
-        if (item is 'Weapon') {
-            zmd_Pickup.take(Weapon(item), item.pos);
-            item.destroy();
-        } else if (item is 'CustomInventory' && !(item is 'zmd_Drop') && item.pos != (0, 0, 0)) {
-            zmd_CustomPickup.take(CustomInventory(item));
-            item.destroy();
-        }
+		item.destroy();
     }
 
     void countdownSpawn() {

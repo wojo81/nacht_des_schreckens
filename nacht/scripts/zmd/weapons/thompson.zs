@@ -1,13 +1,13 @@
-class ThompsonAmmo : Ammo {
+class zmd_ThompsonAmmo : Ammo {
     Default {
         Inventory.maxAmount 200;
     }
 }
 
-class Thompson : zmd_Weapon {
+class zmd_Thompson : zmd_Weapon {
     Default {
         Weapon.ammoGive 80;
-        Weapon.ammoType 'ThompsonAmmo';
+        Weapon.ammoType 'zmd_ThompsonAmmo';
         zmd_Weapon.activeAmmo 20;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

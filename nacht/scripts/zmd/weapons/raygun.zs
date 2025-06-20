@@ -1,13 +1,13 @@
-class RaygunAmmo : Ammo {
+class zmd_RaygunAmmo : Ammo {
     Default {
         Inventory.maxAmount 200;
     }
 }
 
-class Raygun : zmd_Weapon {
+class zmd_Raygun : zmd_Weapon {
     Default {
         Weapon.ammoGive 60;
-        Weapon.ammoType 'RaygunAmmo';
+        Weapon.ammoType 'zmd_RaygunAmmo';
         zmd_Weapon.activeAmmo 20;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;
@@ -37,7 +37,7 @@ class Raygun : zmd_Weapon {
         tnt1 a 0 whenZoomed('ZoomFire');
         rge0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
-        tnt1 a 0 shootProjectile('Rayflux');
+        tnt1 a 0 shootProjectile('zmd_Rayflux');
         rge0 bcdefg 2 ff;
         tnt1 a 0 a_refire;
         goto Ready;
@@ -73,7 +73,7 @@ class Raygun : zmd_Weapon {
     ZoomFire:
         rgg0 a 2 ff;
         tnt1 a 0 a_startSound("weapons/raygun");
-        tnt1 a 0 shootProjectile('Rayflux');
+        tnt1 a 0 shootProjectile('zmd_Rayflux');
         rgg0 bcdefg 2 ff;
         tnt1 a 0 a_refire;
         goto Ready;

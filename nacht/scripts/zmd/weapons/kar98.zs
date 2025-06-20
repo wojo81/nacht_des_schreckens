@@ -1,13 +1,13 @@
-class Kar98Ammo : Ammo {
+class zmd_Kar98Ammo : Ammo {
     Default {
         Inventory.maxAmount 60;
     }
 }
 
-class Kar98 : zmd_Weapon {
+class zmd_Kar98 : zmd_Weapon {
     Default {
         Weapon.ammoGive 30;
-        Weapon.ammoType 'Kar98Ammo';
+        Weapon.ammoType 'zmd_Kar98Ammo';
         zmd_Weapon.activeAmmo 5;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

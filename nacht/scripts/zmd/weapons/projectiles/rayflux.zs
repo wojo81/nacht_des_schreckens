@@ -1,4 +1,4 @@
-class Rayflux : Rocket {
+class zmd_Rayflux : Rocket {
     Default {
         scale 0.25;
         health 1;

@@ -13,7 +13,7 @@ class zmd_Switching : EventHandler {
         let key = event.keyScan;
         for (let i = 0; i <= 11; ++i) {
             if (isKeyForCommand(key, 'slot '..i)) {
-                EventHandler.sendNetworkEvent('switchWeapon', i);
+                EventHandler.sendNetworkEvent('zmd_switchWeapon', i);
                 return true;
             }
         }

@@ -1,13 +1,13 @@
-class ColtAmmo : Ammo {
+class zmd_ColtAmmo : Ammo {
     Default {
         Inventory.maxAmount 72;
     }
 }
 
-class Colt : zmd_Weapon {
+class zmd_Colt : zmd_Weapon {
     Default {
         Weapon.ammoGive 32;
-        Weapon.ammoType 'ColtAmmo';
+        Weapon.ammoType 'zmd_ColtAmmo';
         zmd_Weapon.activeAmmo 8;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

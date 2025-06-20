@@ -1,13 +1,13 @@
-class PpshAmmo : Ammo {
+class zmd_PpshAmmo : Ammo {
     Default {
         Inventory.maxAmount 355;
     }
 }
 
-class Ppsh : zmd_Weapon {
+class zmd_Ppsh : zmd_Weapon {
     Default {
         Weapon.ammoGive 142;
-        Weapon.ammoType 'PpshAmmo';
+        Weapon.ammoType 'zmd_PpshAmmo';
         zmd_Weapon.activeAmmo 71;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

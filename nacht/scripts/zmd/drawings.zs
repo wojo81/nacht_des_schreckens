@@ -30,22 +30,24 @@ class zmd_Drawing : zmd_Interactable {
     }
 
     override void doTouch(PlayerPawn player) {
+		let manager = zmd_InventoryManager.fetchFrom(player);
         if (player.countInv(self.weapon) != 0)
             zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.ammoMessage);
         else if (player.countInv(self.upgradedWeapon))
             zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.upgradedAmmoMessage);
-        else
+        else if ((player.player.readyWeapon == null || player.player.readyWeapon.getClass() != manager.fist) || manager.weapons.size() < manager.maxWeaponCount)
             zmd_HintHud(player.findInventory('zmd_HintHud')).setMessage(self.weaponMessage);
     }
 
     override bool doUse(PlayerPawn player) {
+		let manager = zmd_InventoryManager.fetchFrom(player);
         if (player.countInv(self.weapon) != 0) {
             if (zmd_Points.takeFrom(player, ammoCost) && player.giveInventory(getDefaultByType(self.weapon).ammoType1, 999))
                 player.a_startSound("game/purchase");
         } else if (player.countInv(self.upgradedWeapon) != 0) {
             if (zmd_Points.takeFrom(player, self.upgradedAmmoCost) && player.giveInventory(getDefaultByType(self.upgradedWeapon).ammoType1, 999))
                 player.a_startSound("game/purchase");
-        } else if (zmd_Points.takeFrom(player, self.weaponCost) && player.giveInventory(self.weapon, 1)) {
+        } else if (((player.player.readyWeapon == null || player.player.readyWeapon.getClass() != manager.fist) || manager.weapons.size() < manager.maxWeaponCount) && zmd_Points.takeFrom(player, self.weaponCost) && player.giveInventory(self.weapon, 1)) {
             player.a_selectWeapon(self.weapon);
             player.a_startSound("game/purchase");
         } else
@@ -56,7 +58,7 @@ class zmd_Drawing : zmd_Interactable {
 
 class MinigunDrawing : zmd_Drawing {
     Default {
-        zmd_Drawing.weapon 'M1Garand';
+        zmd_Drawing.weapon 'zmd_M1Garand';
         zmd_Drawing.cost 1200;
     }
 
@@ -69,7 +71,7 @@ class MinigunDrawing : zmd_Drawing {
 
 class Kar98Drawing : zmd_Drawing {
     Default {
-        zmd_Drawing.weapon 'Kar98';
+        zmd_Drawing.weapon 'zmd_Kar98';
         zmd_Drawing.cost 500;
     }
 
@@ -82,7 +84,7 @@ class Kar98Drawing : zmd_Drawing {
 
 class CarbineDrawing : zmd_Drawing {
     Default {
-        zmd_Drawing.weapon 'Carbine';
+        zmd_Drawing.weapon 'zmd_Carbine';
         zmd_Drawing.cost 500;
     }
 
@@ -95,7 +97,7 @@ class CarbineDrawing : zmd_Drawing {
 
 class ThompsonDrawing : zmd_Drawing {
     Default {
-        zmd_Drawing.weapon 'Thompson';
+        zmd_Drawing.weapon 'zmd_Thompson';
         zmd_Drawing.cost 1000;
     }
 

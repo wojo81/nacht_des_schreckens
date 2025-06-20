@@ -1,13 +1,13 @@
-class Type100Ammo : Ammo {
+class zmd_Type100Ammo : Ammo {
     Default {
         Inventory.maxAmount 355;
     }
 }
 
-class Type100 : zmd_Weapon {
+class zmd_Type100 : zmd_Weapon {
     Default {
         Weapon.ammoGive 142;
-        Weapon.ammoType 'Type100Ammo';
+        Weapon.ammoType 'zmd_Type100Ammo';
         zmd_Weapon.activeAmmo 71;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

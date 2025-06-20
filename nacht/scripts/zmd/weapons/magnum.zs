@@ -1,13 +1,13 @@
-class MagnumAmmo : Ammo {
+class zmd_MagnumAmmo : Ammo {
     Default {
         Inventory.maxAmount 66;
     }
 }
 
-class Magnum : zmd_Weapon {
+class zmd_Magnum : zmd_Weapon {
     Default {
         Weapon.ammoGive 30;
-        Weapon.ammoType 'MagnumAmmo';
+        Weapon.ammoType 'zmd_MagnumAmmo';
         zmd_Weapon.activeAmmo 6;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

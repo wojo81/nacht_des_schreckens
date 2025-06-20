@@ -1,4 +1,5 @@
 class zmd_LastStand : Inventory {
+	const speed = 0.2;
     const multiplayerDuration = 35 * 30;
     const soloDuration = 35 * 10;
 
@@ -26,7 +27,7 @@ class zmd_LastStand : Inventory {
             self.manager.switchWeapon = false;
 
             player.changeTid(0);
-            player.speed = 0.2;
+            player.speed = self.speed;
             player.viewHeight = 5;
             player.height = 7;
             player.attackZOffset = -18;
@@ -47,7 +48,7 @@ class zmd_LastStand : Inventory {
     override void detachFromOwner() {
         let player = PlayerPawn(owner);
         if (player != null) {
-            player.speed = player.Default.speed;
+            player.speed = zmd_InventoryManager.fetchFrom(player).speed;
             player.viewHeight = player.Default.viewHeight;
             player.attackZOffset = player.Default.attackZOffset;
             player.height = player.Default.viewHeight;
@@ -65,6 +66,7 @@ class zmd_LastStand : Inventory {
                 self.manager.switchWeapon = true;
                 player.a_setBlend("red", 0.4, 35 * 3);
                 player.takeInventory('zmd_Revive', 1);
+				player.setInventory('zmd_Vitality', 50);
                 player.changeTid(zmd_Player.liveTid);
                 thing_hate(zmd_Spawning.regularTid, zmd_Player.liveTid, 0);
             }
@@ -92,8 +94,8 @@ class zmd_LastStandWeaponPool : EventHandler {
     }
 
     override void worldLoaded(WorldEvent e) {
-        self.weapons.push('Raygun');
-        self.weapons.push('Magnum');
+        self.weapons.push('zmd_Raygun');
+        self.weapons.push('zmd_Magnum');
     }
 }
 

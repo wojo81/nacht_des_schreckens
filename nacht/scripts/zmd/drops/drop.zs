@@ -21,7 +21,6 @@ class zmd_Drop : CustomInventory {
 class zmd_Powerup : Powerup {
     Default {
         Powerup.duration 30 * 35;
-        // +Inventory.additiveTime
     }
 
     override TextureId getPowerupIcon() {
@@ -51,7 +50,6 @@ class zmd_DropPool : EventHandler {
         self.add('zmd_DoublePoints');
         self.add('zmd_MaxAmmo');
         self.add('zmd_Kaboom');
-        // self.add('zmd_FireSale');
         self.fill();
     }
 

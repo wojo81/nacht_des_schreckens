@@ -1,13 +1,13 @@
-class CarbineAmmo : Ammo {
+class zmd_CarbineAmmo : Ammo {
     Default {
         Inventory.maxAmount 120;
     }
 }
 
-class Carbine : zmd_Weapon {
+class zmd_Carbine : zmd_Weapon {
     Default {
         Weapon.ammoGive 60;
-        Weapon.ammoType 'CarbineAmmo';
+        Weapon.ammoType 'zmd_CarbineAmmo';
         zmd_Weapon.activeAmmo 15;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;

@@ -1,4 +1,6 @@
 class zmd_InventoryManager : Inventory {
+	const speed = 0.5;
+
     bool spectating, gameOver, skipHandlePickup, switchWeapon;
     int ticsSinceSwitch;
 
@@ -22,7 +24,7 @@ class zmd_InventoryManager : Inventory {
     property switchDelay: ticsSinceSwitch;
 
     Default {
-        zmd_InventoryManager.switchDelay 20;
+        zmd_InventoryManager.switchDelay 5;
         Inventory.maxAmount 1;
         +Inventory.undroppable
         +Inventory.untossable
@@ -32,21 +34,25 @@ class zmd_InventoryManager : Inventory {
     static zmd_InventoryManager fetchFrom(Actor player) {
         return zmd_InventoryManager(player.findInventory('zmd_InventoryManager'));
     }
-
-    static bool couldPickup(PlayerPawn player, class<Inventory> item) {
-        let slots = player.player.weapons;
-        for (int x = 0; x <= 7; ++x) {
-            for (int y = 0; y != slots.slotSize(x); ++y) {
-                if (slots.getWeapon(x, y) == item) {
-                    return player.findInventory(item) == null;
-                }
-            }
-        }
-        return false;
-    }
+	
+	static bool couldPickup(PlayerPawn player, class<Weapon> weaponClass) {
+		if (player.countInv(weaponClass)) {
+			return true;
+		} else {
+			player.giveInventory(weaponClass, 1);
+			let weapon = player.findInventory(weaponClass);
+			if (weapon != null) {
+				weapon.destroy();
+				return true;
+			}
+			return false;
+		}
+	}
 
     override void postBeginPlay() {
         super.postBeginPlay();
+
+		self.owner.speed = self.speed;
 
         let iterator = ThinkerIterator.create('Inventory');
         Thinker thinker;
@@ -78,27 +84,16 @@ class zmd_InventoryManager : Inventory {
         let mysteryBoxPool = zmd_MysteryBoxPool.fetch();
         let playerNumber = self.owner.playerNumber();
 
-        if (self.owner is 'zmd_Player') {
-            mysteryBoxPool.add(playerNumber, 'Raygun');
-            //mysteryBoxPool.add(playerNumber, 'M1Garand');
-            mysteryBoxPool.add(playerNumber, 'DoubleBarrelShotgun');
-            mysteryBoxPool.add(playerNumber, 'Raygun');
-            mysteryBoxPool.add(playerNumber, 'Ppsh');
-            mysteryBoxPool.add(playerNumber, 'Magnum');
-            mysteryBoxPool.add(playerNumber, 'Thompson');
-            mysteryBoxPool.add(playerNumber, 'Kar98');
-            mysteryBoxPool.add(playerNumber, 'Carbine');
-            mysteryBoxPool.add(playerNumber, 'M1Garand2');
-        } else {
-            let slots = self.owner.player.weapons;
-            for (int x = 0; x <= 7; ++x) {
-                for (int y = 0; y != slots.slotSize(x); ++y) {
-                    let weapon = slots.getWeapon(x, y);
-                    let sprite = getDefaultByType(weapon).spawnState.sprite;
-                    mysteryBoxPool.add(playerNumber, weapon);
-                }
-            }
-        }
+		self.skipHandlePickup = true;
+		let slots = self.owner.player.weapons;
+		for (int x = 0; x <= 7; ++x) {
+			for (int y = 0; y != slots.slotSize(x); ++y) {
+				let weapon = slots.getWeapon(x, y);
+				if (weapon != self.fist && couldPickup(PlayerPawn(self.owner), weapon))
+					mysteryBoxPool.add(playerNumber, weapon);
+			}
+		}
+		self.skipHandlePickup = false;
     }
 
     override bool handlePickup(Inventory item) {
@@ -235,8 +230,16 @@ class zmd_InventoryManager : Inventory {
     }
 
     void selectWeapon(int index) {
-        if (self.weapons.size() > 1 && self.owner.findInventory('zmd_LastStand') == null && index < self.weapons.size()) {
-            self.owner.a_selectWeapon(self.weapons[index].getClass());
+        if (self.owner.findInventory('zmd_LastStand') == null) {
+			if (self.fist != null) {
+				if (index == 0) {
+					self.owner.a_selectWeapon(self.fist);
+				} else if (index <= self.weapons.size()) {
+					self.owner.a_selectWeapon(self.weapons[index - 1].getClass());
+				}
+			} else if (index < self.weapons.size()) {
+				self.owner.a_selectWeapon(self.weapons[index].getClass());
+			}
         }
     }
 

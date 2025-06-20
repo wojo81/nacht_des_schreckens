@@ -8,14 +8,13 @@ class zmd_Player : DoomPlayer {
 
     Default {
         Player.displayName 'Marine (ZMD)';
-        Player.StartItem 'Colt';
-        Player.StartItem 'ColtAmmo', 32;
+        Player.StartItem 'zmd_Colt';
+        Player.StartItem 'zmd_ColtAmmo', 32;
         Player.StartItem 'NTM_QuickMelee';
 
-        Player.WeaponSlot 1, 'Raygun', 'Colt', 'Ppsh', 'M1Garand', 'DoubleBarrelShotgun', 'Magnum', 'Thompson', 'Kar98', 'Carbine', 'Type100', 'M1Garand2';
-
-        Player.forwardMove 0.5, 0.4;
-        Player.sideMove 0.25, 0.2;
+        Player.WeaponSlot 1, 'zmd_Raygun', 'zmd_Colt', 'zmd_Ppsh', 'zmdM1Garand', 
+			'zmd_DoubleBarrelShotgun', 'zmd_Magnum', 'zmd_Thompson', 'zmd_Kar98', 
+			'zmd_Carbine', 'zmd_Type100';
     }
 }
 

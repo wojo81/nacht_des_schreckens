@@ -1,13 +1,13 @@
-class M1GarandAmmo : Ammo {
+class zmd_M1GarandAmmo : Ammo {
     Default {
         Inventory.maxAmount 128;
     }
 }
 
-class M1Garand : zmd_Weapon {
+class zmd_M1Garand : zmd_Weapon {
     Default {
         Weapon.ammoGive 56;
-        Weapon.ammoType 'M1GarandAmmo';
+        Weapon.ammoType 'zmd_M1GarandAmmo';
         zmd_Weapon.activeAmmo 8;
         zmd_Weapon.reloadFrameRate 3;
         zmd_Weapon.fireFrameRate 2;
